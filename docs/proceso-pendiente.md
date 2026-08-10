@@ -77,12 +77,34 @@ de revisión: reglas, formatos de acta y criterios del registro de métricas. To
 cómo se revisa **este** repositorio y no significa nada separado de él; llevarlo a un gestor de
 incidencias lo convertiría en trabajo planificado cuando es artesanía que se aplica al escribir.
 
-**Un aviso sobre el estado de este fichero.** La sincronización encontró que varias entradas de
-los bloques 3 y 5 dicen «se corrige al cerrar la fase» y **ya están corregidas** —§11.2 no
-declara pendiente el workflow diario, §9 sí enumera los validadores condicionales y `estado.py`,
-y §5.2 ya trae el orden por valor de decisión—, sin que ninguna lleve su marca **SUPERADO**. No
-se marcan en esta pasada: exigiría contrastar una a una y el alcance de aquí era el reparto con
-Linear. Queda dicho para que no se lean como vivas.
+### Barrido de las entradas que aplazaban al cierre de fase (2026-08-10)
+
+**Una bandeja donde la mitad de lo que hay ya está hecho deja de revisarse.** La sincronización
+encontró varias entradas que aplazan diciendo «se corrige al cerrar la fase» y llevaban corregidas
+desde el 2026-08-03 sin marca. Se contrastaron **una a una contra el código y la especificación**,
+no contra lo que la entrada afirma de sí misma.
+
+**Nueve superadas**, cada una con su evidencia en la propia entrada:
+
+| Entrada | Evidencia del cierre |
+|---|---|
+| `analyze/estado.py` fuera del árbol de §9 | §9 lo lista con su cometido |
+| Declaraciones de §8.3 al log y no al informe | `renderer.py::_lineas_no_publicado`; vocabulario reservado comprobado sobre el informe en `tests/test_informe.py` |
+| §6.1 paso 4 (`dueDate` a 7 días) sin calcular | `cli.py` consume `ventana_dias_vencimiento` y lo declara |
+| §11.2 «pendiente de implementación» | §11.2 abre en «Programado diariamente a las 06:00 UTC» |
+| Validador condicional sin ruta versionada | §9 declara `data/state/` con tres artefactos y nombra `validadores_http.json` |
+| §5.2 y §8.3 con el orden que ya no se usa | §5.2 trae «Orden por valor de decisión», y el criterio se escribe **una sola vez** |
+| **JR-1** · §6.7 «última ejecución con datos» | La copia vieja se retiró y se escribió por qué era falsa |
+| **JR-4** · invariante del validador | §6.4 fija la regla del tercer artefacto: se congela |
+| Presupuesto de revisión definitivo | Decidido: 10 min / 30 mutaciones, en R2 del protocolo |
+
+**Tres siguen abiertas, y la comprobación lo dice** en vez de dejarlas ambiguas: **JR-2** —§6.5
+cierra una dirección de la ambigüedad y no la contraria—, **JR-3** —el discriminador del CLI sigue
+decidiendo sobre `registros_obtenidos`— y la presentación consolidada de §6.1, que es **E-2**.
+
+**Lo que este barrido no cubre:** las entradas que nunca alegaron el cierre de fase. **P-5** sigue
+abierta —anunciaba revisar en bloque los cuatro relevantes del PR #14 y no consta que ocurriera— y
+no se marca, porque cerrarla exige leer el acta, no contrastar un fichero.
 
 **Estatus de este documento:** lista de trabajo. No manda, no explica y no describe el estado
 del proyecto. Es una bandeja de entrada.
@@ -423,18 +445,34 @@ integrarlos, al cerrar la fase.
 
 Son cuatro relevantes y tres menores. Los relevantes, por si sirve tenerlos a la vista:
 
-- **JR-1** — §6.7 conserva «la marca de agua sigue siendo la de la última ejecución **con
+- ~~**JR-1**~~ **SUPERADO (2026-08-10).** §6.7 ya no lo conserva: la viñeta dice hoy «No se dice
+  «la última ejecución **con datos**», que es lo que decía esta viñeta y es falso precisamente en
+  el caso habitual de CISA KEV». La copia vieja se retiró y quedó escrito por qué era falsa.
+  Texto original: **JR-1** — §6.7 conserva «la marca de agua sigue siendo la de la última ejecución **con
   datos**», falso para el 304, que sí la avanza. Tercera sede de la misma copia vieja; no manda
   nada porque la regla operativa de su viñeta produce el valor correcto sin leerla.
-- **JR-2** — al cerrar el bloqueante de la pasada anterior, la tercera causa del aviso de
+- **JR-2 · SIGUE ABIERTO (verificado el 2026-08-10).** §6.5 mantiene las tres causas y añade que
+  «la tercera no puede declararse como la segunda», que cierra una dirección; **no la contraria**.
+  Para una fuente `fallida` con intervalo largo siguen siendo aplicables la segunda y la tercera,
+  y «cada una se nombra por lo que fue» no da regla de precedencia. Texto original:
+  **JR-2** — al cerrar el bloqueante de la pasada anterior, la tercera causa del aviso de
   frescura de §6.5 pasó a **contener** a la segunda, y la frase que las distingue presupone que
   son disjuntas. Para una fuente `fallida` con intervalo largo hay dos etiquetas aplicables y
   ninguna regla para elegir.
-- **JR-3** — el discriminador de nivel de log del CLI decide sobre `registros_obtenidos`
+- **JR-3 · SIGUE ABIERTO (verificado el 2026-08-10).** `cli.py` decide todavía sobre
+  `registros_obtenidos` —`registrar = _LOGGER.warning if resultado.registros_obtenidos else
+  _LOGGER.info`—, de modo que un lote sin un solo objeto se registra como `info`, igual que un
+  304. Sigue mitigado porque `base.py` advierte de ese lote. Texto original:
+  **JR-3** — el discriminador de nivel de log del CLI decide sobre `registros_obtenidos`
   —indicadores válidos— mientras su comentario declara el criterio «había registros delante». Un
   lote sin un solo objeto se registra como `info`, igual que un 304. Mitigado porque `base.py` ya
   advierte de ese lote.
-- **JR-4** — la regla nueva de §14.2 cierra el camino citado y no el invariante: el validador
+- ~~**JR-4**~~ **SUPERADO (2026-08-10).** El invariante está escrito donde faltaba: §6.4 declara
+  que «`data/state/` guarda tres artefactos con tres reglas distintas» y fija la del tercero —«el
+  validador condicional **se congela también**, por la regla de §14.2»—, que es exactamente lo que
+  la entrada echaba en falta. Y la ambigüedad de «descartar» la resuelve §14.2 por su efecto: «los
+  validadores condicionales se descartan **y la petición se hace sin condicionar**». Texto
+  original: **JR-4** — la regla nueva de §14.2 cierra el camino citado y no el invariante: el validador
   condicional sobrevive intacto a una ejecución `fallida`. Y «los validadores se descartan» no
   dice si se borran o solo no se envían.
 
@@ -569,22 +607,39 @@ accionable de los tres, y aplicaría desde el bloque 3.
 implementado y la especificación se anotan aquí en vez de resolverse tocando la fuente de
 verdad. Ninguna manda hacer ni publicar nada falso.*
 
-- **`analyze/estado.py` no está en el árbol de §9**, que enumera `dedupe.py`, `confidence.py` y
+- ~~**`analyze/estado.py` no está en el árbol de §9**~~ **SUPERADO (2026-08-10).** El árbol lo
+  incorpora: `CLAUDE.md` §9 lo lista con su cometido —«forma del estado mínimo persistido»— y §9
+  lo cita en prosa junto a `persistencia.py`. Se resolvió por la primera de las dos vías que la
+  entrada ofrecía; los dos ficheros siguen separados. Texto original:
+  **`analyze/estado.py` no está en el árbol de §9**, que enumera `dedupe.py`, `confidence.py` y
   `diff.py`. Se separó de `diff.py` porque son dos cosas distintas: la **forma** de lo que se
   persiste y las **reglas** que deciden qué se escribe. Al cerrar la fase, o el árbol lo
   incorpora o los dos ficheros se funden.
 
-- **Las declaraciones obligatorias de §8.3 se emiten al log, no a un informe.** Es lo único que
+- ~~**Las declaraciones obligatorias de §8.3 se emiten al log, no a un informe.**~~ **SUPERADO
+  (2026-08-10).** El informe existe desde el bloque 4 y las emite: `report/renderer.py` construye
+  la declaración de lo no publicado en `_lineas_no_publicado`. Y la condición que la entrada
+  imponía —«tendrá que repetirse sobre el informe»— está cumplida: la comprobación de vocabulario
+  reservado se ejerce hoy sobre el informe renderizado en `tests/test_informe.py`, además de sobre
+  el log en `tests/test_modos_cli.py`. Texto original:
+  **Las declaraciones obligatorias de §8.3 se emiten al log, no a un informe.** Es lo único que
   este bloque puede producir —§8 es el bloque 4—, pero conviene tenerlo escrito: la comprobación
   de vocabulario reservado de §14.5 se ejerce hoy sobre el log, y **tendrá que repetirse sobre
   el informe** cuando exista. Un control que se prueba sobre una salida y se aplica a otra no es
   el mismo control.
 
-- **§6.1 exige presentación consolidada con desglose por fuente**, y hoy la salida es por fuente
+- **SIGUE ABIERTO (verificado el 2026-08-10).** Es el mismo pendiente que **E-2**, más abajo, y
+  allí está su marca. Se deja aquí porque es donde se anotó.
+  **§6.1 exige presentación consolidada con desglose por fuente**, y hoy la salida es por fuente
   sin consolidar. El cálculo sí es por fuente, que es lo que §6.4 obliga; lo que falta es la
   capa de presentación, que es del bloque 4. Se anota para que no se dé por hecho al cerrar.
 
-- **§6.1 paso 4 —entradas KEV con `dueDate` en los próximos 7 días— no está calculado.** Sus
+- ~~**§6.1 paso 4 —entradas KEV con `dueDate` en los próximos 7 días— no está calculado.**~~
+  **SUPERADO (2026-08-10).** Está calculado: `cli.py` consume
+  `configuracion.ajustes.ventana_dias_vencimiento` y declara los vencimientos próximos citando el
+  paso 4 por su nombre. Ocurrió donde la entrada anticipaba —«pertenece al informe»—, en el bloque
+  4. Texto original:
+  **§6.1 paso 4 —entradas KEV con `dueDate` en los próximos 7 días— no está calculado.** Sus
   insumos **sí** están ya persistidos (el bloque `kev` del estado), que es la mitad que este
   bloque tenía que resolver; el cálculo consume la ventana de `config/settings.yaml`
   (`informe.ventana_dias_vencimiento`) y pertenece al informe.
@@ -626,11 +681,22 @@ secciones de `CLAUDE.md` que toca, y a **una** acta reciente como referencia de 
 
 **Lo que queda por decidir al cerrar la fase 4, con las filas del registro delante:**
 
-- **El presupuesto definitivo.** Los 10 minutos / 30 mutaciones son un valor inicial elegido para
+- ~~**El presupuesto definitivo.**~~ **SUPERADO (2026-08-10).** Decidido al cerrar la fase 4 y ya
+  recogido en la sección «Decididos» de más abajo: **10 minutos y 30 mutaciones**, ahora como
+  cifra definitiva, con las tres pasadas acotadas que la sostienen. La tabla vive en R2 de
+  `docs/protocolo-revision.md`. Texto original:
+  **El presupuesto definitivo.** Los 10 minutos / 30 mutaciones son un valor inicial elegido para
   que la pasada termine, **no una cifra calibrada**: no hay todavía ninguna pasada acotada de la
   que estimar cuánto hace falta. El bloque 4 lleva 30 minutos por ser el artefacto que alguien
   lee y cree. Con varias filas acotadas se podrá comparar hallazgos por minuto contra las pasadas
   largas, que es el dato que hoy no existe.
+> **Las dos preguntas del corpus se quedan en el fichero (decidido el 2026-08-10).** Se planteó
+> subirlas a Linear —dependen de una decisión humana y están declaradas «sin decidir» desde el
+> cierre de fase— y el mantenedor resolvió que no: **su decisión solo tiene sentido leyendo el
+> corpus del repositorio**. Un índice de qué sección gobierna qué fichero se decide con
+> `CLAUDE.md` delante, y qué hacer con 956 KB de actas se decide abriéndolas. Una incidencia que
+> remite a un corpus que no contiene no es seguimiento, es un puntero.
+
 - **Si el corpus normativo necesita un índice por secciones.** R1 manda leer «las secciones que
   el diff toca», y hoy eso lo decide el revisor a ojo sobre un documento de 2.621 líneas. Un
   mapa de qué sección gobierna qué fichero lo haría mecánico, pero es instrumentación nueva y
@@ -663,6 +729,9 @@ el 3,5% es deriva del proveedor o variación, con la serie que ya se está anota
 Queda escrito para que esa decisión se tome sabiendo lo que cuesta aplazarla.
 
 ### §11.2 declara el workflow diario «pendiente de implementación» y ya no lo está
+> **SUPERADO (2026-08-10).** §11.2 ya no abre con «Pendiente de implementación. Cuando se
+> implemente:»: arranca directamente en «Programado diariamente a las 06:00 UTC». Se corrigió al
+> cerrar la fase, como la entrada anunciaba, junto con el punto 4 de §13.
 
 *Procedencia: bloque 5 de la fase 4.*
 
@@ -676,6 +745,11 @@ del código y aquí va por detrás. Se corrige al cerrar la fase, junto con el p
 es lo que este workflow hace alcanzable.
 
 ### El validador condicional necesitaba una cuarta ruta versionada, y ninguna sección la enumera
+> **SUPERADO (2026-08-10).** §9 lo incorporó a su lista, que era la primera de las dos vías que la
+> entrada ofrecía: el árbol declara `data/state/` con **tres** artefactos —el último, «los
+> validadores condicionales (§14.2)»—, la lista de lo versionado los nombra, y un bloque propio
+> —«Los validadores condicionales se versionan, y de ello depende que el 304 exista»— explica por
+> qué, con `validadores_http.json` por su nombre.
 
 *Procedencia: bloque 5 de la fase 4.*
 
@@ -690,6 +764,15 @@ si §9 lo incorpora a su lista o si §14.2 lo dice expresamente; hoy vive en el 
 entrada 29 de `docs/decisiones.md`, que es dato pero no norma.
 
 ### §5.2 y §8.3 describen el orden de la cola y de la sección 4 que ya no se usa
+> **SUPERADO (2026-08-10).** §5.2 trae el orden que la implementación usa, bajo el epígrafe «Orden
+> por valor de decisión»: lo no vencido primero, después lo vencido de lo más reciente a lo más
+> antiguo, el uso en ransomware como desempate **solo a igualdad de plazo**, y las entradas de
+> plazo próximo publicadas siempre. Con la dirección medida —1.654 de 1.656 entradas ya vencidas—
+> escrita como justificación.
+>
+> **Y se resolvió también la pregunta que la entrada dejaba abierta**, en la dirección que P-15
+> recomienda: el criterio se escribe **una sola vez**. §5.2 lo declara «definido aquí y en ningún
+> otro sitio», y §8.3 remite en lugar de repetirlo.
 
 *Procedencia: correcciones de producto sobre el informe real, 2026-08-03.*
 
