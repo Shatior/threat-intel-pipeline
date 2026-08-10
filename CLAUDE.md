@@ -1944,11 +1944,63 @@ del ciclo de producto y se ejecutan a demanda.
   por aquí: la evalúa el pipeline contra `linea_base_vigente` (§6.6), de modo que no hay un
   segundo lugar donde se decida el modo ni un cron cuya no ejecución la aplace en silencio
 
+**Tras publicar, pide la reconstrucción del sitio.** El sitio del portafolio deriva sus cifras
+del informe, de modo que hasta que no se reconstruye sigue publicando las de la ejecución
+anterior. El último paso del workflow emite un `repository_dispatch` con
+`event_type: informe-publicado` contra el repositorio del portafolio. Se especifica aquí porque
+hasta ahora **el paso existía en el workflow y no en este documento**, y §9.1 declara a
+`CLAUDE.md` fuente de verdad: un comportamiento cuya única descripción normativa vive en el
+README —que §9.1 declara derivado— es una decisión que nadie llegó a tomar por escrito.
+
+- **Necesita un secreto propio, `TOKEN_DISPARO_PORTAFOLIO`**, un PAT con permiso de escritura de
+  contenido sobre el otro repositorio. **El `GITHUB_TOKEN` no sirve**: está acotado al
+  repositorio donde se ejecuta el workflow. Y que ambos repositorios sean **públicos** tampoco
+  lo hace innecesario —es el atajo natural al verlos—: la visibilidad gobierna quién puede
+  **leer**, no quién puede **actuar** sobre otro repositorio. Son dos ejes distintos, y el
+  alcance es del token, no de quien lo posee.
+- **Se dispara solo si esa ejecución commiteó algo.** Sin la guarda, un día sin cambios
+  reconstruiría un sitio idéntico: es §14.7 aplicado a lo propio, no gastar una ejecución ajena
+  para no cambiar nada.
+- **La guarda no excluye el fallo total**, y es deliberado: §14.3 manda publicar el informe de
+  fallo, de modo que hubo commit y el sitio se reconstruye. Es lo correcto — el sitio debe
+  mostrar el día en que el pipeline no pudo mirar, con su motivo, en lugar de conservar las
+  cifras de ayer como si nada hubiera pasado.
+- **Degrada y declara, y nunca enrojece el workflow.** Sin el secreto, avisa y termina sin
+  error. Si la petición no devuelve 204, avisa con el código y tampoco falla. El criterio es el
+  de §14.3 aplicado al orden de importancia: el informe ya está publicado, que es el producto;
+  un sitio desactualizado es visible y un informe sin publicar no lo sería.
+- **El 204 acredita la emisión, no la recepción, y el paso no afirma más que eso.** La API
+  responde 204 al **aceptar** el evento, y responde igual si en el otro extremo no hay ningún
+  workflow escuchando. El mensaje del paso declara por tanto que el evento se emitió y se
+  aceptó, y no que el sitio vaya a reconstruirse: afirmar la reconstrucción sobre esa evidencia
+  sería el éxito declarado sin efecto que este documento persigue en el producto, reaparecido en
+  su propia automatización.
+- **Que exista receptor lo vigila el canario semanal, como cuarto contrato externo** (§11.3). La
+  verificación comprueba que algún workflow del repositorio receptor declara
+  `repository_dispatch` con ese `event_type`, y **el destino y el tipo se leen del propio
+  `daily.yml`**, no de una copia en la configuración: dos fuentes de verdad para la misma
+  magnitud acabarían verificando un contrato distinto del que el pipeline emite, que es el
+  criterio de §6.4 con el techo de los caídos aplicado al plano de verificación. Su ausencia es
+  **rotura** —el paso depende de ella— y no poder leer el repositorio receptor es un **hueco de
+  verificación**, con la asimetría que §11.3 ya aplica a los otros tres.
+- **Lo que esa vigilancia sigue sin cubrir, y se declara.** Verifica el **contrato**, no el
+  **efecto**: que el receptor esté declarado, no que una ejecución concreta recogiera el evento.
+  Se le escapan un workflow deshabilitado, uno que declare el tipo correcto y falle al arrancar,
+  y la ventana de hasta una semana entre que el contrato se rompe y el canario lo detecta. La
+  verificación del efecto —comprobar que existe una ejecución posterior al disparo— queda
+  anotada en `docs/proceso-pendiente.md` con el caso que solo ella detectaría y la razón de no
+  implementarla hoy: viviría en el camino de publicación, al que añadiría espera y un modo de
+  fallo, y su aviso no podría distinguir «nadie escucha» de «la cola de Actions va lenta».
+
 ### 11.3 Verificación de contratos — `.github/workflows/verificar-contratos.yml`
 Materializa la *verificación contra la realidad* del protocolo de revisión (§15). Consulta
 CISA KEV, ThreatFox **y el bundle de ATT&CK** en vivo y comprueba que los campos de los que
 depende el pipeline siguen apareciendo con su nombre y, en las marcas temporales, con su
-formato.
+formato. Verifica además un **cuarto contrato**, que no es de datos sino de automatización: que
+el repositorio al que el workflow diario dispara la reconstrucción del sitio siga declarando un
+receptor para ese `event_type` (§11.2). Entra aquí por el mismo motivo que el bundle —es un
+contrato con un sistema ajeno que puede romperse sin que nadie toque este repositorio— y con la
+misma asimetría: ausencia del receptor es rotura, no poder leerlo es hueco.
 
 El bundle de ATT&CK es un **tercer contrato externo**, no una fuente de amenazas, y está
 sujeto a la misma regla: la regla 5 del protocolo no distingue entre fuentes y catálogos.

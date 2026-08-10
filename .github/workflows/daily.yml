@@ -208,7 +208,11 @@ jobs:
             https://api.github.com/repos/Shatior/portafolio/dispatches \
             -d '{"event_type":"informe-publicado"}')
           if [ "$codigo" = "204" ]; then
-            echo "Reconstruccion del sitio solicitada."
+            # El 204 dice que la API ACEPTO el evento, y dice exactamente lo mismo si en el otro
+            # extremo no escucha ningun workflow. Acredita la emision, no la recepcion, y por eso
+            # este mensaje no afirma que el sitio se vaya a reconstruir. Que exista receptor lo
+            # vigila el canario semanal como cuarto contrato externo (verificar-contratos.yml).
+            echo "Evento emitido y aceptado por la API (204). La recepcion no se comprueba aqui."
           else
             # No se enrojece el workflow por esto: el informe ya esta publicado, que es el
             # producto. Un sitio desactualizado es visible; un informe sin publicar, no.

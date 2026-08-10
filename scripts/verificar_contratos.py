@@ -29,6 +29,12 @@ repositorio, no de una lista escrita a mano:
   se exige automáticamente). Se analiza solo esa función para no capturar claves de
   diccionarios ajenos al contrato; ver la nota de ``campos_leidos_al_normalizar``.
 
+Verifica además dos contratos que no son de datos: el **bundle de ATT&CK** fijado por hash
+(§5.5) y el **receptor del disparo al portafolio** (§11.2) — que algún workflow del repositorio
+al que dispara el diario siga declarando `repository_dispatch` con ese `event_type`. El destino y
+el tipo se leen del propio `daily.yml`, no de una copia en la configuración: dos fuentes de
+verdad acabarían verificando un contrato distinto del que el pipeline emite.
+
 Alcance declarado (lo que esta verificación **no** cubre): la **envoltura** de cada respuesta
 (``vulnerabilities`` en CISA; ``query_status``/``data`` en ThreatFox) y la **forma de la
 petición** a ThreatFox se reflejan a mano del colector —superficie pequeña y estable—, no se
@@ -58,6 +64,7 @@ import ast
 import hashlib
 import json
 import os
+import re
 import sys
 from collections.abc import Callable
 from pathlib import Path
@@ -405,6 +412,16 @@ def main() -> int:
         _anotar("warning", f"attack-bundle: no verificado ({exc}).")
         no_verificados.append("attack-bundle")
 
+    # Cuarto contrato externo: el receptor del disparo del portafolio (§11.2).
+    try:
+        verificar_disparo_portafolio()
+    except ContratoRoto as exc:
+        _anotar("error", f"portafolio: contrato roto ({exc}).")
+        rotos.append("portafolio")
+    except ContratoNoVerificable as exc:
+        _anotar("warning", f"portafolio: no verificado ({exc}).")
+        no_verificados.append("portafolio")
+
     print("\n--- Resumen ---")
     if rotos:
         print(f"CONTRATO ROTO en: {', '.join(rotos)}.")
@@ -687,6 +704,166 @@ def verificar_bundle_attack() -> tuple[set[str], list[str]]:
     if not defectos:
         print("[attack-bundle] contrato intacto: digest, recuentos de la línea base y forma verificados.")
     return defectos, avisos
+
+
+# =====================================================================================
+# Cuarto contrato externo: el receptor del disparo del portafolio (§11.2, §11.3)
+# =====================================================================================
+#
+# El workflow diario emite un `repository_dispatch` contra el repositorio del portafolio para
+# que reconstruya el sitio. La API responde 204 al **aceptar** el evento, y responde igual si
+# en el otro extremo no escucha nadie: el 204 acredita la emisión, no la recepción. Sin esta
+# comprobación, un renombrado del `event_type` al otro lado dejaría el paso declarando
+# «solicitada» sobre un disparo al vacío, indefinidamente y con todo en verde.
+#
+# Es un contrato externo como los otros tres, y se trata igual: su ausencia es **rotura** —el
+# workflow diario depende de él—, y no poder leerlo es un **hueco de verificación**.
+
+RUTA_WORKFLOW_DIARIO = Path(__file__).resolve().parents[1] / ".github" / "workflows" / "daily.yml"
+API_CONTENIDOS = "https://api.github.com/repos/{repo}/contents/{ruta}"
+DIRECTORIO_WORKFLOWS = ".github/workflows"
+_PATRON_REPO_DISPARO = re.compile(r"api\.github\.com/repos/([A-Za-z0-9._-]+/[A-Za-z0-9._-]+)/dispatches")
+_PATRON_EVENTO = re.compile(r'"event_type"\s*:\s*"([^"]+)"')
+
+
+def contrato_del_disparo(ruta_workflow: Path | None = None) -> tuple[str, str]:
+    """Lee del propio `daily.yml` a qué repositorio se dispara y con qué ``event_type``.
+
+    **Se leen del workflow y no de la configuración a propósito.** Escribir el destino en dos
+    sitios crearía dos fuentes de verdad para una misma magnitud, y el día que divergieran el
+    canario verificaría un contrato distinto del que el pipeline emite — dando por bueno un
+    disparo que nadie recoge, que es exactamente lo que esta comprobación existe para impedir.
+    Es el criterio de §6.4 con el techo de los caídos, aplicado al plano de verificación.
+
+    Que el workflow no declare un disparo reconocible es un fallo de configuración **nuestro**,
+    no una rotura del contrato ajeno: se declara como no verificable.
+    """
+
+    ruta = ruta_workflow or RUTA_WORKFLOW_DIARIO
+    try:
+        texto = ruta.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise ContratoNoVerificable(f"no se pudo leer {ruta.name}: {exc}") from exc
+    repo = _PATRON_REPO_DISPARO.search(texto)
+    evento = _PATRON_EVENTO.search(texto)
+    if not repo or not evento:
+        raise ContratoNoVerificable(
+            f"{ruta.name} no declara un disparo reconocible: no se encontró el repositorio destino o el event_type"
+        )
+    return repo.group(1), evento.group(1)
+
+
+def _tipos_de_dispatch(contenido: Any) -> set[str]:
+    """Extrae los ``types`` de ``repository_dispatch`` de un workflow ya interpretado.
+
+    **La clave ``on`` se lee tanto como cadena como booleano.** En YAML 1.1 ``on:`` sin comillas
+    es el booleano verdadero, de modo que `yaml.safe_load` devuelve la clave ``True`` y no
+    ``"on"``. Buscar solo ``"on"`` haría que esta comprobación no encontrase **nunca** el
+    disparo y declarase roto todo contrato sano: un detector que solo sabe fallar.
+    """
+
+    if not isinstance(contenido, dict):
+        return set()
+    disparadores = contenido.get("on", contenido.get(True))
+    if isinstance(disparadores, str):
+        return set()
+    if isinstance(disparadores, list):
+        return set()
+    if not isinstance(disparadores, dict):
+        return set()
+    dispatch = disparadores.get("repository_dispatch")
+    if not isinstance(dispatch, dict):
+        # `repository_dispatch:` sin `types` escucha **todos** los tipos, de modo que el
+        # contrato se cumple sea cual sea el que emitamos. Se señala con el comodín.
+        return {"*"} if "repository_dispatch" in disparadores else set()
+    tipos = dispatch.get("types")
+    if tipos is None:
+        return {"*"}
+    if isinstance(tipos, str):
+        return {tipos}
+    return {str(t) for t in tipos}
+
+
+def tipos_escuchados(cliente: Any, repo: str, buscado: str | None = None) -> set[str]:
+    """Tipos de ``repository_dispatch`` que declara algún workflow del repositorio receptor.
+
+    ``buscado`` permite **parar en cuanto aparece**: §11.3 exige consumo mínimo, y en el camino
+    sano basta con encontrarlo para no seguir descargando ficheros ajenos. El camino de rotura
+    sí los recorre todos, porque el mensaje de error declara qué tipos **sí** se escuchan y esa
+    lista solo es completa si se miraron todos.
+    """
+
+    url = API_CONTENIDOS.format(repo=repo, ruta=DIRECTORIO_WORKFLOWS)
+    try:
+        respuesta = cliente.solicitar(url)
+    except (AbandonarFuente, ErrorRed, TopePeticiones) as exc:
+        raise ContratoNoVerificable(f"no se pudo listar los workflows de {repo}: {exc}") from exc
+    try:
+        entradas = json.loads(respuesta.cuerpo.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ContratoNoVerificable(f"el listado de workflows de {repo} no es JSON interpretable: {exc}") from exc
+    if not isinstance(entradas, list):
+        # Un repositorio sin `.github/workflows` devuelve un objeto de error, no una lista. No
+        # se puede leer el contrato: hueco, no rotura.
+        raise ContratoNoVerificable(f"{repo} no expone un directorio {DIRECTORIO_WORKFLOWS} legible")
+
+    tipos: set[str] = set()
+    candidatos = 0
+    interpretados = 0
+    for entrada in entradas:
+        if not isinstance(entrada, dict):
+            continue
+        nombre = str(entrada.get("name", ""))
+        if not nombre.endswith((".yml", ".yaml")):
+            continue
+        descarga = entrada.get("download_url")
+        if not descarga:
+            continue
+        candidatos += 1
+        try:
+            crudo = cliente.solicitar(str(descarga))
+        except (AbandonarFuente, ErrorRed, TopePeticiones) as exc:
+            raise ContratoNoVerificable(f"no se pudo descargar {nombre} de {repo}: {exc}") from exc
+        try:
+            contenido = yaml.safe_load(crudo.cuerpo.decode("utf-8"))
+        except (UnicodeDecodeError, yaml.YAMLError):
+            # Un workflow ajeno ilegible no es nuestro contrato roto: se ignora ese fichero y
+            # se sigue con los demás. Si NINGUNO llega a interpretarse, la decisión cambia de
+            # naturaleza y se declara abajo como hueco, no como rotura.
+            continue
+        interpretados += 1
+        tipos |= _tipos_de_dispatch(contenido)
+        if buscado is not None and (buscado in tipos or "*" in tipos):
+            # Encontrado: no se descargan los demás (§11.3, consumo mínimo).
+            break
+    if candidatos and not interpretados:
+        # Ningún workflow se pudo interpretar. Concluir «nadie escucha» sería presentar una
+        # ausencia de observación como observación de ausencia, que es el error de §14.3 en el
+        # plano de verificación: no se leyó el contrato, no se leyó que no exista.
+        raise ContratoNoVerificable(f"ninguno de los {candidatos} workflows de {repo} se pudo interpretar")
+    return tipos
+
+
+def verificar_disparo_portafolio(cliente: Any = None) -> None:
+    """Comprueba que el receptor del disparo escucha el ``event_type`` que el diario emite.
+
+    Verifica el **contrato**, no el efecto: que exista un workflow declarando ese tipo, no que
+    una ejecución concreta lo recogiera. La verificación del efecto queda anotada como
+    pendiente en `docs/proceso-pendiente.md`, con el caso que solo ella detectaría.
+    """
+
+    repo, evento = contrato_del_disparo()
+    tipos = tipos_escuchados(cliente or _cliente(None), repo, buscado=evento)
+    if "*" in tipos:
+        print(f"[portafolio] {repo} escucha repository_dispatch sin acotar tipos: «{evento}» queda cubierto.")
+        return
+    if evento not in tipos:
+        declarados = ", ".join(sorted(tipos)) if tipos else "ninguno"
+        raise ContratoRoto(
+            f"ningún workflow de {repo} escucha repository_dispatch con type «{evento}» (declarados: {declarados}); "
+            "el disparo del workflow diario seguiría recibiendo 204 sin que nadie lo recoja"
+        )
+    print(f"[portafolio] {repo} escucha «{evento}»: el disparo del diario tiene receptor.")
 
 
 # =====================================================================================

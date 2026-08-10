@@ -442,6 +442,11 @@ def _repo_con_bundle_conforme(tmp_path, cuerpo: str = "conforme"):
     (copia / "scripts").mkdir(parents=True)
     (copia / "config").mkdir()
     (copia / "tests").mkdir()
+    # El cuarto contrato (§11.2) lee el destino y el `event_type` del propio `daily.yml`: sin
+    # el workflow en la copia, quedaría "no verificado" por un hueco del andamiaje y el camino
+    # verde —el que esta prueba existe para observar— no podría llegar a verse.
+    (copia / ".github" / "workflows").mkdir(parents=True)
+    shutil.copy(RAIZ / ".github" / "workflows" / "daily.yml", copia / ".github" / "workflows" / "daily.yml")
     shutil.copy(SCRIPT, copia / "scripts" / SCRIPT.name)
     shutil.copy(ARNES, copia / "tests" / ARNES.name)
     shutil.copytree(RAIZ / "tests" / "fixtures", copia / "tests" / "fixtures")

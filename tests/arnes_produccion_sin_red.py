@@ -202,6 +202,25 @@ def _leer(fichero: str, clave: str) -> list[dict]:
     return json.loads((FIXTURES / fichero).read_text(encoding="utf-8")).get(clave) or []
 
 
+# Cuarto contrato (§11.2). El crudo del receptor va a un host propio del arnés: uno que
+# contuviera «raw.githubusercontent.com» caería en la rama del bundle.
+URL_CRUDO_RECEPTOR = "https://crudo.arnes.invalid/publicar.yml"
+RUTA_DIARIO = Path(__file__).resolve().parents[1] / ".github" / "workflows" / "daily.yml"
+
+
+def _evento_del_diario() -> str:
+    """Lee del `daily.yml` que el script va a leer con qué `event_type` dispara."""
+
+    import re
+
+    try:
+        texto = RUTA_DIARIO.read_text(encoding="utf-8")
+    except OSError:
+        return "no-hay-daily"
+    hallazgo = re.search(r'"event_type"\s*:\s*"([^"]+)"', texto)
+    return hallazgo.group(1) if hallazgo else "no-declarado"
+
+
 def _cuerpo_para(url: str) -> bytes:
     """Devuelve el cuerpo sintético que corresponde a cada destino del camino de producción."""
 
@@ -230,6 +249,15 @@ def _cuerpo_para(url: str) -> bytes:
         # resto de modos devuelven el propio pin, de modo que el aviso no contamine su salida.
         sha = SHA_DERIVA if MODO_BUNDLE == "deriva_pin" else _sha_del_pin()
         return json.dumps({"sha": sha}).encode("utf-8")
+    if "/contents/.github/workflows" in url:
+        # Cuarto contrato (§11.2): el receptor del disparo al portafolio. Se sirve un listado con
+        # un único workflow, cuyo crudo devuelve la rama de abajo. El `event_type` se toma del
+        # propio `daily.yml` que el script va a leer, de modo que el arnés no pueda declarar
+        # conforme un contrato distinto del que el pipeline emite.
+        listado = [{"name": "publicar.yml", "download_url": URL_CRUDO_RECEPTOR}]
+        return json.dumps(listado).encode("utf-8")
+    if url == URL_CRUDO_RECEPTOR:
+        return f"on:\n  repository_dispatch:\n    types: [{_evento_del_diario()}]\n".encode()
     if "api.github.com" in url:
         return json.dumps({"default_branch": "master"}).encode("utf-8")
     raise AssertionError(f"el camino de producción pidió una URL no prevista por el arnés: {url}")
