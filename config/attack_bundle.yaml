@@ -67,10 +67,15 @@ linea_base:
       marcador: "x_mitre_deprecated"
 
 # --------------------------------------------------------------------------------------
-# PROCEDIMIENTO DE ACTUALIZACIÓN DEL PIN
+# PROCEDIMIENTO DE ACTUALIZACIÓN DEL PIN — resumen operativo
 # --------------------------------------------------------------------------------------
-# Sin este apartado el pin se congela para siempre: nadie sabría cómo descongelarlo, y la
-# fijación —que existe para dar control— se convertiría en parálisis.
+# LA FUENTE NORMATIVA ES CLAUDE.md §5.5, subsección «Procedimiento de actualización del
+# pin», con sus seis pasos. Lo de abajo es su resumen, puesto aquí porque es donde el
+# operador tiene delante los valores que va a tocar. ANTE DISCREPANCIA MANDA §5.5 (§9.1):
+# si los dos textos divergen, el defecto está en este resumen y se corrige aquí.
+#
+# Sin procedimiento escrito el pin se congela para siempre: nadie sabría cómo descongelarlo,
+# y la fijación —que existe para dar control— se convertiría en parálisis.
 #
 # 1. CUÁNDO SE REVISA. Semanalmente, en el workflow de verificación de contratos (§11.3),
 #    que comprueba si la rama por defecto de `mitre-attack/attack-stix-data` apunta a un
@@ -90,6 +95,13 @@ linea_base:
 #        como evento (§8.2), para que un mapeo que aparece o desaparece sea atribuible al
 #        catálogo y no se lea como un cambio en la amenaza.
 #
-# 4. QUÉ NO SE HACE NUNCA. Adoptar automáticamente el último commit; fijar por etiqueta en
-#    lugar de por SHA; actualizar los valores sin actualizar la línea base; ni subir el pin
-#    sin dejar constancia de la aprobación.
+# 4. QUÉ SE DEJA ANOTADO AL ADOPTAR. La fecha del cambio y EL PIN AL QUE SUSTITUYE, para que
+#    la serie diaria pueda leerse sabiendo dónde se movió el catálogo. Hoy este registro es
+#    manual: el informe publica la versión de cada día pero no puede declarar que cambió
+#    respecto al anterior (§9, entrada E-1 de docs/proceso-pendiente.md), de modo que sin
+#    esta anotación el salto queda como una diferencia que alguien tendría que ir a buscar
+#    comparando dos informes, en vez de como un evento fechado.
+#
+# 5. QUÉ NO SE HACE NUNCA. Adoptar automáticamente el último commit; fijar por etiqueta en
+#    lugar de por SHA; actualizar los valores sin actualizar la línea base; declarar la
+#    aprobación sin fecha; ni subir el pin sin dejar constancia de a qué pin sustituye.

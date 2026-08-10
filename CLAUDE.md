@@ -573,6 +573,81 @@ proveedor al que este proyecto se identifica como a cualquier otro.
 ejecuta: los registros se marcan con `motivo_sin_mapeo: etapa_no_disponible` y el informe
 declara la indisponibilidad en lugar de publicar una sección de técnicas vacía (§5.3).
 
+#### Procedimiento de actualización del pin
+
+**Sin procedimiento escrito, el pin se congela para siempre.** Nadie sabría cómo
+descongelarlo, y la fijación —que existe para dar control— se convertiría en parálisis. Es la
+categoría 11 de la taxonomía de revisión aplicada a este mecanismo: uno que penaliza su propia
+retirada acaba sobreviviendo a su utilidad.
+
+**Esta subsección es la fuente normativa del procedimiento.** El bloque de comentarios de
+`config/attack_bundle.yaml` lo resume junto a los valores que el operador va a tocar, y remite
+aquí; ante discrepancia manda §5.5 (§9.1). Se escribe así porque hasta ahora el procedimiento
+existía **solo** en aquel comentario, y un procedimiento cuya única descripción normativa vive
+en un fichero de configuración es una decisión que nadie llegó a tomar por escrito — el mismo
+defecto que §11.2 corrigió con el disparo al portafolio.
+
+Los seis pasos, en orden, y **ninguno es opcional**:
+
+1. **Detección — automática, semanal, y no adopta nada.** El canario de §11.3 compara la rama
+   por defecto de `mitre-attack/attack-stix-data` con el commit fijado y **avisa** si difieren.
+   Es un aviso y no una rotura: el pin es reproducible precisamente porque no sigue a la rama.
+   La revisión es automática; la **adopción no lo es**.
+2. **Medición previa sobre el bundle nuevo, antes de adoptar nada.** Se recuentan sobre el
+   commit candidato las magnitudes de la línea base de §5.1 —objetos Software totales, vivos y
+   retirados, vivos con `x_mitre_aliases`, canons distintos y **ambiguos**, relaciones `uses`
+   Software → técnica y Software vivo sin técnicas alcanzables—. **Medir es un paso propio y
+   previo**, no un efecto colateral de adoptar: adoptar primero y medir después deja una ventana
+   en la que el informe publica sobre un catálogo cuyas propiedades nadie conoce.
+3. **Contraste con la línea base vigente, magnitud a magnitud.** Lo que decide no es que las
+   cifras cambien —cambiarán— sino **cuánto**. El número de **canons ambiguos** es el que manda:
+   un salto ahí significa que la metodología pasará a abstenerse sobre una parte mayor del
+   panorama **en silencio**, y la comparación contra este número es el único aviso que existe
+   (§5.1). Un salto no prohíbe adoptar; obliga a decidirlo a la vista de la cifra y a declararlo.
+4. **Comprobación por identidad de los objetos retirados, sin exigir igualdad del conjunto.** Se
+   verifica que cada objeto que la línea base declara retirado **sigue presente** en el bundle
+   nuevo y **sigue marcado** por su marcador —hoy `Darkmoon` y `Ngrok` por `revoked`, y `TRITON`
+   por `x_mitre_deprecated`—. Es verificación por identidad: mira objetos concretos, no una
+   magnitud agregada, porque un recuento que cuadra puede esconder una sustitución.
+   **Nunca se exige que los retirados sean exactamente esos tres.** Que MITRE retire uno más es
+   evolución normal del catálogo, no una rotura: exigir igualdad del conjunto convertiría cada
+   deprecación futura en un rojo, y un rojo que suena por lo normal enseña a ignorarlo, que es
+   justo lo que §11.3 evita separando «contrato roto» de «no verificado».
+   Al remedir, la lista se actualiza **conservando cubiertos los dos marcadores**: si todos los
+   objetos declarados quedaran retirados por el mismo, la desaparición del otro sería invisible
+   y la comprobación dejaría de sostenerse sin que nada fallara.
+5. **Aprobación humana declarada, con fecha.** El pin lo sube **siempre un humano**. Un agente
+   puede resolver los valores contra la fuente viva y proponerlos; no puede fijarlos. Al
+   adoptarlos se actualiza el bloque `aprobacion` de `config/attack_bundle.yaml` con **quién
+   aprueba, en qué fecha, con qué procedencia y qué ejecución produjo los valores** — no solo los
+   valores. Un pin sin esa constancia es indistinguible de uno copiado de cualquier sitio, y la
+   trazabilidad que toda esta sección persigue depende de que conste quién decidió adoptarlo.
+6. **Registro de la fecha del cambio, para poder leer la serie.** La adopción queda anotada con
+   su fecha y con **el pin anterior al que sustituye**, de modo que un lector pueda situar en el
+   tiempo dónde se movió el catálogo. Sin ese registro, un mapeo que aparece o desaparece de un
+   día para otro es indistinguible de un cambio en la amenaza — y esa confusión es exactamente
+   lo que §8.2 obliga a impedir declarando el cambio de versión **como evento**.
+   **Hoy este paso es manual y por eso está aquí.** El informe declara que no puede saber si el
+   catálogo cambió respecto a la ejecución anterior, porque el estado no persiste la versión ni
+   el digest usados (§9; entrada E-1 de `docs/proceso-pendiente.md`). Lo que sí hace cada informe
+   es publicar la versión y el digest **de ese día** (§8.2), de modo que el salto **es
+   reconstruible** comparando dos informes consecutivos — por un lector que conserve ambos, sepa
+   entre qué fechas mirar y haga la comparación a mano. Mientras la laguna siga abierta, el
+   registro del humano es el único sitio donde el cambio consta **como evento fechado** en vez de
+   como una diferencia que alguien tiene que ir a buscar, y esa es la forma en que §8.2 exige
+   que se declare.
+
+**Lo que no se hace nunca:** adoptar automáticamente el último commit; fijar por etiqueta en
+lugar de por SHA de commit; actualizar los valores del pin sin remedir la línea base; declarar
+la aprobación sin fecha; ni subir el pin sin dejar constancia de a qué pin sustituye.
+
+**Cuándo conviene no adoptar todavía.** Que haya commit nuevo no obliga a moverse. Un cambio de
+catálogo introduce en la serie diaria una variación que no procede de la amenaza, de modo que
+adoptarlo mientras la serie está corta, recién reiniciada o bajo observación por otro motivo
+mezcla dos causas en un mismo dato. Aplazar es una decisión legítima **si se declara**, con su
+razón y su condición de salida; lo que no vale es dejar el aviso sin atender y sin escribir por
+qué.
+
 ---
 
 ## 6. Análisis y diferencial
