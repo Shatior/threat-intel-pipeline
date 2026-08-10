@@ -415,6 +415,48 @@ Dos de los hallazgos de la pasada 4 nacen de contrastar lo que el commit escribi
 desde el otro lado: el implementador no distingue corregir de rediseñar, y el revisor no puede
 declarar que revisó más de lo que el diff contiene.
 
+### P-23 · El primer disparo de la regla de retirada venció y nadie lo atendió durante una semana
+**Se queda en el fichero:** es un defecto del protocolo de revisión de este repositorio, y su
+corrección se decide con el corpus delante.
+
+*Procedencia: observado el 2026-08-10 al anotar la fila de la pasada del PR #7.*
+
+La regla de retirada del registro de métricas se evalúa **«al cerrar la fase 4 o al alcanzar 40
+filas, lo que ocurra primero»**. La fase 4 cerró el **2026-08-03** (§13). **El disparo venció ese
+día y la regla no se evaluó**: siete días después no hay ninguna entrada de `docs/decisiones.md`
+que declare el desenlace —conservar o retirar— ni que fije el punto de evaluación siguiente, que
+es lo que la propia regla obliga a hacer cuando el desenlace es conservar.
+
+**Lo que sí ocurrió, y es lo que hace el fallo difícil de ver.** Ese mismo día, la entrada 31 de
+`docs/decisiones.md` **agregó el registro y respondió tres de sus cuatro preguntas**. Es la
+evidencia más sustancial que el instrumento ha producido nunca. Pero responder las preguntas del
+registro **no es evaluar la regla**: una dice qué hemos aprendido, la otra decide si el
+instrumento sigue pagándose y hasta cuándo. Que la primera se hiciera con esmero el día exacto
+del disparo, y la segunda no se hiciera en absoluto, es lo que dejó el vencimiento invisible.
+
+**Por qué venció sin ruido, que es la parte accionable.** Los dos disparos de la regla **no están
+implementados igual**:
+
+- El de **filas** es un test que **falla** al alcanzarse el umbral. Funcionó: a las veinte filas
+  sonó, la sesión implementadora se abstuvo de silenciarlo y el mantenedor decidió (entrada 24).
+- El de **cierre de fase** no tiene mecanismo **ninguno**. Depende de que alguien se acuerde, y
+  el día del cierre había veinte cosas que hacer.
+
+De los dos disparos que la regla declara, **uno es una alarma y el otro es una intención**. Y el
+que falló es justamente el que la regla añadió para cubrir el caso en que el otro no llegara —lo
+que deja los dos caminos con un solo guardián real.
+
+**Es el mismo defecto que esta bandeja acaba de sanear, un nivel más arriba.** Allí eran entradas
+que declaraban «se corrige al cerrar la fase» y nadie volvió a mirarlas; aquí es la regla que
+declara cuándo debe revisarse y nadie la revisó. Una regla con fecha de revisión y sin nada que
+la dispare no se distingue de una sin fecha, salvo en que aparenta rigor.
+
+**Lo que no se propone**, y conviene decirlo: no se propone *quitar* el disparo por cierre de
+fase. Se propone decidir **cómo se dispara** —un test que falle mientras el registro no declare
+una evaluación posterior al último cierre de fase, o cualquier otro instrumento que no dependa de
+la memoria—. Que la evaluación de agosto se haya hecho tarde no dice nada contra el criterio;
+dice que el criterio no tenía quien lo despertara.
+
 ### P-22 · Verificación del **efecto** del disparo al portafolio, no solo de su contrato
 > **MIGRADA A LINEAR (PRO-51), 2026-08-10.** Se queda escrita aquí por la regla de esta bandeja —una entrada resuelta o trasladada dice qué se decidió—, y **el seguimiento vive en Linear**. Motivo del traslado: cruza con el proyecto `portafolio`: cualquier solución toca los dos repositorios.
 *Procedencia: hallazgo relevante de la pasada 1 de la migración de cuenta, 2026-08-10.*
