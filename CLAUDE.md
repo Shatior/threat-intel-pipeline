@@ -1651,7 +1651,7 @@ threat-intel-pipeline/
 │   └── settings.json         # hook SessionStart para dependencias
 └── .github/workflows/
     ├── ci.yml                # integración continua (§11.1)
-    ├── daily.yml             # workflow diario de producción (§11.2, pendiente)
+    ├── daily.yml             # workflow diario de producción (§11.2)
     ├── verificar-contratos.yml # verificación de contratos, semanal (§11.3)
     ├── capturar-fixtures.yml # utilidad manual: captura de fixtures
     └── recolectar-real.yml   # utilidad manual: recolección de diagnóstico

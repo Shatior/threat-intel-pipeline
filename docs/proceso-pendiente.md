@@ -51,6 +51,87 @@ conjunto creció hasta que el instrumento cambiaba en cada medición. Decidirlas
 cuáles se solapan, cuáles se cancelan y cuáles dejaron de importar — y hacerlo con datos en vez
 de con la impresión del momento.
 
+## Parte de esta bandeja vive ahora en Linear
+
+*Sincronizado el 2026-08-10 con el proyecto
+[threat-intel-pipeline](https://linear.app/proyectosmiguel/project/threat-intel-pipeline-1566e4dd294c)
+del equipo `Proyectos`.*
+
+**La frontera la declara el proyecto en Linear, no este fichero:** allí van los pendientes que
+**dependen de una decisión humana, tienen fecha o cruzan con otro proyecto**; aquí se queda **lo
+específico del repositorio, que debe viajar con él**.
+
+| Entrada | Destino | Por qué |
+|---|---|---|
+| **E-3** · cobertura de `reference` | [PRO-49](https://linear.app/proyectosmiguel/issue/PRO-49) | Tiene fecha: se decide tras tres ejecuciones concretas |
+| **E-1** · insumos del catálogo | [PRO-50](https://linear.app/proyectosmiguel/issue/PRO-50) | Decisión humana de esquema, y cruza con PRO-43 |
+| **P-22** · efecto del disparo | [PRO-51](https://linear.app/proyectosmiguel/issue/PRO-51) | Cruza con el proyecto `portafolio` |
+| *(hallazgo nuevo)* · el bloque `aprobacion` no aloja el pin sustituido | [PRO-48](https://linear.app/proyectosmiguel/issue/PRO-48) | Bloquea PRO-43 |
+
+**Las migradas no se borran de aquí**, por la misma regla que gobierna el resto de la bandeja:
+una entrada trasladada dice qué se decidió sobre ella. Llevan un aviso con su identificador, y
+**el seguimiento vive en Linear** — si las dos versiones divergen, manda la incidencia.
+
+**Lo demás se queda, y cada entrada abierta dice por qué.** El grueso son mejoras del protocolo
+de revisión: reglas, formatos de acta y criterios del registro de métricas. Todo eso describe
+cómo se revisa **este** repositorio y no significa nada separado de él; llevarlo a un gestor de
+incidencias lo convertiría en trabajo planificado cuando es artesanía que se aplica al escribir.
+
+### Qué mantiene el reparto, y qué no lo vigila
+
+**El reparto abre una deriva simétrica de la que corrige, y conviene declararla en vez de
+confiarla a una frase.** El defecto que el barrido de abajo resuelve era *entradas ya hechas que
+aquí siguen figurando como abiertas*. El reparto crea el contrario: **entradas cerradas en Linear
+que aquí siguen diciendo lo contrario** — y ese es peor de detectar, porque la sede autorizada es
+justamente la que no se ve desde el repositorio. Vale para las cuatro migradas y para E-4.
+
+La regla, por tanto:
+
+1. **Toda pasada que toque este fichero rehace el contraste**: las entradas que aleguen
+   aplazamiento se comprueban contra el código y la especificación, y **el estado de las migradas
+   se comprueba contra su incidencia**, refrescando el aviso si cambió. No es trabajo extra: es lo
+   que esta pasada acaba de hacer, escrito para que la siguiente no dependa de que se le ocurra.
+2. **Si una incidencia se cierra, su entrada aquí se marca** con el desenlace, igual que una
+   SUPERADO. Una entrada migrada sin marca no significa «sigue abierta»: significa que nadie ha
+   mirado.
+
+**Y lo que no hay: disparo automático.** Nada avisa de que las marcas se estén quedando
+obsoletas; esta acumulación se descubrió por casualidad de una sincronización, y la siguiente se
+descubriría igual. Se declara en vez de inventar una alarma: un aviso semanal sobre una bandeja
+que «no manda ni describe el estado» (§9.1) sonaría siempre y enseñaría a ignorarlo, que es la
+alarma degenerada que este proyecto rechaza por escrito. La consecuencia está acotada por el
+mismo §9.1 — una divergencia aquí no puede producir por sí sola una afirmación falsa en el
+informe.
+
+### Barrido de las entradas que aplazaban al cierre de fase (2026-08-10)
+
+**Una bandeja donde la mitad de lo que hay ya está hecho deja de revisarse.** La sincronización
+encontró varias entradas que aplazan diciendo «se corrige al cerrar la fase» y llevaban corregidas
+desde el 2026-08-03 sin marca. Se contrastaron **una a una contra el código y la especificación**,
+no contra lo que la entrada afirma de sí misma.
+
+**Nueve superadas**, cada una con su evidencia en la propia entrada:
+
+| Entrada | Evidencia del cierre |
+|---|---|
+| `analyze/estado.py` fuera del árbol de §9 | §9 lo lista con su cometido |
+| Declaraciones de §8.3 al log y no al informe | `renderer.py::_lineas_no_publicado`; vocabulario reservado comprobado sobre el informe en `tests/test_informe.py` |
+| §6.1 paso 4 (`dueDate` a 7 días) sin calcular | `cli.py` consume `ventana_dias_vencimiento` y lo declara |
+| §11.2 «pendiente de implementación» | §11.2 abre en «Programado diariamente a las 06:00 UTC» |
+| Validador condicional sin ruta versionada | §9 declara `data/state/` con tres artefactos y nombra `validadores_http.json` |
+| §5.2 y §8.3 con el orden que ya no se usa | §5.2 trae «Orden por valor de decisión», y el criterio se escribe **una sola vez** |
+| **JR-1** · §6.7 «última ejecución con datos» | La copia vieja se retiró y se escribió por qué era falsa |
+| **JR-4** · invariante del validador | §6.4 fija la regla del tercer artefacto: se congela |
+| Presupuesto de revisión definitivo | Decidido: 10 min / 30 mutaciones, en R2 del protocolo |
+
+**Tres siguen abiertas, y la comprobación lo dice** en vez de dejarlas ambiguas: **JR-2** —§6.5
+cierra una dirección de la ambigüedad y no la contraria—, **JR-3** —el discriminador del CLI sigue
+decidiendo sobre `registros_obtenidos`— y la presentación consolidada de §6.1, que es **E-2**.
+
+**Lo que este barrido no cubre:** las entradas que nunca alegaron el cierre de fase. **P-5** sigue
+abierta —anunciaba revisar en bloque los cuatro relevantes del PR #14 y no consta que ocurriera— y
+no se marca, porque cerrarla exige leer el acta, no contrastar un fichero.
+
 **Estatus de este documento:** lista de trabajo. No manda, no explica y no describe el estado
 del proyecto. Es una bandeja de entrada.
 
@@ -69,6 +150,7 @@ que siguen abiertas se anota **la recomendación de que se caigan**, con su raz�
 correcto y perseguirlas ya no lo es.
 
 ### P-1 · Cobertura del verificador de contratos
+**Se queda en el fichero:** cobertura de una herramienta de proceso de este repositorio. No hay decisión que tomar, solo trabajo, y solo significa algo junto al script que cubre.
 *Procedencia: pasadas 1 a 3 del PR #13.*
 
 Varias ramas del verificador siguen sin ejercitarse: los cuerpos no interpretables de las tres
@@ -78,6 +160,7 @@ cerrarlas con más modos del arnés. No es un defecto del protocolo sino de la c
 herramienta de proceso, así que espera.
 
 ### P-2 · Atribución de cobertura de los tests que copian el script
+**Se queda en el fichero:** defecto de una herramienta de proceso, con recomendación de que se caiga anotada arriba. Llevarla a Linear la convertiría en trabajo aceptado, que es lo contrario de lo que dice su propia revisión.
 *(Revisado el 2026-08-03: **sigue abierto**, y se recomienda que se caiga — es un defecto real
 de una herramienta de proceso que no ha producido ningún fallo, y su beneficio es hipotético.)*
 
@@ -88,6 +171,7 @@ confirman las mutaciones—, pero ninguna herramienta de cobertura las atribuye 
 futura puerta de cobertura las leería como muertas.
 
 ### P-3 · Magnitudes no numéricas en la línea base
+**Se queda en el fichero:** igual que P-2: herramienta de proceso, y recomendada para caerse.
 *(Revisado el 2026-08-03: **sigue abierto**, y se recomienda que se caiga, por el mismo motivo
 que P-2.)*
 
@@ -98,6 +182,7 @@ presencia, no tipo. En producción, comparar un entero observado con `'muchos'` 
 contrato roto falso.
 
 ### P-4 · Quién publica el acta cuando el pull request no existe aún
+**Se queda en el fichero:** regla del protocolo de revisión, que vive en este repositorio y viaja con él.
 *Procedencia: H-14 de la pasada 1 del PR #14.*
 
 La regla dice que el revisor publica su informe como comentario «si el pull request ya existe»,
@@ -105,12 +190,14 @@ y el caso habitual es revisar **antes** de abrirlo. Se escribió que lo publique
 sesión revisora al abrirse, reanudándola con el número; no se ha ejercitado ninguna vez.
 
 ### P-5 · Los cuatro relevantes restantes de la pasada 1 del PR #14
+**Se queda en el fichero:** hallazgos de un acta concreta de `docs/revisiones/`, que se identifican por acta y posición y son ilegibles fuera del repositorio que las contiene.
 *Procedencia: `docs/revisiones/claude-fase4-independencia-revisor--pasada-1.md`.*
 
 Quedaron documentados y sin corregir en ese acta. Se revisan aquí en bloque al cerrar la fase,
 en lugar de uno a uno.
 
 ### P-6 · La fase de una fila la decide quien la anota
+**Se queda en el fichero:** criterio de una columna de `docs/metricas-revision.md`, fichero de este repositorio.
 *Procedencia: fila del PR #14, anotada por su revisor.*
 
 El revisor registró la fase como `proceso` y el número de PR como «sin confirmar», declarando
@@ -137,6 +224,7 @@ ejemplo registrando en el acta el hash del commit de rama que la introdujo, o fu
 pull requests sin squash. Ninguna de las dos se decide durante el congelamiento.
 
 ### P-8 · Si una pasada de revisión puede salir a la red, y con qué presupuesto
+**Se queda en el fichero:** regla del protocolo —si el revisor puede salir a la red y con qué presupuesto—, cuya sede es `docs/protocolo-revision.md`.
 *Procedencia: pasada 1 del PR del verificador de contratos, 2026-08-02.*
 
 La regla 5 exige comprobar todo contrato externo «contra la fuente viva, no contra su
@@ -151,6 +239,7 @@ red —a diferencia de las pruebas—, con qué límite, y que la salida del rev
 comprobó en vivo. No se decide durante el congelamiento.
 
 ### P-9 · La escala de tres grados no distingue el defecto latente del activo
+**Se queda en el fichero:** escala de severidad del protocolo. Cambiarla cambia el formato de las actas versionadas aquí.
 *Procedencia: pasada 1 del PR del verificador de contratos, 2026-08-02.*
 
 Cuatro de los seis relevantes de esa pasada son defectos que **hoy no producen ningún efecto**:
@@ -164,6 +253,7 @@ de activación. Anotarlo aquí es también, de paso, el dato que la pregunta 4 d
 necesita para no leerse mal.
 
 ### P-10 · Dónde se anota una verificación que salió bien
+**Se queda en el fichero:** formato de la salida esperada del revisor, definido en el protocolo de este repositorio.
 *Procedencia: pasada 1 del PR del verificador de contratos, 2026-08-02.*
 
 La salida esperada del revisor pide «hallazgos, o declaración explícita de que no encontró
@@ -211,6 +301,7 @@ correcta para un caso y no una regla. La regla —marca explícita, y quién la 
 implementar— se decide al cerrar la fase.
 
 ### P-13 · Revisar un diff de documentación tensiona la regla del «artefacto más cercano»
+**Se queda en el fichero:** convención de revisión para diffs documentales. Nace y muere dentro del ciclo de revisión.
 *Procedencia: pasada 1 del PR de los modos de informe, 2026-08-02.*
 
 La regla 6 ordena ejecutar cada comprobación contra el artefacto más cercano al efecto real y
@@ -224,6 +315,7 @@ cuatro bloqueantes salieron precisamente de contrastar secciones entre sí, no d
 separado.
 
 ### P-14 · Una pasada acotada no tiene dónde registrar el dictamen de los hallazgos previos
+**Se queda en el fichero:** formato del acta de una pasada acotada.
 *Procedencia: pasada 2 del PR de los modos de informe, 2026-08-02.*
 
 La salida esperada del revisor está escrita para una pasada que examina un diff; una pasada
@@ -235,6 +327,7 @@ tabla es hoy invención de un revisor, no formato exigido, de modo que la siguie
 puede no hacerla. Se anota para decidir si el dictamen entra en la salida esperada.
 
 ### P-15 · Un hallazgo con varias ubicaciones se cierra en unas y no en otras
+**Se queda en el fichero:** regla de proceso sobre hallazgos con varias ubicaciones. Su corrección se aplica al escribir, no se planifica.
 *Procedencia: pasada 2 del PR de los modos de informe, 2026-08-02.*
 
 El acta de la pasada 1 nombró por línea las **tres** ubicaciones de B-1; la corrección tocó dos y
@@ -259,6 +352,7 @@ resultó exacto, y el revisor lo declaró cerrado por eso. Es decir, la solució
 problema es que hay que acordarse de escribirla. Se acumula a P-12 en lugar de abrir hilo aparte.
 
 ### P-17 · Una corrección puede borrar el ancla a la que ella misma remite
+**Se queda en el fichero:** control automático de referencias internas de `CLAUDE.md`, con recomendación de que se caiga y condición escrita para reconsiderarlo.
 *(Revisado el 2026-08-03: **sigue abierto**, y se recomienda que se caiga. La comprobación
 automática de referencias `§N.M` es tentadora —el cierre de fase encontró `§13.1`, inexistente—
 pero el propio diff la encontró y corrigió sin herramienta, y sería un script que mantener contra
@@ -277,6 +371,7 @@ citada contra los encabezados existentes—, pero eso es instrumentación nueva 
 congelado. Se anota con su evidencia.
 
 ### P-18 · Una corrección estructural no pedida entra en el ciclo sin volver a la casilla de salida
+**Se queda en el fichero:** distinción de proceso entre corregir un hallazgo y rediseñar para corregirlo.
 *Procedencia: pasada 3 del PR de los modos de informe, 2026-08-02.*
 
 Las correcciones de bloqueantes de aquel commit eran acotadas; junto a ellas viajó un rediseño
@@ -289,6 +384,7 @@ implementación nueva. La fila del registro dirá «documentación (acotada)» p
 acotado tuvo poco.
 
 ### P-19 · El dictamen de una pasada acotada rinde más cuando distingue «cerrado» de «cerrado con defecto nuevo», y ese dato no cabe en el registro
+**Se queda en el fichero:** dato de la serie del registro de métricas de este repositorio.
 *Procedencia: pasadas 3 y 4 del PR de los modos de informe, 2026-08-02.*
 
 P-14 anotó que una pasada acotada no tiene dónde registrar el dictamen. Las pasadas 3 y 4 aportan
@@ -298,6 +394,7 @@ pregunta del registro de métricas, «¿en qué pasada dejan de aparecer bloquea
 solo en la prosa de cuatro actas.
 
 ### P-20 · Los hallazgos de proceso de un acta no tienen destino garantizado, y su numeración se desincroniza en silencio
+**Se queda en el fichero:** quién anota los hallazgos de proceso de un acta, y cómo no se pierden al transcribirlos.
 *Procedencia: pasada 4 del PR de los modos de informe, 2026-08-02.*
 
 La pasada 3 propuso tres hallazgos de proceso y esta bandeja recibió **uno**, con el número de
@@ -309,6 +406,7 @@ entrada pierde piezas. Se anota también, por si sirve de dato, que quien las pe
 implementadora al transcribirlas — la misma asimetría que motivó la independencia del acta.
 
 ### P-21 · Una pasada acotada que abarca el estado completo no tiene forma de declarar su alcance
+**Se queda en el fichero:** cómo declara su alcance una pasada acotada.
 *Procedencia: pasada 4 del PR de los modos de informe, 2026-08-02.*
 
 Dos de los hallazgos de la pasada 4 nacen de contrastar lo que el commit escribió con líneas que
@@ -318,6 +416,7 @@ desde el otro lado: el implementador no distingue corregir de rediseñar, y el r
 declarar que revisó más de lo que el diff contiene.
 
 ### P-22 · Verificación del **efecto** del disparo al portafolio, no solo de su contrato
+> **MIGRADA A LINEAR (PRO-51), 2026-08-10.** Se queda escrita aquí por la regla de esta bandeja —una entrada resuelta o trasladada dice qué se decidió—, y **el seguimiento vive en Linear**. Motivo del traslado: cruza con el proyecto `portafolio`: cualquier solución toca los dos repositorios.
 *Procedencia: hallazgo relevante de la pasada 1 de la migración de cuenta, 2026-08-10.*
 
 **Anomalía de encaje, declarada por delante:** este documento dice arriba que **no** entran los
@@ -357,6 +456,11 @@ evidencia medida de que el contrato solo no basta.
 
 ## Pendientes de la pasada 16 del bloque 1 de la fase 4
 
+**Se quedan en el fichero, todos los de esta sección y las siguientes hasta el cierre de fase.**
+Son hallazgos identificados **por acta y posición** dentro de `docs/revisiones/`, y su enunciado no
+se sostiene sin el acta que los contiene: sacarlos a Linear dejaría allí una referencia a un
+documento que solo existe aquí. Ninguno tiene fecha ni cruza con otro proyecto.
+
 *Anotados el 2026-08-02, sin corregir, por decisión del mantenedor: ninguno manda hacer ni
 publicar nada falso, de modo que por la regla 7 se documentan y no bloquean la fusión.*
 
@@ -367,18 +471,34 @@ integrarlos, al cerrar la fase.
 
 Son cuatro relevantes y tres menores. Los relevantes, por si sirve tenerlos a la vista:
 
-- **JR-1** — §6.7 conserva «la marca de agua sigue siendo la de la última ejecución **con
+- ~~**JR-1**~~ **SUPERADO (2026-08-10).** §6.7 ya no lo conserva: la viñeta dice hoy «No se dice
+  «la última ejecución **con datos**», que es lo que decía esta viñeta y es falso precisamente en
+  el caso habitual de CISA KEV». La copia vieja se retiró y quedó escrito por qué era falsa.
+  Texto original: **JR-1** — §6.7 conserva «la marca de agua sigue siendo la de la última ejecución **con
   datos**», falso para el 304, que sí la avanza. Tercera sede de la misma copia vieja; no manda
   nada porque la regla operativa de su viñeta produce el valor correcto sin leerla.
-- **JR-2** — al cerrar el bloqueante de la pasada anterior, la tercera causa del aviso de
+- **JR-2 · SIGUE ABIERTO (verificado el 2026-08-10).** §6.5 mantiene las tres causas y añade que
+  «la tercera no puede declararse como la segunda», que cierra una dirección; **no la contraria**.
+  Para una fuente `fallida` con intervalo largo siguen siendo aplicables la segunda y la tercera,
+  y «cada una se nombra por lo que fue» no da regla de precedencia. Texto original:
+  **JR-2** — al cerrar el bloqueante de la pasada anterior, la tercera causa del aviso de
   frescura de §6.5 pasó a **contener** a la segunda, y la frase que las distingue presupone que
   son disjuntas. Para una fuente `fallida` con intervalo largo hay dos etiquetas aplicables y
   ninguna regla para elegir.
-- **JR-3** — el discriminador de nivel de log del CLI decide sobre `registros_obtenidos`
+- **JR-3 · SIGUE ABIERTO (verificado el 2026-08-10).** `cli.py` decide todavía sobre
+  `registros_obtenidos` —`registrar = _LOGGER.warning if resultado.registros_obtenidos else
+  _LOGGER.info`—, de modo que un lote sin un solo objeto se registra como `info`, igual que un
+  304. Sigue mitigado porque `base.py` advierte de ese lote. Texto original:
+  **JR-3** — el discriminador de nivel de log del CLI decide sobre `registros_obtenidos`
   —indicadores válidos— mientras su comentario declara el criterio «había registros delante». Un
   lote sin un solo objeto se registra como `info`, igual que un 304. Mitigado porque `base.py` ya
   advierte de ese lote.
-- **JR-4** — la regla nueva de §14.2 cierra el camino citado y no el invariante: el validador
+- ~~**JR-4**~~ **SUPERADO (2026-08-10).** El invariante está escrito donde faltaba: §6.4 declara
+  que «`data/state/` guarda tres artefactos con tres reglas distintas» y fija la del tercero —«el
+  validador condicional **se congela también**, por la regla de §14.2»—, que es exactamente lo que
+  la entrada echaba en falta. Y la ambigüedad de «descartar» la resuelve §14.2 por su efecto: «los
+  validadores condicionales se descartan **y la petición se hace sin condicionar**». Texto
+  original: **JR-4** — la regla nueva de §14.2 cierra el camino citado y no el invariante: el validador
   condicional sobrevive intacto a una ejecución `fallida`. Y «los validadores se descartan» no
   dice si se borran o solo no se envían.
 
@@ -513,22 +633,39 @@ accionable de los tres, y aplicaría desde el bloque 3.
 implementado y la especificación se anotan aquí en vez de resolverse tocando la fuente de
 verdad. Ninguna manda hacer ni publicar nada falso.*
 
-- **`analyze/estado.py` no está en el árbol de §9**, que enumera `dedupe.py`, `confidence.py` y
+- ~~**`analyze/estado.py` no está en el árbol de §9**~~ **SUPERADO (2026-08-10).** El árbol lo
+  incorpora: `CLAUDE.md` §9 lo lista con su cometido —«forma del estado mínimo persistido»— y §9
+  lo cita en prosa junto a `persistencia.py`. Se resolvió por la primera de las dos vías que la
+  entrada ofrecía; los dos ficheros siguen separados. Texto original:
+  **`analyze/estado.py` no está en el árbol de §9**, que enumera `dedupe.py`, `confidence.py` y
   `diff.py`. Se separó de `diff.py` porque son dos cosas distintas: la **forma** de lo que se
   persiste y las **reglas** que deciden qué se escribe. Al cerrar la fase, o el árbol lo
   incorpora o los dos ficheros se funden.
 
-- **Las declaraciones obligatorias de §8.3 se emiten al log, no a un informe.** Es lo único que
+- ~~**Las declaraciones obligatorias de §8.3 se emiten al log, no a un informe.**~~ **SUPERADO
+  (2026-08-10).** El informe existe desde el bloque 4 y las emite: `report/renderer.py` construye
+  la declaración de lo no publicado en `_lineas_no_publicado`. Y la condición que la entrada
+  imponía —«tendrá que repetirse sobre el informe»— está cumplida: la comprobación de vocabulario
+  reservado se ejerce hoy sobre el informe renderizado en `tests/test_informe.py`, además de sobre
+  el log en `tests/test_modos_cli.py`. Texto original:
+  **Las declaraciones obligatorias de §8.3 se emiten al log, no a un informe.** Es lo único que
   este bloque puede producir —§8 es el bloque 4—, pero conviene tenerlo escrito: la comprobación
   de vocabulario reservado de §14.5 se ejerce hoy sobre el log, y **tendrá que repetirse sobre
   el informe** cuando exista. Un control que se prueba sobre una salida y se aplica a otra no es
   el mismo control.
 
-- **§6.1 exige presentación consolidada con desglose por fuente**, y hoy la salida es por fuente
+- **SIGUE ABIERTO (verificado el 2026-08-10).** Es el mismo pendiente que **E-2**, más abajo, y
+  allí está su marca. Se deja aquí porque es donde se anotó.
+  **§6.1 exige presentación consolidada con desglose por fuente**, y hoy la salida es por fuente
   sin consolidar. El cálculo sí es por fuente, que es lo que §6.4 obliga; lo que falta es la
   capa de presentación, que es del bloque 4. Se anota para que no se dé por hecho al cerrar.
 
-- **§6.1 paso 4 —entradas KEV con `dueDate` en los próximos 7 días— no está calculado.** Sus
+- ~~**§6.1 paso 4 —entradas KEV con `dueDate` en los próximos 7 días— no está calculado.**~~
+  **SUPERADO (2026-08-10).** Está calculado: `cli.py` consume
+  `configuracion.ajustes.ventana_dias_vencimiento` y declara los vencimientos próximos citando el
+  paso 4 por su nombre. Ocurrió donde la entrada anticipaba —«pertenece al informe»—, en el bloque
+  4. Texto original:
+  **§6.1 paso 4 —entradas KEV con `dueDate` en los próximos 7 días— no está calculado.** Sus
   insumos **sí** están ya persistidos (el bloque `kev` del estado), que es la mitad que este
   bloque tenía que resolver; el cálculo consume la ventana de `config/settings.yaml`
   (`informe.ventana_dias_vencimiento`) y pertenece al informe.
@@ -570,7 +707,11 @@ secciones de `CLAUDE.md` que toca, y a **una** acta reciente como referencia de 
 
 **Lo que queda por decidir al cerrar la fase 4, con las filas del registro delante:**
 
-- **El presupuesto definitivo.** Los 10 minutos / 30 mutaciones son un valor inicial elegido para
+- ~~**El presupuesto definitivo.**~~ **SUPERADO (2026-08-10).** Decidido al cerrar la fase 4 y ya
+  recogido en la sección «Decididos» de más abajo: **10 minutos y 30 mutaciones**, ahora como
+  cifra definitiva, con las tres pasadas acotadas que la sostienen. La tabla vive en R2 de
+  `docs/protocolo-revision.md`. Texto original:
+  **El presupuesto definitivo.** Los 10 minutos / 30 mutaciones son un valor inicial elegido para
   que la pasada termine, **no una cifra calibrada**: no hay todavía ninguna pasada acotada de la
   que estimar cuánto hace falta. El bloque 4 lleva 30 minutos por ser el artefacto que alguien
   lee y cree. Con varias filas acotadas se podrá comparar hallazgos por minuto contra las pasadas
@@ -582,6 +723,18 @@ secciones de `CLAUDE.md` que toca, y a **una** acta reciente como referencia de 
 - **Si el histórico de actas necesita otra forma de existir.** Son 956 KB de testimonio que no
   se edita (§9.1) y que ya nadie lee entero. Que no se lea no lo invalida —es acta, no norma—,
   pero conviene decidir si algo lo resume o si simplemente se declara que no se lee.
+
+> **Las dos preguntas del corpus se quedan en el fichero (decidido el 2026-08-10).** Se planteó
+> subirlas a Linear —dependen de una decisión humana y están declaradas «sin decidir» desde el
+> cierre de fase— y el mantenedor resolvió que no: **su decisión solo tiene sentido leyendo el
+> corpus del repositorio**. Un índice de qué sección gobierna qué fichero se decide con
+> `CLAUDE.md` delante, y qué hacer con 956 KB de actas se decide abriéndolas. Una incidencia que
+> remite a un corpus que no contiene no es seguimiento, es un puntero.
+
+> **Lo decidido es la sede, no la sustancia**, y conviene decirlo porque la sección «Decididos»
+> declara que «lo que no aparece aquí sigue sin decidir». Las dos preguntas **siguen sin decidir**;
+> lo que se resolvió el 2026-08-10 es **dónde se deciden**. Su entrada en aquella sección lo dice
+> con esas palabras.
 
 ### Consecuencia operativa del `parcial` sostenido de ThreatFox
 
@@ -607,6 +760,9 @@ el 3,5% es deriva del proveedor o variación, con la serie que ya se está anota
 Queda escrito para que esa decisión se tome sabiendo lo que cuesta aplazarla.
 
 ### §11.2 declara el workflow diario «pendiente de implementación» y ya no lo está
+> **SUPERADO (2026-08-10).** §11.2 ya no abre con «Pendiente de implementación. Cuando se
+> implemente:»: arranca directamente en «Programado diariamente a las 06:00 UTC». Se corrigió al
+> cerrar la fase, como la entrada anunciaba, junto con el punto 4 de §13.
 
 *Procedencia: bloque 5 de la fase 4.*
 
@@ -620,6 +776,11 @@ del código y aquí va por detrás. Se corrige al cerrar la fase, junto con el p
 es lo que este workflow hace alcanzable.
 
 ### El validador condicional necesitaba una cuarta ruta versionada, y ninguna sección la enumera
+> **SUPERADO (2026-08-10).** §9 lo incorporó a su lista, que era la primera de las dos vías que la
+> entrada ofrecía: el árbol declara `data/state/` con **tres** artefactos —el último, «los
+> validadores condicionales (§14.2)»—, la lista de lo versionado los nombra, y un bloque propio
+> —«Los validadores condicionales se versionan, y de ello depende que el 304 exista»— explica por
+> qué, con `validadores_http.json` por su nombre.
 
 *Procedencia: bloque 5 de la fase 4.*
 
@@ -634,6 +795,15 @@ si §9 lo incorpora a su lista o si §14.2 lo dice expresamente; hoy vive en el 
 entrada 29 de `docs/decisiones.md`, que es dato pero no norma.
 
 ### §5.2 y §8.3 describen el orden de la cola y de la sección 4 que ya no se usa
+> **SUPERADO (2026-08-10).** §5.2 trae el orden que la implementación usa, bajo el epígrafe «Orden
+> por valor de decisión»: lo no vencido primero, después lo vencido de lo más reciente a lo más
+> antiguo, el uso en ransomware como desempate **solo a igualdad de plazo**, y las entradas de
+> plazo próximo publicadas siempre. Con la dirección medida —1.654 de 1.656 entradas ya vencidas—
+> escrita como justificación.
+>
+> **Y se resolvió también la pregunta que la entrada dejaba abierta**, en la dirección que P-15
+> recomienda: el criterio se escribe **una sola vez**. §5.2 lo declara «definido aquí y en ningún
+> otro sitio», y §8.3 remite en lugar de repetirlo.
 
 *Procedencia: correcciones de producto sobre el informe real, 2026-08-03.*
 
@@ -676,11 +846,20 @@ Sigue **sin decidir** todo lo demás, y en particular las dos preguntas del corp
 un índice de qué sección de `CLAUDE.md` gobierna qué fichero, y qué se hace con los 956 KB de
 actas que ya nadie lee enteras.
 
+**Añadido el 2026-08-10, y solo sobre su sede:** las dos preguntas del corpus **siguen sin
+decidir** —esta sección conserva su regla de lectura—, y lo que se decidió es que **se deciden
+aquí y no en Linear**, porque ambas exigen el corpus delante. Consta para que un lector que
+aplique la regla no concluya que el 2026-08-10 no se decidió nada.
+
 ---
 
 ## Pendientes abiertos al cerrar la fase 4
 
 ### E-1 · Los insumos de §8.2 sobre el catálogo no se persisten
+> **MIGRADA A LINEAR (PRO-50), 2026-08-10.** Depende de una decisión humana sobre el esquema del
+> estado —qué se guarda y dónde— que lleva aplazada desde el bloque 2, y **cruza con PRO-43**: es lo
+> que convertiría en automático el registro manual del paso 6 de §5.5. El texto se conserva aquí; el
+> seguimiento vive en Linear.
 
 *Procedencia: arrastrado desde el bloque 2; verificado de nuevo el 2026-08-03.*
 
@@ -698,6 +877,9 @@ cierre de fase es verificación y README, no funcionalidad nueva —es la regla 
 §13—.
 
 ### E-2 · La presentación consolidada del diferencial con desglose por fuente
+**Se queda en el fichero:** no hay decisión que tomar —§6.1 ya dice qué hacer—, no tiene fecha y no
+cruza con ningún otro proyecto. Es implementación acotada contra una especificación cerrada, y su
+sitio es el repositorio donde se implementa.
 
 *Procedencia: arrastrado desde el bloque 3.*
 
@@ -709,7 +891,29 @@ cambia ninguna cifra; con una tercera sí la cambiaría, y §3.4 contempla añad
 
 No es urgente y no produce ninguna afirmación falsa hoy. Se anota para que no se dé por hecho.
 
+### E-4 · El bloque `aprobacion` no aloja el pin al que sustituye
+> **También en Linear (PRO-48), 2026-08-10.** Se anota aquí **además** de en la incidencia, y no
+> solo allí: es un hallazgo de producto específico de este repositorio, y registrarlo únicamente
+> fuera habría contradicho la frontera que esta misma bandeja declara. El seguimiento vive en
+> PRO-48; la constancia, aquí.
+
+*Procedencia: pasada de revisión del PR #6, en «lo que no he podido verificar».*
+
+El **paso 6** del procedimiento de §5.5 obliga a anotar, al adoptar un pin nuevo, la fecha del
+cambio **y el pin al que sustituye**. El bloque `aprobacion` de `config/attack_bundle.yaml` tiene
+`fecha_aprobacion` y **ningún campo para el SHA sustituido**: el procedimiento pide algo que la
+configuración no aloja, de modo que el paso 6 no se puede completar tal como está escrito.
+
+Pesa más de lo que parece porque **hoy ese registro es la única constancia del salto como evento
+fechado**: mientras E-1 siga abierta, el informe no puede declarar por su cuenta si el catálogo
+cambió. Lo que queda por decidir es la forma —un campo suelto `sustituye_a`, o una lista de
+adopciones que conserve la serie entera—, y la elige un humano, como el pin.
+
 ### E-3 · La cobertura de `reference` de ThreatFox: tres mediciones antes de decidir
+> **MIGRADA A LINEAR (PRO-49), 2026-08-10.** Tiene **fecha**: la decisión se toma tras tres
+> ejecuciones concretas del workflow diario, y un pendiente con condición temporal en un fichero de
+> texto no avisa cuando le toca. **La serie se sigue anotando aquí**, una fila por ejecución, porque
+> el dato es del repositorio; lo que vive en Linear es la decisión pendiente.
 
 *Procedencia: observación de campo del bloque 2, con serie iniciada. Decisión aplazada
 deliberadamente el 2026-08-03.*

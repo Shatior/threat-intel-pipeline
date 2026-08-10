@@ -17,7 +17,7 @@ de fila **no** es una opción, porque un hueco mudo es indistinguible de «no hu
 
 ## Registro
 
-**Filas: 37** (5 con `†`). La regla de retirada se evalúa al cerrar la fase 4 **o al llegar a 40 filas**, lo
+**Filas: 38** (5 con `†`). Una lleva `‡`. La regla de retirada se evalúa al cerrar la fase 4 **o al llegar a 40 filas**, lo
 que ocurra primero (`docs/protocolo-revision.md`). El recuento se actualiza al añadir una fila:
 es el insumo del segundo disparo, y un disparo cuyo insumo hay que contar a mano cada vez es un
 disparo que se olvida.
@@ -62,6 +62,19 @@ disparo que se olvida.
 | 2026-08-02 | #20 (sin confirmar) | 4 | 1 | comportamiento | ~7 min (presupuesto acotado: 10 min / 30 mutaciones; 16 mutaciones ejecutadas) | 3 | 3 | 2 | 1, 3, 4, 5, 6, 7, 8, 9 |
 | 2026-08-03 | #23 | 4 | 1 | documentación + comportamiento | ~5 min (presupuesto acotado: 10 min / 30 mutaciones; 2 mutaciones ejecutadas) | 1 | 2 | 1 | n/d † |
 | 2026-08-03 | #25 | proceso | 1 | documentación + prueba | ~8 min (presupuesto acotado: 10 min / 30 mutaciones; 10 mutaciones ejecutadas) | 0 | 2 | 3 | 1, 3, 4, 5 |
+| 2026-08-10 | #7 ‡ | proceso | 1 | documentación | ~9,5 min (presupuesto acotado: 10 min / 30 mutaciones; 19 mutaciones ejecutadas) | 0 | 3 | 3 | 4, 5, 6, 7, 9, 11 |
+
+## Nota sobre las filas marcadas con ‡ — la numeración de pull requests se reinició
+
+**El número de pull request retrocede de #25 a #7, y no es un error de transcripción.** El
+proyecto migró de cuenta: las filas hasta `#25` son del repositorio anterior
+(`vigiabref/threat-intel-pipeline`) y las marcadas con ‡ son del actual
+(`Shatior/threat-intel-pipeline`), cuya numeración empieza de nuevo en 1.
+
+Se anota porque un registro cuya columna de identificadores retrocede sin explicación invita a
+dos lecturas falsas —que la fila está mal copiada, o que las anteriores no son de este proyecto—,
+y ninguna se puede descartar leyendo la tabla. El orden real de las pasadas es el de la columna de
+fecha, que sí es monótona.
 
 ## Cómo se lee este registro
 
