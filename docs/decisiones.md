@@ -1534,18 +1534,43 @@ De rebote alcanza también al criterio 6, «no hay secretos en el historial de g
 era «barrido del historial completo sin hallazgos». Ese historial ya no existe: el criterio queda
 satisfecho de forma trivial por un árbol sin pasado, que no es lo mismo que un pasado barrido.
 
-### El original sigue en pie, y esto es reversible
+### Si el original sigue en pie, la pérdida es reversible — y eso **no está verificado**
 
-`vigiabref/threat-intel-pipeline` **no se ha borrado**. Mientras siga existiendo, un
-`git push --mirror` posterior desde el original hacia esta cuenta recuperaría commits, ramas,
-etiquetas y autoría, y con ellos la evidencia de plataforma de los criterios 4 y 6. Los hilos de
-los pull requests seguirían sin viajar —es la limitación que `docs/pull-requests/README.md`
-anticipó y que motivó las transcripciones—, pero la cadena de autoría volvería a ser verificable.
+**Condicional, y el condicional es el contenido de este apartado.** *Si*
+`vigiabref/threat-intel-pipeline` sigue existiendo, un `git push --mirror` posterior desde el
+original hacia esta cuenta recuperaría commits, ramas, etiquetas y autoría, y con ellos la
+evidencia de plataforma de los criterios 4 y 6. Los hilos de los pull requests seguirían sin
+viajar —es la limitación que `docs/pull-requests/README.md` anticipó y que motivó las
+transcripciones—, pero la cadena de autoría volvería a ser verificable.
+
+**Que el original siga en pie es una declaración del mantenedor, no una comprobación.** La sesión
+que escribió esta entrada no tiene acceso a `vigiabref/*`: su alcance es este repositorio, y el
+listado de repositorios accesibles no devuelve nada para esa cuenta. Eso **no** prueba que el
+original se haya borrado —puede ser privado, o quedar fuera del alcance concedido—, pero tampoco
+prueba lo contrario. Desde aquí la existencia del original es indecidible.
+
+Comprobarlo es barato para quien tenga acceso: abrir la URL del repositorio, o un
+`git ls-remote https://github.com/vigiabref/threat-intel-pipeline` desde una sesión autenticada
+con esa cuenta. Mientras nadie lo haga y lo registre, la reversibilidad de la migración es una
+**hipótesis**, y de ella depende que la evidencia de los criterios 4 y 6 sea recuperable o esté
+perdida para siempre. No es un detalle: es la diferencia entre una pérdida temporal y una
+definitiva.
 
 Se deja escrito aquí, y no solo en la cabeza de quien hizo la migración, porque una pérdida
-recuperable que nadie recuerda que lo es se convierte en una pérdida definitiva. Si esa
-recuperación llega a hacerse, se registra en una entrada nueva; si el original se retira antes,
-esta entrada pasa a describir un estado final.
+recuperable que nadie recuerda que lo es se convierte en una pérdida definitiva. Si la
+comprobación se hace, se registra con su resultado; si se hace la recuperación, en una entrada
+nueva; si el original se retira antes, esta entrada pasa a describir un estado final.
+
+**Este apartado afirmó primero lo que no había comprobado, y el error queda escrito porque es
+exactamente el que este proyecto persigue.** La primera versión decía, en negrita y sin
+condicional, que el original «**no se ha borrado**». Nadie lo verificó: se dedujo de que el
+mantenedor contara que el `push --mirror` le había fallado —lo que implica que el original
+existía **al migrar**, no que exista ahora— y se publicó como hecho. Es una conjetura presentada
+como verificación, que la regla 3 de `docs/protocolo-revision.md` llama «el defecto más grave que
+puede cometer un revisor», y es el mismo fallo que la entrada 31 documenta sobre las métricas: un
+dato que el instrumento no tenía y que alguien rellenó con lo plausible. Lo encontró la propia
+sesión implementadora al intentar verificarlo a posteriori, no una revisión independiente — de
+modo que tampoco esto acredita el método, solo lo ilustra.
 
 **Lo que sobrevive.** El árbol completo tal como estaba: código, pruebas, workflows,
 configuración, los ocho informes publicados, el estado de `data/state/` y la documentación —con
