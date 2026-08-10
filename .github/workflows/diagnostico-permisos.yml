@@ -1,0 +1,23 @@
+# Diagnóstico temporal: comprueba qué permisos concede realmente el GITHUB_TOKEN a un job que
+# pide `contents: write`, que es lo que necesita el workflow diario para publicar el informe.
+#
+# El ajuste del repositorio (Settings > Actions > General > Workflow permissions) TOPA lo que un
+# job puede pedir: si está en solo lectura, este job pedirá write y recibirá read, y el `git push`
+# del informe diario fallaría con 403 sin que nada lo hubiera avisado antes.
+#
+# No escribe nada, no consulta ninguna fuente y no toca `main`. Se retira en cuanto responda.
+name: Diagnóstico de permisos (temporal)
+
+on: push
+
+jobs:
+  comprobar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Declarar qué se concedió
+        run: |
+          echo "El grupo 'Set up job' de arriba lista los permisos realmente concedidos."
+          echo "Contents: write -> el workflow diario podra publicar el informe."
+          echo "Contents: read  -> el ajuste del repositorio esta topando la peticion."
