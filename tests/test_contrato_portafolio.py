@@ -241,3 +241,58 @@ def test_un_workflow_sin_disparo_reconocible_se_declara_no_verificable(tmp_path)
 
     with pytest.raises(vc.ContratoNoVerificable):
         vc.contrato_del_disparo(ruta_workflow=falso)
+
+
+def test_si_ningun_workflow_se_puede_interpretar_es_hueco_y_no_rotura():
+    """Ningún fichero legible ≠ nadie escucha, y la diferencia decide el color del canario.
+
+    Concluir «no hay receptor» porque no se pudo leer ninguno sería presentar una **ausencia de
+    observación como observación de ausencia** — el error de §14.3 trasladado al plano de
+    verificación—. La primera versión de esta comprobación lo hacía: se saltaba cada YAML roto y,
+    si se saltaban todos, el conjunto vacío de tipos caía en la rama de rotura.
+    """
+
+    listado = [
+        {"name": "uno.yml", "download_url": "https://raw.example/uno.yml"},
+        {"name": "dos.yml", "download_url": "https://raw.example/dos.yml"},
+    ]
+    cliente = ClienteFalso(
+        {
+            URL_LISTADO: json.dumps(listado).encode("utf-8"),
+            "https://raw.example/uno.yml": b"esto: [no cierra\n",
+            "https://raw.example/dos.yml": b"tampoco: {cierra\n",
+        }
+    )
+
+    with pytest.raises(vc.ContratoNoVerificable) as fallo:
+        vc.verificar_disparo_portafolio(cliente=cliente)
+
+    assert "se pudo interpretar" in str(fallo.value), str(fallo.value)
+
+
+def test_encontrado_el_receptor_no_se_descargan_los_demas_workflows():
+    """§11.3 pide consumo mínimo: hallado el tipo, se para.
+
+    El camino de **rotura** sí los recorre todos, porque su mensaje declara qué tipos sí se
+    escuchan y esa lista solo es completa si se miraron todos. Se comprueban los dos.
+    """
+
+    listado = [
+        {"name": "a.yml", "download_url": "https://raw.example/a.yml"},
+        {"name": "b.yml", "download_url": "https://raw.example/b.yml"},
+    ]
+    respuestas = {
+        URL_LISTADO: json.dumps(listado).encode("utf-8"),
+        "https://raw.example/a.yml": f"on:\n  repository_dispatch:\n    types: [{EVENTO_REAL}]\n".encode(),
+        "https://raw.example/b.yml": b"on:\n  repository_dispatch:\n    types: [otro]\n",
+    }
+
+    sano = ClienteFalso(dict(respuestas))
+    vc.verificar_disparo_portafolio(cliente=sano)
+    assert "https://raw.example/b.yml" not in sano.pedidas, f"se descargó de más: {sano.pedidas}"
+
+    roto = ClienteFalso({**respuestas, "https://raw.example/a.yml": b"on:\n  repository_dispatch:\n    types: [uno]\n"})
+    with pytest.raises(vc.ContratoRoto) as fallo:
+        vc.verificar_disparo_portafolio(cliente=roto)
+    assert "https://raw.example/b.yml" in roto.pedidas, "el camino de rotura debe mirarlos todos"
+    assert "otro" in str(fallo.value) and "uno" in str(fallo.value), str(fallo.value)

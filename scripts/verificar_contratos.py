@@ -784,8 +784,14 @@ def _tipos_de_dispatch(contenido: Any) -> set[str]:
     return {str(t) for t in tipos}
 
 
-def tipos_escuchados(cliente: Any, repo: str) -> set[str]:
-    """Tipos de ``repository_dispatch`` que declara algún workflow del repositorio receptor."""
+def tipos_escuchados(cliente: Any, repo: str, buscado: str | None = None) -> set[str]:
+    """Tipos de ``repository_dispatch`` que declara algún workflow del repositorio receptor.
+
+    ``buscado`` permite **parar en cuanto aparece**: §11.3 exige consumo mínimo, y en el camino
+    sano basta con encontrarlo para no seguir descargando ficheros ajenos. El camino de rotura
+    sí los recorre todos, porque el mensaje de error declara qué tipos **sí** se escuchan y esa
+    lista solo es completa si se miraron todos.
+    """
 
     url = API_CONTENIDOS.format(repo=repo, ruta=DIRECTORIO_WORKFLOWS)
     try:
@@ -802,6 +808,8 @@ def tipos_escuchados(cliente: Any, repo: str) -> set[str]:
         raise ContratoNoVerificable(f"{repo} no expone un directorio {DIRECTORIO_WORKFLOWS} legible")
 
     tipos: set[str] = set()
+    candidatos = 0
+    interpretados = 0
     for entrada in entradas:
         if not isinstance(entrada, dict):
             continue
@@ -811,6 +819,7 @@ def tipos_escuchados(cliente: Any, repo: str) -> set[str]:
         descarga = entrada.get("download_url")
         if not descarga:
             continue
+        candidatos += 1
         try:
             crudo = cliente.solicitar(str(descarga))
         except (AbandonarFuente, ErrorRed, TopePeticiones) as exc:
@@ -819,9 +828,19 @@ def tipos_escuchados(cliente: Any, repo: str) -> set[str]:
             contenido = yaml.safe_load(crudo.cuerpo.decode("utf-8"))
         except (UnicodeDecodeError, yaml.YAMLError):
             # Un workflow ajeno ilegible no es nuestro contrato roto: se ignora ese fichero y
-            # se sigue con los demás. Si ninguno declara el tipo, la rotura se declara abajo.
+            # se sigue con los demás. Si NINGUNO llega a interpretarse, la decisión cambia de
+            # naturaleza y se declara abajo como hueco, no como rotura.
             continue
+        interpretados += 1
         tipos |= _tipos_de_dispatch(contenido)
+        if buscado is not None and (buscado in tipos or "*" in tipos):
+            # Encontrado: no se descargan los demás (§11.3, consumo mínimo).
+            break
+    if candidatos and not interpretados:
+        # Ningún workflow se pudo interpretar. Concluir «nadie escucha» sería presentar una
+        # ausencia de observación como observación de ausencia, que es el error de §14.3 en el
+        # plano de verificación: no se leyó el contrato, no se leyó que no exista.
+        raise ContratoNoVerificable(f"ninguno de los {candidatos} workflows de {repo} se pudo interpretar")
     return tipos
 
 
@@ -834,7 +853,7 @@ def verificar_disparo_portafolio(cliente: Any = None) -> None:
     """
 
     repo, evento = contrato_del_disparo()
-    tipos = tipos_escuchados(cliente or _cliente(None), repo)
+    tipos = tipos_escuchados(cliente or _cliente(None), repo, buscado=evento)
     if "*" in tipos:
         print(f"[portafolio] {repo} escucha repository_dispatch sin acotar tipos: «{evento}» queda cubierto.")
         return

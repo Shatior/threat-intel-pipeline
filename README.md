@@ -128,6 +128,11 @@ alcance es del token, no de quien lo posee.
 Sin el token, el informe se publica igual y el paso del sitio **avisa y no enrojece el workflow**:
 un sitio desactualizado es visible, y un informe sin publicar no lo sería.
 
+**Que alguien recoja el evento no lo dice la respuesta.** La API contesta 204 al aceptarlo, y
+contesta igual si en el otro extremo no escucha ningún workflow, de modo que el paso declara la
+emisión y no la reconstrucción. Que el receptor siga ahí lo vigila la verificación semanal de
+contratos, como el cuarto de los que comprueba.
+
 ## Para leer más
 
 - [`CLAUDE.md`](CLAUDE.md) — la especificación, y la fuente de verdad: qué se recolecta, cómo se
