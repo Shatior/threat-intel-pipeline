@@ -1,22 +1,48 @@
-# Hallazgos de proceso pendientes
+# Hallazgos pendientes
 
-El protocolo de revisión está **congelado hasta el cierre de la fase 4**
-([`docs/protocolo-revision.md`](protocolo-revision.md), sección «Congelamiento hasta el cierre
-de la fase 4»). Todo hallazgo de proceso que surja durante la fase se anota aquí **sin
-implementarse**, para decidirlo en conjunto al cerrar la fase, con las filas del registro de
-métricas delante.
+Bandeja de entrada de lo que se decide más tarde: mejoras del **proceso** de revisión y
+pendientes del **producto** que no bloquean, anotados con su procedencia y sin implementar.
 
-**Qué entra aquí:** mejoras del protocolo — categorías nuevas, comprobaciones adicionales,
-umbrales mejor calibrados, reglas más precisas.
+**Qué entra aquí:** mejoras del protocolo —categorías nuevas, comprobaciones adicionales,
+umbrales mejor calibrados, reglas más precisas— y hallazgos del pipeline y su automatización
+cuya corrección se aplaza con razón declarada.
 
 **Qué NO entra:** los defectos que **impiden aplicar** el protocolo, que se reparan en el acto;
-y los hallazgos sobre el **producto**, que se corrigen con normalidad. El congelamiento es del
-proceso, no del pipeline.
+y los hallazgos que sí bloquean, que se corrigen antes de fusionar. Aplazar no es archivar: cada
+entrada dice por qué espera.
 
-**Por qué en conjunto y no uno a uno.** Cada adición de las últimas semanas estaba justificada
-por un hallazgo real, y el conjunto creció hasta que el instrumento cambiaba en cada medición.
-Decidirlas juntas permite ver cuáles se solapan, cuáles se cancelan y cuáles dejaron de
-importar — y hacerlo con datos en vez de con la impresión del momento.
+## El alcance era solo de proceso, y dejó de serlo
+
+Hasta el cierre de la fase 4 este documento **solo admitía hallazgos de proceso**, y lo decía
+con una regla explícita: los del producto quedaban fuera «porque se corrigen con normalidad». La
+regla no era arbitraria — existía **por el congelamiento**. El protocolo estaba congelado hasta
+el cierre de la fase (§13), de modo que sus mejoras no podían aplicarse y necesitaban un sitio
+donde esperar; el pipeline no lo estaba, así que sus defectos no tenían nada que esperar. Lo que
+separaba una cosa de la otra no era su naturaleza sino **si podía corregirse ya**.
+
+**El congelamiento se levantó el 2026-08-03** con el cierre de la fase 4, y con él desapareció el
+motivo de la distinción. Desde entonces el criterio de admisión es el que la regla perseguía
+desde el principio: **entra lo que se aplaza, sea de proceso o de producto**. El primero en
+llegar bajo el criterio nuevo fue P-22 —la verificación del efecto del disparo al portafolio—,
+que es de automatización y se anotó aquí declarando la discrepancia con la cabecera anterior.
+
+Se corrige la cabecera y **no se mueve P-22 a otro sitio**: el documento ya funcionaba de hecho
+como la bandeja que ahora declara ser, y trasladar la entrada habría sostenido una regla que
+ninguna decisión mantenía viva. Queda escrito de dónde venía la distinción para que un lector no
+la reinvente al encontrarse entradas de las dos clases.
+
+**Varias entradas de más abajo aplazan su corrección diciendo que «`CLAUDE.md` está congelado».
+Ese motivo caducó el 2026-08-03 y las entradas no se reescriben.** Son el registro de por qué se
+aplazó cada una **en su momento**, y corregirlas dejaría una lista donde toda espera parece haber
+tenido siempre la razón que hoy le encaja. Se dice aquí, una vez, para que nadie las lea como
+razón vigente: quien retome una de esas entradas ya no tiene el congelamiento delante y necesita
+un motivo nuevo para seguir aplazándola — o ninguno para corregirla.
+
+**Por qué en conjunto y no uno a uno** —el argumento con el que nació el documento, que sigue
+valiendo—. Cada adición de aquellas semanas estaba justificada por un hallazgo real, y el
+conjunto creció hasta que el instrumento cambiaba en cada medición. Decidirlas juntas permite ver
+cuáles se solapan, cuáles se cancelan y cuáles dejaron de importar — y hacerlo con datos en vez
+de con la impresión del momento.
 
 **Estatus de este documento:** lista de trabajo. No manda, no explica y no describe el estado
 del proyecto. Es una bandeja de entrada.

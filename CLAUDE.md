@@ -1539,7 +1539,7 @@ threat-intel-pipeline/
 │   ├── protocolo-revision.md # protocolo de revisión independiente (§15)
 │   ├── decisiones.md         # registro de decisiones de diseño, numeradas y fechadas
 │   ├── metricas-revision.md  # registro de pasadas de revisión (instrumentación del protocolo)
-│   ├── proceso-pendiente.md  # hallazgos de proceso anotados durante el congelamiento (§15)
+│   ├── proceso-pendiente.md  # bandeja de lo aplazado: proceso y producto (§9.1)
 │   └── revisiones/           # informes íntegros, escritos por el revisor y commiteados sin tocar
 ├── src/threatintel/
 │   ├── __init__.py
@@ -1830,7 +1830,7 @@ documento que nadie considera vinculante y citarla después como si lo fuera.
 | `docs/decisiones.md` | **Registro histórico** | Explica por qué se decidió lo que se decidió. **No manda** |
 | `docs/metricas-revision.md` | **Dato en bruto** | Observaciones sobre el propio proceso. **Sin autoridad de ninguna clase** |
 | `docs/revisiones/*.md` | **Acta** | Lo que un revisor informó, con su firma. No manda y **no se edita**: es testimonio, no norma |
-| `docs/proceso-pendiente.md` | **Bandeja de entrada** | Mejoras de proceso anotadas durante el congelamiento. **No manda ni describe el estado** |
+| `docs/proceso-pendiente.md` | **Bandeja de entrada** | Lo que se aplaza con razón declarada, de proceso y de producto. **No manda ni describe el estado** |
 | `README.md` | **Derivado** | Explica el proyecto a quien llega de fuera. No decide nada: su contenido obligatorio lo fijan §13 y §14.7 |
 
 **Ante discrepancia en materia de producto entre el protocolo y `CLAUDE.md`, prevalece
@@ -2763,10 +2763,12 @@ es verificación, sino coherencia interna: el equivalente en proceso del fallo s
 §14.3 prohíbe en el producto.
 
 El **protocolo de revisión** está en [`docs/protocolo-revision.md`](docs/protocolo-revision.md),
-que es su fuente de verdad. **Está congelado hasta el cierre de la fase 4** (§13): se aplica tal
-como está, solo se reparan los defectos que impidan aplicarlo, y las mejoras se anotan en
-`docs/proceso-pendiente.md` para decidirlas juntas al cerrar la fase — un instrumento que cambia
-en cada medición no mide. En síntesis: antes de fusionar un cambio, lo revisa una sesión de
+que es su fuente de verdad. **Estuvo congelado hasta el cierre de la fase 4, y el congelamiento
+se levantó el 2026-08-03** con ese cierre (§13): mientras duró, el protocolo se aplicaba tal como
+estaba, solo se reparaban los defectos que impidieran aplicarlo, y las mejoras esperaban en
+`docs/proceso-pendiente.md` para decidirse juntas — un instrumento que cambia en cada medición no
+mide. Ese documento sigue siendo la bandeja de lo aplazado, ya sin la restricción a hallazgos de
+proceso que el congelamiento motivaba (§9.1). En síntesis: antes de fusionar un cambio, lo revisa una sesión de
 agente distinta de la que lo implementó, sin su contexto; el revisor **informa, no corrige**,
 recorre una taxonomía explícita de once categorías de defecto, **declara siempre lo que no ha
 podido verificar** y **cierra con un recuento explícito por severidad**; **escribe su informe
