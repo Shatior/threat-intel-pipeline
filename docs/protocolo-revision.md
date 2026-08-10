@@ -691,7 +691,8 @@ registro se rellena y no se interpreta.
 
 ### Regla de retirada
 
-**Si al cerrar la fase 4 el registro no ha servido para tomar ninguna decisión, se elimina.**
+**Si al llegar el punto de evaluación el registro no ha servido para tomar ninguna decisión,
+se elimina.**
 No se conserva «por si acaso» ni se deja creciendo a la espera de una tercera fase: un
 registro que nadie usa es coste de proceso disfrazado de rigor, y este documento no puede
 pedir que se justifique el coste de cada mecanismo del pipeline (categoría 6) y eximir a los
@@ -704,11 +705,26 @@ Para que la regla pueda ejecutarse y no solo enunciarse:
   agente, ni la que lo creó ni la que lo usa.
 - **Con qué evidencia:** las entradas de `docs/decisiones.md` que citen el registro. Si no hay
   ninguna, no ha servido, y esa es la respuesta — no un empate que se resuelva conservándolo.
-- **Cuándo:** **al cerrar la fase 4 o al alcanzar el registro 40 filas, lo que ocurra
-  primero.** El cierre de fase es el que **§13 de `CLAUDE.md`** define —sus seis puntos son su
-  definición operativa, y §13 declara que el cierre de la fase 4 y la versión 1 son el mismo
-  hito—, de modo que el instante es comprobable contra el repositorio y no vive en la cabeza de
-  nadie, que es lo que la regla 6 exige de cualquier criterio de disparo.
+- **Cuándo:** **al alcanzar el registro 10 filas del régimen acotado** (R1–R6), o al cerrar una
+  fase, lo que ocurra primero.
+
+  **El umbral dejó de ser un total y pasó a contar solo el régimen vigente**, por la decisión
+  del 2026-08-10 (entrada 33 de `docs/decisiones.md`): un umbral sobre el total mezclaría las
+  pasadas de corpus sin acotar con las acotadas —dos regímenes cuyo coste por bloqueante
+  difiere **4,0 veces**, medido el 2026-08-10 sobre las 32 filas que declaran duración: 25,1
+  frente a 6,2 minutos por bloqueante— y volvería a medir lo ya medido.
+
+  **Qué fila cuenta lo dice la columna `Régimen` del registro**, no la redacción de su
+  duración. La primera versión de este umbral lo dejaba a una subcadena en una celda libre, y
+  la revisión demostró con mutaciones que una fila acotada redactada de otro modo no se contaba
+  y el disparo se aplazaba en silencio.
+
+  **El disparo por cierre de fase se conserva y hoy no tiene mecanismo.** Cuando la referencia
+  era el cierre de la **fase 4**, el instante era comprobable contra el repositorio —§13 de
+  `CLAUDE.md` lo define con seis puntos—; generalizado a «una fase», esa garantía ya no existe,
+  porque ninguna sección define operativamente el cierre de una fase 5. Venció el 2026-08-03 sin
+  que nadie lo atendiera, y **P-23** de `docs/proceso-pendiente.md` recoge el defecto. El disparo
+  por filas sí tiene mecanismo, y es el que ha funcionado las dos veces.
 
   **Por qué hacen falta los dos disparos.** Anclar la evaluación solo al cierre de fase la
   volvía *precisa pero condicionada a un evento que puede no llegar*: el punto 4 de §13 exige un
@@ -719,13 +735,19 @@ Para que la regla pueda ejecutarse y no solo enunciarse:
   filas es el segundo disparo, independiente del calendario y del producto: es un umbral que
   **solo depende del propio registro**, así que no puede quedarse esperando a nada.
 
-  **El umbral fue veinte y ahora es 40**, y el cambio no es una desactivación de la alarma sino
-  su primera aplicación con desenlace. A las veinte filas la alarma sonó, el mantenedor evaluó
-  la regla y **decidió conservar el registro**: había servido, y la evidencia es la serie de
-  «correcciones con defecto propio» que sus filas hicieron visible. Fijar el umbral siguiente
-  con esa evidencia es lo que la propia regla manda hacer cuando el desenlace es conservar; lo
-  que la regla prohíbe es subirlo **sin** evaluarla, que es lo que convierte una alarma en un
-  número que nadie mira. La decisión y su razón están en `docs/decisiones.md`.
+  **El umbral fue veinte, luego 40, y ahora son 10 del régimen acotado.** Ninguno de los dos
+  cambios desactivó la alarma: los dos son aplicaciones de la regla con desenlace declarado
+  —entradas 24 y 33 de `docs/decisiones.md`—. Lo que la regla prohíbe es subirlo **sin**
+  evaluarla, que es lo que convierte una alarma en un número que nadie mira.
+
+  **La evaluación del 2026-08-10 dejó además escrito su propio final**, que es lo que las dos
+  anteriores no tenían: si al llegar a las diez filas acotadas la última pregunta viva sigue sin
+  respuesta, **el registro se retira igualmente**. Un instrumento que no puede responder su
+  última pregunta no gana nada esperando más datos, y sin esta cláusula la evaluación siguiente
+  podría volver a aplazarse por la misma razón por la que se aplaza siempre: que con un poco más
+  de serie quizá se vea.
+
+
 
 ## Verificación contra la realidad
 

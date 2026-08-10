@@ -17,52 +17,53 @@ de fila **no** es una opción, porque un hueco mudo es indistinguible de «no hu
 
 ## Registro
 
-**Filas: 38** (5 con `†`). Una lleva `‡`. La regla de retirada se evalúa al cerrar la fase 4 **o al llegar a 40 filas**, lo
-que ocurra primero (`docs/protocolo-revision.md`). El recuento se actualiza al añadir una fila:
+**Filas: 39** (5 con `†`). Dos llevan `‡`. **Del régimen acotado: 7.** La regla de retirada se evalúa al llegar a **10 filas
+del régimen acotado**, o al cerrar una fase, lo que ocurra primero (`docs/protocolo-revision.md`). El recuento se actualiza al añadir una fila:
 es el insumo del segundo disparo, y un disparo cuyo insumo hay que contar a mano cada vez es un
 disparo que se olvida.
 
 
-| Fecha | PR | Fase | Pasada | Tipo de diff | Duración | Bloq. | Relev. | Menores | Categorías con hallazgo |
-|---|---|---|---|---|---|---|---|---|---|
-| 2026-08-02 | #9 | proceso | 1 | documentación | n/d | 0 | 3 | 3 | 1, 3, 6, 7 |
-| 2026-08-02 | #10 | proceso | 1 | comportamiento | n/d | 0 | 4 | 6 | 1, 2, 4, 6, 7, 8 |
-| 2026-08-02 | #11 | 3 | 1 | documentación | n/d | 4 | 22 | 14 | 1, 2, 3, 4, 5, 6, 7, 8 |
-| 2026-08-02 | #11 | 3 | 2 | comportamiento | n/d | 2 | 13 | 10 | 1, 2, 3, 4, 5, 6, 7, 8, 9 |
-| 2026-08-02 | #11 | 3 | 3 | comportamiento | n/d | 3 | 17 | 15 | 1, 2, 3, 4, 5, 6, 7, 9 |
-| 2026-08-02 | #11 | 3 | 4 | comportamiento (acotada) | n/d | 1 | 6 | 1 | 1, 2, 3, 4, 5, 7, 9 |
-| 2026-08-02 | #11 | 3 | 5 | comportamiento (acotada) | ~11 min | 1 | 3 | 7 | n/d |
-| 2026-08-02 | #11 | 3 | 6 | comportamiento (acotada) | ~12 min | 2 | 2 | 3 | n/d |
-| 2026-08-02 | #11 | 3 | 7 | comportamiento (acotada) | ~13 min | 0 | 4 | n/d | n/d |
-| 2026-08-02 | #12 | proceso | 1 | documentación | ~12 min | 0 | 11 | 6 | 1, 3, 4, 5, 6, 7, 9, 10 † |
-| 2026-08-02 | #13 | 4 | 1 | comportamiento | ~40 min | 0 | 6 | 9 | 1, 3, 4, 5, 7, 8, 9, 10 † |
-| 2026-08-02 | #13 | 4 | 2 | comportamiento (acotada) | ~35 min | 0 | 4 | 6 | 1, 3, 4, 7, 9, 10 † |
-| 2026-08-02 | #13 | 4 | 3 | comportamiento (acotada) | ~40 min | 0 | 5 | 8 | 1, 3, 4, 7, 9, 10 † |
-| 2026-08-02 | #14 (sin confirmar) | proceso | 1 | documentación + prueba | ~25 min | 0 | 8 | 11 | 1, 3, 4, 5, 6, 7, 8, 9, 10 |
-| 2026-08-02 | #15 (sin confirmar) | 4 | 1 | comportamiento (acotada) | ~50 min | 0 | 6 | 10 | 1, 3, 4, 5, 6, 7, 9, 10, 11 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 1 | documentación | ~13 min | 4 | 8 | 11 | 1, 3, 4, 5, 7, 9, 10, 11 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 2 | documentación (acotada) | ~15 min | 3 | 8 | 9 | 1, 3, 4, 5, 6, 9, 10, 11 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 3 | documentación (acotada) | ~16 min | 4 | 6 | 8 | 1, 3, 4, 5, 6, 7, 9, 10, 11 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 4 | documentación (acotada) | ~20 min | 2 | 4 | 7 | 1, 3, 4, 5, 7, 9, 10 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 5 | documentación (acotada) | ~25 min | 2 | 3 | 4 | 3, 4, 5, 6, 7, 9, 10 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 6 | documentación (acotada) | ~30 min | 2 | 5 | 4 | 3, 4, 5, 7, 9, 10 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 7 | documentación (acotada) | ~35 min | 2 | 4 | 5 | 3, 4, 5, 6, 7, 9, 10 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 8 | documentación + comportamiento (acotada) | ~35 min | 1 | 4 | 4 | 3, 4, 5, 7, 9, 10 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 9 | documentación + comportamiento (acotada) | ~40 min | 1 | 3 | 4 | 1, 4, 5, 7, 9, 10 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 10 | documentación + comportamiento (acotada) | ~45 min | 2 | 2 | 5 | 1, 4, 5, 7, 9, 10 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 11 | documentación + comportamiento (acotada) | ~45 min | 2 | 2 | 4 | 1, 3, 4, 5, 7, 9, 10 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 12 | documentación + comportamiento (acotada) | ~45 min | 1 | 2 | 4 | 3, 4, 5, 7, 8, 9, 10 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 13 | documentación + comportamiento (acotada) | ~50 min | 1 | 2 | 6 | 3, 4, 5, 7, 8, 9, 10 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 14 | documentación + comportamiento (acotada) | ~50 min | 1 | 2 | 5 | 3, 4, 5, 7, 9, 10 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 15 | documentación + comportamiento (acotada) | ~55 min | 1 | 4 | 3 | 1, 3, 4, 5, 7, 9, 10 |
-| 2026-08-02 | #16 (sin confirmar) | 4 | 16 | documentación + comportamiento (acotada) | ~50 min | 0 | 4 | 3 | 1, 3, 4, 5, 7, 9, 10 |
-| 2026-08-02 | #17 (sin confirmar) | 4 | 1 | comportamiento | ~45 min | 2 | 10 | 10 | 1, 4, 5, 6, 7, 9, 10, 11 |
-| 2026-08-02 | #18 (sin confirmar) | 4 | 1 | comportamiento | ~7 min (presupuesto acotado: 10 min / 30 mutaciones) | 1 | 1 | 1 | 3, 4, 5, 9 |
-| 2026-08-02 | #19 (sin confirmar) | 4 | 1 | comportamiento | ~7 min (presupuesto acotado: 10 min / 30 mutaciones; 5 mutaciones ejecutadas) | 2 | 4 | 2 | 3, 4, 5, 8, 9, 10 |
-| 2026-08-02 | #20 (sin confirmar) | 4 | 1 | comportamiento | ~7 min (presupuesto acotado: 10 min / 30 mutaciones; 16 mutaciones ejecutadas) | 3 | 3 | 2 | 1, 3, 4, 5, 6, 7, 8, 9 |
-| 2026-08-03 | #23 | 4 | 1 | documentación + comportamiento | ~5 min (presupuesto acotado: 10 min / 30 mutaciones; 2 mutaciones ejecutadas) | 1 | 2 | 1 | n/d † |
-| 2026-08-03 | #25 | proceso | 1 | documentación + prueba | ~8 min (presupuesto acotado: 10 min / 30 mutaciones; 10 mutaciones ejecutadas) | 0 | 2 | 3 | 1, 3, 4, 5 |
-| 2026-08-10 | #7 ‡ | proceso | 1 | documentación | ~9,5 min (presupuesto acotado: 10 min / 30 mutaciones; 19 mutaciones ejecutadas) | 0 | 3 | 3 | 4, 5, 6, 7, 9, 11 |
+| Fecha | PR | Fase | Pasada | Tipo de diff | Régimen | Duración | Bloq. | Relev. | Menores | Categorías con hallazgo |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 2026-08-02 | #9 | proceso | 1 | documentación | amplio | n/d | 0 | 3 | 3 | 1, 3, 6, 7 |
+| 2026-08-02 | #10 | proceso | 1 | comportamiento | amplio | n/d | 0 | 4 | 6 | 1, 2, 4, 6, 7, 8 |
+| 2026-08-02 | #11 | 3 | 1 | documentación | amplio | n/d | 4 | 22 | 14 | 1, 2, 3, 4, 5, 6, 7, 8 |
+| 2026-08-02 | #11 | 3 | 2 | comportamiento | amplio | n/d | 2 | 13 | 10 | 1, 2, 3, 4, 5, 6, 7, 8, 9 |
+| 2026-08-02 | #11 | 3 | 3 | comportamiento | amplio | n/d | 3 | 17 | 15 | 1, 2, 3, 4, 5, 6, 7, 9 |
+| 2026-08-02 | #11 | 3 | 4 | comportamiento (acotada) | amplio | n/d | 1 | 6 | 1 | 1, 2, 3, 4, 5, 7, 9 |
+| 2026-08-02 | #11 | 3 | 5 | comportamiento (acotada) | amplio | ~11 min | 1 | 3 | 7 | n/d |
+| 2026-08-02 | #11 | 3 | 6 | comportamiento (acotada) | amplio | ~12 min | 2 | 2 | 3 | n/d |
+| 2026-08-02 | #11 | 3 | 7 | comportamiento (acotada) | amplio | ~13 min | 0 | 4 | n/d | n/d |
+| 2026-08-02 | #12 | proceso | 1 | documentación | amplio | ~12 min | 0 | 11 | 6 | 1, 3, 4, 5, 6, 7, 9, 10 † |
+| 2026-08-02 | #13 | 4 | 1 | comportamiento | amplio | ~40 min | 0 | 6 | 9 | 1, 3, 4, 5, 7, 8, 9, 10 † |
+| 2026-08-02 | #13 | 4 | 2 | comportamiento (acotada) | amplio | ~35 min | 0 | 4 | 6 | 1, 3, 4, 7, 9, 10 † |
+| 2026-08-02 | #13 | 4 | 3 | comportamiento (acotada) | amplio | ~40 min | 0 | 5 | 8 | 1, 3, 4, 7, 9, 10 † |
+| 2026-08-02 | #14 (sin confirmar) | proceso | 1 | documentación + prueba | amplio | ~25 min | 0 | 8 | 11 | 1, 3, 4, 5, 6, 7, 8, 9, 10 |
+| 2026-08-02 | #15 (sin confirmar) | 4 | 1 | comportamiento (acotada) | amplio | ~50 min | 0 | 6 | 10 | 1, 3, 4, 5, 6, 7, 9, 10, 11 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 1 | documentación | amplio | ~13 min | 4 | 8 | 11 | 1, 3, 4, 5, 7, 9, 10, 11 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 2 | documentación (acotada) | amplio | ~15 min | 3 | 8 | 9 | 1, 3, 4, 5, 6, 9, 10, 11 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 3 | documentación (acotada) | amplio | ~16 min | 4 | 6 | 8 | 1, 3, 4, 5, 6, 7, 9, 10, 11 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 4 | documentación (acotada) | amplio | ~20 min | 2 | 4 | 7 | 1, 3, 4, 5, 7, 9, 10 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 5 | documentación (acotada) | amplio | ~25 min | 2 | 3 | 4 | 3, 4, 5, 6, 7, 9, 10 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 6 | documentación (acotada) | amplio | ~30 min | 2 | 5 | 4 | 3, 4, 5, 7, 9, 10 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 7 | documentación (acotada) | amplio | ~35 min | 2 | 4 | 5 | 3, 4, 5, 6, 7, 9, 10 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 8 | documentación + comportamiento (acotada) | amplio | ~35 min | 1 | 4 | 4 | 3, 4, 5, 7, 9, 10 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 9 | documentación + comportamiento (acotada) | amplio | ~40 min | 1 | 3 | 4 | 1, 4, 5, 7, 9, 10 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 10 | documentación + comportamiento (acotada) | amplio | ~45 min | 2 | 2 | 5 | 1, 4, 5, 7, 9, 10 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 11 | documentación + comportamiento (acotada) | amplio | ~45 min | 2 | 2 | 4 | 1, 3, 4, 5, 7, 9, 10 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 12 | documentación + comportamiento (acotada) | amplio | ~45 min | 1 | 2 | 4 | 3, 4, 5, 7, 8, 9, 10 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 13 | documentación + comportamiento (acotada) | amplio | ~50 min | 1 | 2 | 6 | 3, 4, 5, 7, 8, 9, 10 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 14 | documentación + comportamiento (acotada) | amplio | ~50 min | 1 | 2 | 5 | 3, 4, 5, 7, 9, 10 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 15 | documentación + comportamiento (acotada) | amplio | ~55 min | 1 | 4 | 3 | 1, 3, 4, 5, 7, 9, 10 |
+| 2026-08-02 | #16 (sin confirmar) | 4 | 16 | documentación + comportamiento (acotada) | amplio | ~50 min | 0 | 4 | 3 | 1, 3, 4, 5, 7, 9, 10 |
+| 2026-08-02 | #17 (sin confirmar) | 4 | 1 | comportamiento | amplio | ~45 min | 2 | 10 | 10 | 1, 4, 5, 6, 7, 9, 10, 11 |
+| 2026-08-02 | #18 (sin confirmar) | 4 | 1 | comportamiento | acotado | ~7 min (presupuesto acotado: 10 min / 30 mutaciones) | 1 | 1 | 1 | 3, 4, 5, 9 |
+| 2026-08-02 | #19 (sin confirmar) | 4 | 1 | comportamiento | acotado | ~7 min (presupuesto acotado: 10 min / 30 mutaciones; 5 mutaciones ejecutadas) | 2 | 4 | 2 | 3, 4, 5, 8, 9, 10 |
+| 2026-08-02 | #20 (sin confirmar) | 4 | 1 | comportamiento | acotado | ~7 min (presupuesto acotado: 10 min / 30 mutaciones; 16 mutaciones ejecutadas) | 3 | 3 | 2 | 1, 3, 4, 5, 6, 7, 8, 9 |
+| 2026-08-03 | #23 | 4 | 1 | documentación + comportamiento | acotado | ~5 min (presupuesto acotado: 10 min / 30 mutaciones; 2 mutaciones ejecutadas) | 1 | 2 | 1 | n/d † |
+| 2026-08-03 | #25 | proceso | 1 | documentación + prueba | acotado | ~8 min (presupuesto acotado: 10 min / 30 mutaciones; 10 mutaciones ejecutadas) | 0 | 2 | 3 | 1, 3, 4, 5 |
+| 2026-08-10 | #7 ‡ | proceso | 1 | documentación | acotado | ~9,5 min (presupuesto acotado: 10 min / 30 mutaciones; 19 mutaciones ejecutadas) | 0 | 3 | 3 | 4, 5, 6, 7, 9, 11 |
+| 2026-08-10 | #9 ‡ | proceso | 1 | documentación + prueba | acotado | ~10 min (presupuesto acotado: 10 min / 30 mutaciones; 10 mutaciones ejecutadas) | 2 | 3 | 5 | 1, 4, 6, 7, 9, 10, 11 |
 
 ## Nota sobre las filas marcadas con ‡ — la numeración de pull requests se reinició
 
@@ -75,6 +76,23 @@ Se anota porque un registro cuya columna de identificadores retrocede sin explic
 dos lecturas falsas —que la fila está mal copiada, o que las anteriores no son de este proyecto—,
 y ninguna se puede descartar leyendo la tabla. El orden real de las pasadas es el de la columna de
 fecha, que sí es monótona.
+
+## «Régimen acotado» y «pasada acotada» no son lo mismo
+
+**Dos cosas distintas se llamaban `acotada` en esta tabla, y una de ellas es el insumo de una
+alarma.** Conviene separarlas antes de leer nada:
+
+- La columna **`Régimen`** dice con qué encargo se hizo la pasada: `acotado` es el de R1–R6
+  —corpus acotado, presupuesto de 10 min / 30 mutaciones—, y `amplio` es el anterior. **Es la
+  columna que cuenta el umbral de la regla de retirada**, y por eso existe: antes el recuento
+  salía de buscar una subcadena en la celda de duración, y una fila redactada de otro modo se
+  quedaba fuera sin que nada fallara.
+- El `(acotada)` que aparece dentro de **`Tipo de diff`** dice otra cosa: que el diff revisado
+  era un diff de correcciones de una pasada anterior, en el sentido de R4 y de la categoría 10.
+  **Veintidós filas lo llevan**, casi todas del régimen amplio.
+
+Quien confunda las dos al verificar el insumo a mano obtiene 22 donde debía obtener 7. La
+distinción la fija la columna, no la prosa.
 
 ## Cómo se lee este registro
 
