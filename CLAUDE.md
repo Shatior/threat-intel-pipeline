@@ -1944,6 +1944,39 @@ del ciclo de producto y se ejecutan a demanda.
   por aquí: la evalúa el pipeline contra `linea_base_vigente` (§6.6), de modo que no hay un
   segundo lugar donde se decida el modo ni un cron cuya no ejecución la aplace en silencio
 
+**Tras publicar, pide la reconstrucción del sitio.** El sitio del portafolio deriva sus cifras
+del informe, de modo que hasta que no se reconstruye sigue publicando las de la ejecución
+anterior. El último paso del workflow emite un `repository_dispatch` con
+`event_type: informe-publicado` contra el repositorio del portafolio. Se especifica aquí porque
+hasta ahora **el paso existía en el workflow y no en este documento**, y §9.1 declara a
+`CLAUDE.md` fuente de verdad: un comportamiento cuya única descripción normativa vive en el
+README —que §9.1 declara derivado— es una decisión que nadie llegó a tomar por escrito.
+
+- **Necesita un secreto propio, `TOKEN_DISPARO_PORTAFOLIO`**, un PAT con permiso de escritura de
+  contenido sobre el otro repositorio. **El `GITHUB_TOKEN` no sirve**: está acotado al
+  repositorio donde se ejecuta el workflow. Y que ambos repositorios sean **públicos** tampoco
+  lo hace innecesario —es el atajo natural al verlos—: la visibilidad gobierna quién puede
+  **leer**, no quién puede **actuar** sobre otro repositorio. Son dos ejes distintos, y el
+  alcance es del token, no de quien lo posee.
+- **Se dispara solo si esa ejecución commiteó algo.** Sin la guarda, un día sin cambios
+  reconstruiría un sitio idéntico: es §14.7 aplicado a lo propio, no gastar una ejecución ajena
+  para no cambiar nada.
+- **La guarda no excluye el fallo total**, y es deliberado: §14.3 manda publicar el informe de
+  fallo, de modo que hubo commit y el sitio se reconstruye. Es lo correcto — el sitio debe
+  mostrar el día en que el pipeline no pudo mirar, con su motivo, en lugar de conservar las
+  cifras de ayer como si nada hubiera pasado.
+- **Degrada y declara, y nunca enrojece el workflow.** Sin el secreto, avisa y termina sin
+  error. Si la petición no devuelve 204, avisa con el código y tampoco falla. El criterio es el
+  de §14.3 aplicado al orden de importancia: el informe ya está publicado, que es el producto;
+  un sitio desactualizado es visible y un informe sin publicar no lo sería.
+- **Laguna declarada: hoy no se sabe si el evento se recogió.** La API responde 204 al
+  **aceptar** el evento, y responde igual si en el otro extremo no hay ningún workflow
+  escuchando. El paso puede por tanto declarar «reconstrucción solicitada» sobre un disparo al
+  vacío: un éxito declarado sin efecto, que es la clase de afirmación que este documento
+  persigue en el producto y que aquí sigue viva en su propia automatización. Mientras no se
+  cierre, **el 204 acredita la emisión, no la recepción**, y así debe leerse. La verificación
+  está pendiente de decisión y se especificará aquí cuando se tome.
+
 ### 11.3 Verificación de contratos — `.github/workflows/verificar-contratos.yml`
 Materializa la *verificación contra la realidad* del protocolo de revisión (§15). Consulta
 CISA KEV, ThreatFox **y el bundle de ATT&CK** en vivo y comprueba que los campos de los que
