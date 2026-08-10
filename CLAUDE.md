@@ -1969,19 +1969,38 @@ README —que §9.1 declara derivado— es una decisión que nadie llegó a toma
   error. Si la petición no devuelve 204, avisa con el código y tampoco falla. El criterio es el
   de §14.3 aplicado al orden de importancia: el informe ya está publicado, que es el producto;
   un sitio desactualizado es visible y un informe sin publicar no lo sería.
-- **Laguna declarada: hoy no se sabe si el evento se recogió.** La API responde 204 al
-  **aceptar** el evento, y responde igual si en el otro extremo no hay ningún workflow
-  escuchando. El paso puede por tanto declarar «reconstrucción solicitada» sobre un disparo al
-  vacío: un éxito declarado sin efecto, que es la clase de afirmación que este documento
-  persigue en el producto y que aquí sigue viva en su propia automatización. Mientras no se
-  cierre, **el 204 acredita la emisión, no la recepción**, y así debe leerse. La verificación
-  está pendiente de decisión y se especificará aquí cuando se tome.
+- **El 204 acredita la emisión, no la recepción, y el paso no afirma más que eso.** La API
+  responde 204 al **aceptar** el evento, y responde igual si en el otro extremo no hay ningún
+  workflow escuchando. El mensaje del paso declara por tanto que el evento se emitió y se
+  aceptó, y no que el sitio vaya a reconstruirse: afirmar la reconstrucción sobre esa evidencia
+  sería el éxito declarado sin efecto que este documento persigue en el producto, reaparecido en
+  su propia automatización.
+- **Que exista receptor lo vigila el canario semanal, como cuarto contrato externo** (§11.3). La
+  verificación comprueba que algún workflow del repositorio receptor declara
+  `repository_dispatch` con ese `event_type`, y **el destino y el tipo se leen del propio
+  `daily.yml`**, no de una copia en la configuración: dos fuentes de verdad para la misma
+  magnitud acabarían verificando un contrato distinto del que el pipeline emite, que es el
+  criterio de §6.4 con el techo de los caídos aplicado al plano de verificación. Su ausencia es
+  **rotura** —el paso depende de ella— y no poder leer el repositorio receptor es un **hueco de
+  verificación**, con la asimetría que §11.3 ya aplica a los otros tres.
+- **Lo que esa vigilancia sigue sin cubrir, y se declara.** Verifica el **contrato**, no el
+  **efecto**: que el receptor esté declarado, no que una ejecución concreta recogiera el evento.
+  Se le escapan un workflow deshabilitado, uno que declare el tipo correcto y falle al arrancar,
+  y la ventana de hasta una semana entre que el contrato se rompe y el canario lo detecta. La
+  verificación del efecto —comprobar que existe una ejecución posterior al disparo— queda
+  anotada en `docs/proceso-pendiente.md` con el caso que solo ella detectaría y la razón de no
+  implementarla hoy: viviría en el camino de publicación, al que añadiría espera y un modo de
+  fallo, y su aviso no podría distinguir «nadie escucha» de «la cola de Actions va lenta».
 
 ### 11.3 Verificación de contratos — `.github/workflows/verificar-contratos.yml`
 Materializa la *verificación contra la realidad* del protocolo de revisión (§15). Consulta
 CISA KEV, ThreatFox **y el bundle de ATT&CK** en vivo y comprueba que los campos de los que
 depende el pipeline siguen apareciendo con su nombre y, en las marcas temporales, con su
-formato.
+formato. Verifica además un **cuarto contrato**, que no es de datos sino de automatización: que
+el repositorio al que el workflow diario dispara la reconstrucción del sitio siga declarando un
+receptor para ese `event_type` (§11.2). Entra aquí por el mismo motivo que el bundle —es un
+contrato con un sistema ajeno que puede romperse sin que nadie toque este repositorio— y con la
+misma asimetría: ausencia del receptor es rotura, no poder leerlo es hueco.
 
 El bundle de ATT&CK es un **tercer contrato externo**, no una fuente de amenazas, y está
 sujeto a la misma regla: la regla 5 del protocolo no distingue entre fuentes y catálogos.

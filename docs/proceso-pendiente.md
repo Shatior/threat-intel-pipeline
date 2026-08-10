@@ -284,6 +284,42 @@ Dos de los hallazgos de la pasada 4 nacen de contrastar lo que el commit escribi
 desde el otro lado: el implementador no distingue corregir de rediseñar, y el revisor no puede
 declarar que revisó más de lo que el diff contiene.
 
+### P-22 · Verificación del **efecto** del disparo al portafolio, no solo de su contrato
+*Procedencia: hallazgo relevante de la pasada 1 de la migración de cuenta, 2026-08-10.*
+
+**Anomalía de encaje, declarada por delante:** este documento dice arriba que **no** entran los
+hallazgos sobre el producto, y este lo es —automatización, no protocolo—. Se anota aquí por
+indicación del mantenedor, y se deja escrita la discrepancia en vez de disimularla: si la regla
+de alcance vale, esta entrada debería vivir en otro sitio; si el alcance ha cambiado de hecho, lo
+que hay que corregir es la regla. Decidirlo es parte de lo pendiente.
+
+**Qué se implementó.** El canario semanal verifica el **contrato**: que algún workflow del
+repositorio receptor declare `repository_dispatch` con el `event_type` que emite `daily.yml`.
+Cubre el fallo realista —que alguien renombre el evento o retire el receptor— a coste nulo sobre
+el camino de publicación.
+
+**Qué solo detectaría la verificación del efecto.** Comprobar que existe una ejecución en el
+receptor posterior al disparo detectaría tres casos que el contrato no ve:
+
+1. Un workflow **deshabilitado** que sigue declarando el tipo correcto.
+2. Uno que declara el tipo y **falla al arrancar**, de modo que nunca reconstruye.
+3. La **ventana de hasta una semana** entre que el contrato se rompe y el canario lo mira.
+
+**Por qué no se implementa ahora.** Tres costes, y el segundo es el que decide:
+
+- Viviría en `daily.yml`, no en el canario: el canario no puede disparar un evento de prueba sin
+  reconstruir el sitio de mentira. Eso añade **espera y un modo de fallo nuevo al workflow que
+  publica**, cuyo cometido es publicar.
+- **Su aviso no podría distinguir «nadie escucha» de «la cola de Actions va lenta».** Un aviso
+  que a veces miente es la *alarma degenerada* de la categoría 4 de la taxonomía: enseña a
+  ignorarlo, y entonces deja de detectar también el caso real.
+- Ampliaría el alcance del PAT con `actions: read` sobre el otro repositorio.
+
+**Qué haría falta para reconsiderarlo.** Una forma de esperar el efecto que no cuelgue del camino
+de publicación —por ejemplo, que la ejecución siguiente compruebe si hubo despliegue tras el
+disparo **anterior**, que convierte la espera en asincronía y elimina el problema del umbral— o
+evidencia medida de que el contrato solo no basta.
+
 ---
 
 ## Pendientes de la pasada 16 del bloque 1 de la fase 4
