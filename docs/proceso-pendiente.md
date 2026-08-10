@@ -77,6 +77,32 @@ de revisión: reglas, formatos de acta y criterios del registro de métricas. To
 cómo se revisa **este** repositorio y no significa nada separado de él; llevarlo a un gestor de
 incidencias lo convertiría en trabajo planificado cuando es artesanía que se aplica al escribir.
 
+### Qué mantiene el reparto, y qué no lo vigila
+
+**El reparto abre una deriva simétrica de la que corrige, y conviene declararla en vez de
+confiarla a una frase.** El defecto que el barrido de abajo resuelve era *entradas ya hechas que
+aquí siguen figurando como abiertas*. El reparto crea el contrario: **entradas cerradas en Linear
+que aquí siguen diciendo lo contrario** — y ese es peor de detectar, porque la sede autorizada es
+justamente la que no se ve desde el repositorio. Vale para las cuatro migradas y para E-4.
+
+La regla, por tanto:
+
+1. **Toda pasada que toque este fichero rehace el contraste**: las entradas que aleguen
+   aplazamiento se comprueban contra el código y la especificación, y **el estado de las migradas
+   se comprueba contra su incidencia**, refrescando el aviso si cambió. No es trabajo extra: es lo
+   que esta pasada acaba de hacer, escrito para que la siguiente no dependa de que se le ocurra.
+2. **Si una incidencia se cierra, su entrada aquí se marca** con el desenlace, igual que una
+   SUPERADO. Una entrada migrada sin marca no significa «sigue abierta»: significa que nadie ha
+   mirado.
+
+**Y lo que no hay: disparo automático.** Nada avisa de que las marcas se estén quedando
+obsoletas; esta acumulación se descubrió por casualidad de una sincronización, y la siguiente se
+descubriría igual. Se declara en vez de inventar una alarma: un aviso semanal sobre una bandeja
+que «no manda ni describe el estado» (§9.1) sonaría siempre y enseñaría a ignorarlo, que es la
+alarma degenerada que este proyecto rechaza por escrito. La consecuencia está acotada por el
+mismo §9.1 — una divergencia aquí no puede producir por sí sola una afirmación falsa en el
+informe.
+
 ### Barrido de las entradas que aplazaban al cierre de fase (2026-08-10)
 
 **Una bandeja donde la mitad de lo que hay ya está hecho deja de revisarse.** La sincronización
@@ -690,13 +716,6 @@ secciones de `CLAUDE.md` que toca, y a **una** acta reciente como referencia de 
   que estimar cuánto hace falta. El bloque 4 lleva 30 minutos por ser el artefacto que alguien
   lee y cree. Con varias filas acotadas se podrá comparar hallazgos por minuto contra las pasadas
   largas, que es el dato que hoy no existe.
-> **Las dos preguntas del corpus se quedan en el fichero (decidido el 2026-08-10).** Se planteó
-> subirlas a Linear —dependen de una decisión humana y están declaradas «sin decidir» desde el
-> cierre de fase— y el mantenedor resolvió que no: **su decisión solo tiene sentido leyendo el
-> corpus del repositorio**. Un índice de qué sección gobierna qué fichero se decide con
-> `CLAUDE.md` delante, y qué hacer con 956 KB de actas se decide abriéndolas. Una incidencia que
-> remite a un corpus que no contiene no es seguimiento, es un puntero.
-
 - **Si el corpus normativo necesita un índice por secciones.** R1 manda leer «las secciones que
   el diff toca», y hoy eso lo decide el revisor a ojo sobre un documento de 2.621 líneas. Un
   mapa de qué sección gobierna qué fichero lo haría mecánico, pero es instrumentación nueva y
@@ -704,6 +723,18 @@ secciones de `CLAUDE.md` que toca, y a **una** acta reciente como referencia de 
 - **Si el histórico de actas necesita otra forma de existir.** Son 956 KB de testimonio que no
   se edita (§9.1) y que ya nadie lee entero. Que no se lea no lo invalida —es acta, no norma—,
   pero conviene decidir si algo lo resume o si simplemente se declara que no se lee.
+
+> **Las dos preguntas del corpus se quedan en el fichero (decidido el 2026-08-10).** Se planteó
+> subirlas a Linear —dependen de una decisión humana y están declaradas «sin decidir» desde el
+> cierre de fase— y el mantenedor resolvió que no: **su decisión solo tiene sentido leyendo el
+> corpus del repositorio**. Un índice de qué sección gobierna qué fichero se decide con
+> `CLAUDE.md` delante, y qué hacer con 956 KB de actas se decide abriéndolas. Una incidencia que
+> remite a un corpus que no contiene no es seguimiento, es un puntero.
+
+> **Lo decidido es la sede, no la sustancia**, y conviene decirlo porque la sección «Decididos»
+> declara que «lo que no aparece aquí sigue sin decidir». Las dos preguntas **siguen sin decidir**;
+> lo que se resolvió el 2026-08-10 es **dónde se deciden**. Su entrada en aquella sección lo dice
+> con esas palabras.
 
 ### Consecuencia operativa del `parcial` sostenido de ThreatFox
 
@@ -815,6 +846,11 @@ Sigue **sin decidir** todo lo demás, y en particular las dos preguntas del corp
 un índice de qué sección de `CLAUDE.md` gobierna qué fichero, y qué se hace con los 956 KB de
 actas que ya nadie lee enteras.
 
+**Añadido el 2026-08-10, y solo sobre su sede:** las dos preguntas del corpus **siguen sin
+decidir** —esta sección conserva su regla de lectura—, y lo que se decidió es que **se deciden
+aquí y no en Linear**, porque ambas exigen el corpus delante. Consta para que un lector que
+aplique la regla no concluya que el 2026-08-10 no se decidió nada.
+
 ---
 
 ## Pendientes abiertos al cerrar la fase 4
@@ -854,6 +890,24 @@ y suma cuando puede. Con las dos fuentes actuales el solapamiento es casi nulo y
 cambia ninguna cifra; con una tercera sí la cambiaría, y §3.4 contempla añadirlas.
 
 No es urgente y no produce ninguna afirmación falsa hoy. Se anota para que no se dé por hecho.
+
+### E-4 · El bloque `aprobacion` no aloja el pin al que sustituye
+> **También en Linear (PRO-48), 2026-08-10.** Se anota aquí **además** de en la incidencia, y no
+> solo allí: es un hallazgo de producto específico de este repositorio, y registrarlo únicamente
+> fuera habría contradicho la frontera que esta misma bandeja declara. El seguimiento vive en
+> PRO-48; la constancia, aquí.
+
+*Procedencia: pasada de revisión del PR #6, en «lo que no he podido verificar».*
+
+El **paso 6** del procedimiento de §5.5 obliga a anotar, al adoptar un pin nuevo, la fecha del
+cambio **y el pin al que sustituye**. El bloque `aprobacion` de `config/attack_bundle.yaml` tiene
+`fecha_aprobacion` y **ningún campo para el SHA sustituido**: el procedimiento pide algo que la
+configuración no aloja, de modo que el paso 6 no se puede completar tal como está escrito.
+
+Pesa más de lo que parece porque **hoy ese registro es la única constancia del salto como evento
+fechado**: mientras E-1 siga abierta, el informe no puede declarar por su cuenta si el catálogo
+cambió. Lo que queda por decidir es la forma —un campo suelto `sustituye_a`, o una lista de
+adopciones que conserve la serie entera—, y la elige un humano, como el pin.
 
 ### E-3 · La cobertura de `reference` de ThreatFox: tres mediciones antes de decidir
 > **MIGRADA A LINEAR (PRO-49), 2026-08-10.** Tiene **fecha**: la decisión se toma tras tres
