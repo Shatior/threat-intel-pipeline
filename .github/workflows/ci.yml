@@ -1,0 +1,46 @@
+# Integración continua (§11): valida cada cambio antes de fusionar. No genera ni
+# publica informes; eso corresponde al workflow diario de producción (aún no implementado).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Permisos mínimos a nivel de workflow: la CI solo necesita leer el código.
+permissions:
+  contents: read
+
+jobs:
+  pruebas:
+    name: Tests y formato
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      # Acciones de terceros fijadas a hash de commit (con la etiqueta de versión como
+      # comentario) para reproducibilidad e integridad de la cadena de suministro.
+      - name: Descargar el repositorio
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Configurar Python ${{ matrix.python-version }}
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Instalar el paquete y las dependencias de desarrollo
+        run: python -m pip install -e ".[dev]"
+
+      - name: Verificar el formato con ruff
+        run: python -m ruff format --check .
+
+      - name: Analizar el código con ruff (lint)
+        run: python -m ruff check .
+
+      - name: Ejecutar los tests
+        run: python -m pytest

@@ -1,0 +1,32 @@
+[
+  {
+    "fuente": "cisa-kev",
+    "estado": "correcta",
+    "registros_obtenidos": 0,
+    "descartados_invalidos": 0,
+    "no_soportados": 0,
+    "no_soportados_excesivo": false,
+    "ventana_consultada": null,
+    "momento_intento": "2026-08-09T07:06:17.188202+00:00",
+    "motivo_fallo": null,
+    "codigo_http": 304,
+    "reintentos_realizados": 0,
+    "campos_insuficientes": {},
+    "cobertura_no_evaluada": true
+  },
+  {
+    "fuente": "threatfox",
+    "estado": "correcta",
+    "registros_obtenidos": 3075,
+    "descartados_invalidos": 0,
+    "no_soportados": 0,
+    "no_soportados_excesivo": false,
+    "ventana_consultada": "P5D/2026-08-09T07:06:17.188523+00:00",
+    "momento_intento": "2026-08-09T07:06:17.188523+00:00",
+    "motivo_fallo": null,
+    "codigo_http": 200,
+    "reintentos_realizados": 0,
+    "campos_insuficientes": {},
+    "cobertura_no_evaluada": false
+  }
+]

@@ -1,0 +1,213 @@
+# Ejecución manual del pipeline contra las fuentes vivas (§14.6). Solo workflow_dispatch:
+# no está programado (el workflow diario de producción de §11.2 se implementará en su fase).
+# Sirve para ejecutar y observar la recolección y el enriquecimiento reales.
+#
+# La poda de ramas de captura es OPCIONAL y va desactivada por defecto: una ejecución de
+# diagnóstico no debe borrar ramas como efecto colateral de mirar los números.
+name: Recolección real (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      podar_ramas_captura:
+        description: >-
+          Elimina las ramas fixtures/captura-*. Desactivado por defecto: una ejecución de
+          diagnóstico no debe borrar ramas como efecto colateral, y quien quiera podar lo pide.
+        type: boolean
+        default: false
+
+# Sin permisos por defecto; cada trabajo eleva solo lo que necesita.
+permissions: {}
+
+jobs:
+  recolectar:
+    name: Ejecutar la recolección contra las fuentes vivas
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Configurar Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+
+      - name: Instalar el paquete
+        run: python -m pip install -e "."
+
+      - name: Ejecutar la recolección real y mostrar el estado
+        env:
+          ABUSECH_AUTH_KEY: ${{ secrets.ABUSECH_AUTH_KEY }}
+          LOG_LEVEL: INFO
+        run: |
+          set -uo pipefail
+          echo "::add-mask::$ABUSECH_AUTH_KEY"
+          echo "============ 1ª ejecución: sin estado previo → LÍNEA BASE (§6.2) ======"
+          set +e
+          python -m threatintel recolectar
+          primera=$?
+          set -e
+          echo "Código de salida de la 1ª ejecución: $primera"
+          echo ""
+          # Segunda invocación seguida: ahora SÍ hay estado, de modo que el modo es
+          # diferencial y el cálculo de §6.1 se ejerce contra datos reales. Sin ella, una
+          # ejecución en runner efímero solo recorrería el modo línea base y el diferencial
+          # —que es el objeto de este bloque— no se probaría nunca fuera de los tests.
+          #
+          # Coste sobre las fuentes (§14.7): CISA KEV responde 304 —el validador quedó
+          # guardado por la primera—, así que no se vuelve a descargar; ThreatFox recibe una
+          # segunda consulta. Dos consultas en un workflow manual de diagnóstico, no diario.
+          echo "============ 2ª ejecución: con estado → DIFERENCIAL (§6.1, §6.3) ====="
+          # `run` en vez de `recolectar`: es el ciclo completo hasta el informe (§13.1), de modo
+          # que la ejecución de cierre del bloque produce el artefacto que el bloque implementa.
+          set +e
+          python -m threatintel run
+          codigo=$?
+          set -e
+          echo "======================================================================="
+          echo "Código de salida de la 2ª ejecución: $codigo"
+          echo ""
+          echo "=================== data/state/recoleccion.json ======================="
+          cat data/state/recoleccion.json 2>/dev/null || echo "(no se generó recoleccion.json)"
+          echo ""
+          echo "=================== tamaño de los dos ficheros de estado =============="
+          # Estado mínimo versionado y comprimido (data/state, gzip) y volcado completo no
+          # versionado (data/cache, sin comprimir).
+          ls -l data/state/indicadores.json.gz data/cache/indicadores.json 2>/dev/null || echo "(faltan ficheros de estado)"
+          echo ""
+          echo "=================== resumen (volcado completo, data/cache) ============"
+          python - <<'PY'
+          import collections
+          import gzip
+          import json
+          import pathlib
+
+          completo = pathlib.Path("data/cache/indicadores.json")
+          minimo = pathlib.Path("data/state/indicadores.json.gz")
+          if not completo.exists():
+              print("(no se generó el volcado completo)")
+          else:
+              indicadores = json.loads(completo.read_text(encoding="utf-8"))
+              print("total de indicadores:", len(indicadores))
+              print("por fuente:", dict(collections.Counter(i["source"] for i in indicadores)))
+              print("por tipo:", dict(collections.Counter(i["type"] for i in indicadores)))
+              print("bytes estado mínimo comprimido (data/state, gzip):", minimo.stat().st_size if minimo.exists() else "n/a")
+              print("bytes volcado completo (data/cache):", completo.stat().st_size)
+              if minimo.exists():
+                  # El estado mínimo es un OBJETO desde el formato 2 (§9): además de los
+                  # indicadores lleva las marcas de agua por fuente y la línea base vigente,
+                  # que §6.3 y §6.6 obligan a declarar en cada informe y que no son propiedad
+                  # de ningún indicador. Se imprimen aquí porque son la cabecera del
+                  # diferencial de la ejecución siguiente.
+                  estado = json.loads(gzip.decompress(minimo.read_bytes()).decode("utf-8"))
+                  print()
+                  print("--- estado mínimo (data/state), cabecera del formato 2 ---")
+                  print("formato:", estado.get("formato"))
+                  print("marcas de agua por fuente:", estado.get("marcas_de_agua"))
+                  print("línea base vigente:", estado.get("linea_base_vigente"))
+                  entradas = estado.get("indicadores", [])
+                  print("indicadores en el estado:", len(entradas))
+                  con_kev = sum(1 for e in entradas if e.get("kev"))
+                  print("con bloque kev (solo los `vulnerability`, §9):", con_kev)
+                  por_estado = collections.Counter(
+                      obs.get("estado") for e in entradas for obs in (e.get("fuentes") or {}).values()
+                  )
+                  print("observaciones por estado y fuente:", dict(por_estado))
+                  if entradas:
+                      print("primer registro:")
+                      print(json.dumps(entradas[0], ensure_ascii=False, indent=2))
+
+              # --- Enriquecimiento ATT&CK (§5, §8.1) --------------------------------
+              # Los recuentos van SEPARADOS por unidad: los indicadores miden infraestructura
+              # observada y las familias miden comportamiento. Mezclarlos produce una cifra
+              # que no significa nada (§8.1).
+              print()
+              print("--- enriquecimiento: indicadores (infraestructura observada) ---")
+              con_tecnica = [i for i in indicadores if i.get("attack_techniques")]
+              print("con técnica:", len(con_tecnica), "de", len(indicadores))
+              print("sin mapeo:", len(indicadores) - len(con_tecnica))
+              motivos = collections.Counter(
+                  i.get("motivo_sin_mapeo") for i in indicadores if i.get("motivo_sin_mapeo")
+              )
+              print()
+              print("--- motivos por indicador (denominador: indicadores de esa fuente) ---")
+              for motivo, cuantos in sorted(motivos.items()):
+                  print(f"  {motivo}: {cuantos}")
+
+              # Nivel FAMILIA: **no se reconstruye aquí**. La identidad de familia de §5.1 la
+              # decide `familia_de_indicador`, que descarta los centinelas de "sin atribuir"
+              # para que no entren en el denominador de §8.1 como si fueran una familia real.
+              # Una reconstrucción ad hoc agrupando por el `malware` crudo los cuenta, y en la
+              # primera ejecución real dio 91 familias donde el pipeline decía 90 —además de
+              # atribuir al nivel familia un `sin_atribucion`, que es un hecho del indicador—.
+              # Dos implementaciones de la misma identidad divergen; los recuentos por familia
+              # se leen del log del propio pipeline, que es quien los calcula.
+              print()
+              print("--- familias: ver las líneas 'Familias observadas' del log de arriba ---")
+
+              print()
+              print("--- entradas KEV (denominador: entradas KEV procesadas) ---")
+              kev = [i for i in indicadores if i.get("source") == "cisa-kev"]
+              con_vector = [i for i in kev if i.get("attack_techniques")]
+              print("procesadas:", len(kev), "| con vector inferido:", len(con_vector))
+              motivos_kev = collections.Counter(
+                  i.get("motivo_sin_mapeo") for i in kev if i.get("motivo_sin_mapeo")
+              )
+              for motivo, cuantas in sorted(motivos_kev.items()):
+                  print(f"  {motivo}: {cuantas} de {len(kev)} entradas procesadas")
+          PY
+
+      - name: Mostrar el informe publicado
+        run: |
+          set -uo pipefail
+          echo "=================== reports/latest.md ================================="
+          cat reports/latest.md 2>/dev/null || echo "(no se publicó informe)"
+          echo ""
+          echo "=================== punteros a la especificación en el informe ========"
+          # El lector del informe no tiene CLAUDE.md delante: un «§» aquí es un defecto.
+          if grep -q '§' reports/latest.md 2>/dev/null; then
+            echo "::error::el informe publicado contiene punteros a secciones de la especificación"
+            grep -n '§' reports/latest.md
+          else
+            echo "ninguno, correcto"
+          fi
+
+      - name: Subir los ficheros de estado como artefacto
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: estado-recoleccion
+          # Estado mínimo versionado + resultado (data/state) y volcado completo (data/cache),
+          # para poder descargarlos desde la página del run sin commitear nada al repositorio.
+          path: |
+            data/state/indicadores.json.gz
+            data/state/recoleccion.json
+            data/cache/indicadores.json
+            reports/latest.md
+          if-no-files-found: warn
+          retention-days: 7
+
+  podar-ramas-captura:
+    name: Podar ramas de captura obsoletas
+    if: ${{ inputs.podar_ramas_captura }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Eliminar las ramas fixtures/captura-*
+        run: |
+          set -euo pipefail
+          # Las fixtures ya están integradas en el repositorio; las ramas fixtures/captura-*
+          # son subproductos desechables. Se eliminan todas para no dejar acumulación en el
+          # remoto. La acumulación futura entre capturas la limita la retención del workflow
+          # capturar-fixtures. No ejecutar este workflow con una captura pendiente de revisar.
+          mapfile -t ramas < <(git ls-remote --heads origin 'fixtures/captura-*' | sed 's#.*refs/heads/##')
+          echo "Ramas de captura a eliminar: ${#ramas[@]}"
+          for rama in "${ramas[@]}"; do
+            echo "Eliminando $rama"
+            git push origin --delete "$rama" || echo "::warning::No se pudo eliminar la rama $rama"
+          done
