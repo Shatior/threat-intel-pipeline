@@ -193,7 +193,7 @@ jobs:
         if: steps.commit.outputs.publicado == 'true'
         continue-on-error: true
         env:
-          # PAT con permiso de escritura de contenido sobre `vigiabref/portafolio`. `GITHUB_TOKEN`
+          # PAT con permiso de escritura de contenido sobre `Shatior/portafolio`. `GITHUB_TOKEN`
           # no sirve: está acotado a este repositorio.
           TOKEN_SITIO: ${{ secrets.TOKEN_DISPARO_PORTAFOLIO }}
         run: |
@@ -205,7 +205,7 @@ jobs:
           codigo=$(curl -sS -o /dev/null -w "%{http_code}" -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer $TOKEN_SITIO" \
-            https://api.github.com/repos/vigiabref/portafolio/dispatches \
+            https://api.github.com/repos/Shatior/portafolio/dispatches \
             -d '{"event_type":"informe-publicado"}')
           if [ "$codigo" = "204" ]; then
             echo "Reconstruccion del sitio solicitada."

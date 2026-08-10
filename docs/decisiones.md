@@ -1505,6 +1505,48 @@ etiquetas y la autoría de cada línea. La consecuencia práctica: el proyecto y
 con la plataforma *quién* escribió *qué* y *cuándo*. Todo lo que queda de esa cadena son
 declaraciones del propio repositorio.
 
+### La pérdida alcanza a la evidencia del criterio 4 de §13
+
+Conviene declararlo con precisión, porque no es un daño difuso a la trazabilidad sino la
+desaparición de una prueba concreta que este proyecto se exigió a sí mismo.
+
+El criterio 4 de §13 no pide que el workflow diario exista ni que termine en verde: pide que
+**haya publicado al menos un informe fusionado en `main`**, y la sección explica por qué —«un
+workflow que termina en verde demuestra que el proceso no falló; un informe en `reports/`
+demuestra que produjo algo»—. La evidencia que se registró al cerrar la fase 4 fue, literalmente,
+«dos informes en `reports/`, ambos commiteados por `daily.yml` y fusionados en `main`».
+
+Esa evidencia tenía dos mitades y la migración solo conserva una. **Los informes existen**: los
+ocho de `reports/2026/` están en el árbol, con sus cifras, sus modos y sus intervalos reales.
+**Lo que ya no puede demostrarse es que los commiteó el bot.** El autor de aquellos commits, su
+fecha y su fusión en `main` los garantizaba GitHub; el ZIP trae el resultado sin el acta. Hoy la
+afirmación «esto lo produjo el workflow y no una mano escribiendo Markdown» descansa en la
+palabra del mantenedor, que es exactamente el tipo de garantía que §13 y el protocolo de revisión
+fueron escritos para no necesitar.
+
+Es coherente con lo que el proyecto ya sabía de sí mismo: la misma distinción que
+`docs/pull-requests/README.md` hace entre un registro y una declaración se aplica ahora al
+criterio de terminado. El criterio **no se retira ni se declara incumplido** —se cumplió, y los
+informes lo atestiguan—; lo que cambia es la calidad de la prueba, que pasa de verificable por un
+tercero a declarada por la parte interesada.
+
+De rebote alcanza también al criterio 6, «no hay secretos en el historial de git», cuya evidencia
+era «barrido del historial completo sin hallazgos». Ese historial ya no existe: el criterio queda
+satisfecho de forma trivial por un árbol sin pasado, que no es lo mismo que un pasado barrido.
+
+### El original sigue en pie, y esto es reversible
+
+`vigiabref/threat-intel-pipeline` **no se ha borrado**. Mientras siga existiendo, un
+`git push --mirror` posterior desde el original hacia esta cuenta recuperaría commits, ramas,
+etiquetas y autoría, y con ellos la evidencia de plataforma de los criterios 4 y 6. Los hilos de
+los pull requests seguirían sin viajar —es la limitación que `docs/pull-requests/README.md`
+anticipó y que motivó las transcripciones—, pero la cadena de autoría volvería a ser verificable.
+
+Se deja escrito aquí, y no solo en la cabeza de quien hizo la migración, porque una pérdida
+recuperable que nadie recuerda que lo es se convierte en una pérdida definitiva. Si esa
+recuperación llega a hacerse, se registra en una entrada nueva; si el original se retira antes,
+esta entrada pasa a describir un estado final.
+
 **Lo que sobrevive.** El árbol completo tal como estaba: código, pruebas, workflows,
 configuración, los ocho informes publicados, el estado de `data/state/` y la documentación —con
 las 25 actas de `docs/revisiones/` y las 26 transcripciones de `docs/pull-requests/`—. La
@@ -1525,9 +1567,15 @@ Un enlace roto que apunta a la verdad es preferible a uno que resuelve hacia una
 criterio es el mismo que gobierna el resto del proyecto: declarar la laguna en vez de rellenarla
 con lo más plausible.
 
-**Queda pendiente, y es una decisión del mantenedor.** El workflow diario dispara la
-reconstrucción de `vigiabref/portafolio` (`daily.yml`), y los *secrets* del repositorio
-—`ABUSECH_AUTH_KEY` y `TOKEN_DISPARO_PORTAFOLIO`— no viajan en un ZIP ni en un push. Sin el
-primero, ThreatFox falla y el informe declara la laguna; sin el segundo, el paso del sitio avisa
-y no enrojece el workflow. Ninguno de los dos rompe el pipeline, y por eso ninguno se toca aquí:
-ambos dependen de dónde viva ahora el portafolio y de qué cuenta emita las claves.
+**El portafolio también se movió**, de modo que el disparo de reconstrucción de `daily.yml`
+apunta ya a `Shatior/portafolio`. Se trata como referencia viva por el mismo criterio de arriba:
+es una llamada que tiene que resolver contra un repositorio real, no la mención de un hecho
+pasado. El dominio `vigiabref.com` que cita el comentario de ese paso **no** se toca: es la
+dirección del sitio publicado, no un recurso de GitHub, y nadie ha declarado que haya cambiado.
+
+**Queda pendiente una sola cosa, y es del mantenedor.** Los *secrets* del repositorio
+—`ABUSECH_AUTH_KEY` y `TOKEN_DISPARO_PORTAFOLIO`— no viajan en un ZIP ni en un push, y hay que
+recrearlos en la cuenta nueva. Sin el primero, ThreatFox falla y el informe declara la laguna;
+sin el segundo, el paso del sitio avisa y no enrojece el workflow. Ninguno de los dos rompe el
+pipeline: el diseño de degradación de la entrada 7 cubre exactamente este caso, y por eso la
+migración puede darse por buena antes de que existan.
