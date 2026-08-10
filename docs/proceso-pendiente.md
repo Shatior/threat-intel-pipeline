@@ -22,9 +22,16 @@ separaba una cosa de la otra no era su naturaleza sino **si podía corregirse ya
 
 **El congelamiento se levantó el 2026-08-03** con el cierre de la fase 4, y con él desapareció el
 motivo de la distinción. Desde entonces el criterio de admisión es el que la regla perseguía
-desde el principio: **entra lo que se aplaza, sea de proceso o de producto**. El primero en
-llegar bajo el criterio nuevo fue P-22 —la verificación del efecto del disparo al portafolio—,
-que es de automatización y se anotó aquí declarando la discrepancia con la cabecera anterior.
+desde el principio: **entra lo que se aplaza, sea de proceso o de producto**.
+
+**La práctica se había adelantado a la regla, y eso es lo que la corrige.** La cabecera anterior
+decía que los hallazgos de producto no entran, mientras el documento ya los contenía: la
+*Observación de campo* sobre `reference` de ThreatFox, del **2026-08-02** —anotada un día antes
+de que el congelamiento se levantara y que declara de sí misma «no es un hallazgo de proceso ni
+un defecto»—, y las entradas E-1 y E-2, que son de producto y a las que **§13 remite aquí por su
+nombre** al enumerar lo que queda abierto tras el cierre de la fase. P-22 no fue la primera de su
+clase: fue la primera en **declarar la discrepancia** en vez de convivir con ella. Lo que esta
+cabecera hace, por tanto, no es abrir una puerta nueva sino dejar de negar la que ya se usaba.
 
 Se corrige la cabecera y **no se mueve P-22 a otro sitio**: el documento ya funcionaba de hecho
 como la bandeja que ahora declara ser, y trasladar la entrada habría sostenido una regla que
