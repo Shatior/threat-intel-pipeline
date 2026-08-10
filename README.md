@@ -107,6 +107,27 @@ en CI, como *secret* del repositorio.
 **Nunca en el código ni en un fichero versionado.** Sin ella ThreatFox falla, y el informe declara
 la laguna y publica la parte de CISA KEV.
 
+## El token que reconstruye el sitio
+
+Al publicar un informe, el workflow diario pide a [`Shatior/portafolio`](https://github.com/Shatior/portafolio)
+que se reconstruya, porque el sitio deriva sus cifras del informe y hasta entonces sigue mostrando
+las de la ejecución anterior. Ese disparo necesita un PAT con permiso de escritura de contenido
+sobre el otro repositorio, en el *secret* `TOKEN_DISPARO_PORTAFOLIO`.
+
+**Que los dos repositorios sean públicos no lo hace innecesario, y conviene decir por qué antes de
+que alguien lo retire por sobrante.** La visibilidad gobierna quién puede **leer**, no quién puede
+**actuar**: que cualquiera pueda clonar el portafolio no habilita a nadie a lanzarle un evento de
+repositorio. Son dos ejes distintos, y confundirlos es el atajo natural al ver dos repositorios
+públicos de la misma cuenta.
+
+Tampoco sirve el `GITHUB_TOKEN` que GitHub inyecta solo: está **acotado al repositorio donde se
+ejecuta el workflow**, de modo que aquí solo alcanza a `threat-intel-pipeline` y el disparo contra
+el portafolio se rechaza. Que ambos repositorios pertenezcan a la misma cuenta no cambia nada: el
+alcance es del token, no de quien lo posee.
+
+Sin el token, el informe se publica igual y el paso del sitio **avisa y no enrojece el workflow**:
+un sitio desactualizado es visible, y un informe sin publicar no lo sería.
+
 ## Para leer más
 
 - [`CLAUDE.md`](CLAUDE.md) — la especificación, y la fuente de verdad: qué se recolecta, cómo se
