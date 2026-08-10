@@ -11,7 +11,7 @@ cisa-kev:
   techo_espera: 120      # §14.2: techo de espera para Retry-After
   max_peticiones: 10     # §14.2: tope de peticiones por ejecución (red de seguridad)
   umbral_cobertura: 0.8  # §14.4: umbral por defecto; los umbrales por campo los fija cada colector
-  user_agent: "threat-intel-pipeline/0.1 (+https://github.com/vigiabref/threat-intel-pipeline)"
+  user_agent: "threat-intel-pipeline/0.1 (+https://github.com/Shatior/threat-intel-pipeline)"
 
 threatfox:
   url: "https://threatfox-api.abuse.ch/api/v1/"
@@ -22,4 +22,4 @@ threatfox:
   max_peticiones: 10     # §14.2: tope de peticiones por ejecución (red de seguridad)
   umbral_cobertura: 0.8  # §14.4: umbral por defecto; los umbrales por campo los fija cada colector
   ventana_dias: 5        # §14.1: ventana de recolección de 5 días (holgura sobre la penalización de 72 h)
-  user_agent: "threat-intel-pipeline/0.1 (+https://github.com/vigiabref/threat-intel-pipeline)"
+  user_agent: "threat-intel-pipeline/0.1 (+https://github.com/Shatior/threat-intel-pipeline)"

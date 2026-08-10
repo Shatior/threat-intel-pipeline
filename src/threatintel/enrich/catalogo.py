@@ -43,7 +43,7 @@ CRUDO_GITHUB = "https://raw.githubusercontent.com/{repo}/{sha}/{ruta}"
 
 # Identificación ante MITRE (§12). El mismo formato que usan los colectores: un cliente
 # anónimo es indistinguible de un raspador abusivo.
-USER_AGENT = "threat-intel-pipeline/0.1 (+https://github.com/vigiabref/threat-intel-pipeline)"
+USER_AGENT = "threat-intel-pipeline/0.1 (+https://github.com/Shatior/threat-intel-pipeline)"
 
 # El bundle son decenas de megas por una conexión ajena: el timeout es holgado a propósito, y
 # el tope de peticiones es bajo porque aquí no hay paginación que justifique más de un puñado.

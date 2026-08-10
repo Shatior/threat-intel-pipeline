@@ -1,6 +1,6 @@
 # threat-intel-pipeline
 
-[![CI](https://github.com/vigiabref/threat-intel-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/vigiabref/threat-intel-pipeline/actions/workflows/ci.yml)
+[![CI](https://github.com/Shatior/threat-intel-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/Shatior/threat-intel-pipeline/actions/workflows/ci.yml)
 
 <!--
 INTRODUCCIÓN — pendiente de redactar por el mantenedor.

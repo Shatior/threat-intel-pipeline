@@ -22,7 +22,7 @@ RAIZ_PROYECTO = Path(__file__).resolve().parents[2]
 DIR_CONFIG = RAIZ_PROYECTO / "config"
 
 #: User-Agent descriptivo por defecto para identificarse ante las fuentes (§12).
-USER_AGENT_POR_DEFECTO = "threat-intel-pipeline/0.1 (+https://github.com/vigiabref/threat-intel-pipeline)"
+USER_AGENT_POR_DEFECTO = "threat-intel-pipeline/0.1 (+https://github.com/Shatior/threat-intel-pipeline)"
 
 
 class ConfiguracionFuente(BaseModel):

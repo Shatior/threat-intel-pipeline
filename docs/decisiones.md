@@ -1485,3 +1485,49 @@ encontrar en cualquier diff—, de modo que «aparece en más pasadas» no es lo
 más hallazgos». Para responder la pregunta como estaba escrita haría falta un recuento **por
 categoría**, que el registro decidió expresamente no llevar. Se deja así: cambiar el instrumento
 para que responda mejor a una pregunta es la vía más corta para que deje de medir lo que medía.
+
+---
+
+## 32. La migración de cuenta se hizo por ZIP, y eso costó el historial
+
+**Fecha:** 2026-08-10 · **Contexto:** el repositorio cambia de la cuenta `vigiabref` a
+`Shatior`, y llega con un único fichero: `threat-intel-pipeline-main(1).zip`.
+
+La entrada 26 de `docs/pull-requests/README.md` anticipaba esta migración y planificaba hacerla
+con `git push --mirror`, precisamente porque conserva commits, ramas, etiquetas y autoría. La
+transcripción de los hilos de pull request se escribió para cubrir lo único que ese comando **no**
+conserva. El push no llegó a funcionar y la migración se hizo subiendo un ZIP del árbol de
+trabajo, de modo que se perdió exactamente lo que el plan sí protegía y se salvó lo que el plan
+daba por perdido.
+
+**Lo que se pierde, y no se recupera desde aquí.** El historial de commits, las ramas, las
+etiquetas y la autoría de cada línea. La consecuencia práctica: el proyecto ya no puede demostrar
+con la plataforma *quién* escribió *qué* y *cuándo*. Todo lo que queda de esa cadena son
+declaraciones del propio repositorio.
+
+**Lo que sobrevive.** El árbol completo tal como estaba: código, pruebas, workflows,
+configuración, los ocho informes publicados, el estado de `data/state/` y la documentación —con
+las 25 actas de `docs/revisiones/` y las 26 transcripciones de `docs/pull-requests/`—. La
+verificación disponible es la del propio árbol: las 471 pruebas pasan, `ruff` está limpio y el
+verificador de contratos encuentra el pin del bundle de ATT&CK intacto.
+
+**Qué se reescribe y qué no.** Se reescriben las referencias **vivas**, las que apuntan a un
+recurso que hoy debe resolver: el badge de CI del README y el `User-Agent` con el que el cliente
+se identifica ante CISA, abuse.ch y MITRE (§12). Un `User-Agent` que remite a un repositorio
+ajeno no cumple su función, que es decirle al proveedor a quién reclamar.
+
+No se reescribe ninguna referencia **histórica**: los enlaces a los pull requests originales en
+`docs/protocolo-revision.md`, las URLs dentro de las actas y las transcripciones, ni la línea
+`aprobado_por` de `config/attack_bundle.yaml`. Aquellos pull requests ocurrieron en
+`vigiabref/threat-intel-pipeline` y aquella aprobación la firmó esa cuenta; cambiar la URL no
+movería el original de sitio, solo haría que el registro afirmase algo falso sobre dónde estuvo.
+Un enlace roto que apunta a la verdad es preferible a uno que resuelve hacia una mentira, y el
+criterio es el mismo que gobierna el resto del proyecto: declarar la laguna en vez de rellenarla
+con lo más plausible.
+
+**Queda pendiente, y es una decisión del mantenedor.** El workflow diario dispara la
+reconstrucción de `vigiabref/portafolio` (`daily.yml`), y los *secrets* del repositorio
+—`ABUSECH_AUTH_KEY` y `TOKEN_DISPARO_PORTAFOLIO`— no viajan en un ZIP ni en un push. Sin el
+primero, ThreatFox falla y el informe declara la laguna; sin el segundo, el paso del sitio avisa
+y no enrojece el workflow. Ninguno de los dos rompe el pipeline, y por eso ninguno se toca aquí:
+ambos dependen de dónde viva ahora el portafolio y de qué cuenta emita las claves.
