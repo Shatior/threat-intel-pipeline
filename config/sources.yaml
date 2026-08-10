@@ -1,0 +1,25 @@
+# Configuración de fuentes de datos (§3, §14.2 de CLAUDE.md).
+# Solo parámetros declarativos: endpoints, timeouts, reintentos y política HTTP. Los
+# secretos (p. ej. ABUSECH_AUTH_KEY) NUNCA se escriben aquí; se leen de variables de
+# entorno (§12).
+
+cisa-kev:
+  url: "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
+  timeout: 30            # timeout de socket en segundos (conexión y lectura)
+  max_reintentos: 3      # §14.2: máximo 3 reintentos por petición
+  base_retroceso: 2      # §14.2: retroceso exponencial con base 2 segundos
+  techo_espera: 120      # §14.2: techo de espera para Retry-After
+  max_peticiones: 10     # §14.2: tope de peticiones por ejecución (red de seguridad)
+  umbral_cobertura: 0.8  # §14.4: umbral por defecto; los umbrales por campo los fija cada colector
+  user_agent: "threat-intel-pipeline/0.1 (+https://github.com/vigiabref/threat-intel-pipeline)"
+
+threatfox:
+  url: "https://threatfox-api.abuse.ch/api/v1/"
+  timeout: 30
+  max_reintentos: 3
+  base_retroceso: 2
+  techo_espera: 120
+  max_peticiones: 10     # §14.2: tope de peticiones por ejecución (red de seguridad)
+  umbral_cobertura: 0.8  # §14.4: umbral por defecto; los umbrales por campo los fija cada colector
+  ventana_dias: 5        # §14.1: ventana de recolección de 5 días (holgura sobre la penalización de 72 h)
+  user_agent: "threat-intel-pipeline/0.1 (+https://github.com/vigiabref/threat-intel-pipeline)"

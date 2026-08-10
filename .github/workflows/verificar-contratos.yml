@@ -1,0 +1,44 @@
+# Verificación de contratos de las fuentes contra la realidad (protocolo de revisión).
+#
+# Consulta CISA KEV y ThreatFox en vivo y comprueba que los campos de los que depende el
+# pipeline siguen apareciendo con ese nombre. Si un campo esperado ha desaparecido o cambiado
+# de nombre, el workflow falla de forma visible declarando cuál. Se ejecuta con independencia
+# de que haya cambios en el código: un contrato puede romperse sin que nadie toque nada.
+name: Verificar contratos de fuentes
+
+on:
+  schedule:
+    # Semanal, lunes a las 06:17 UTC. El minuto 17 evita el pico del inicio de hora.
+    - cron: "17 6 * * 1"
+  workflow_dispatch: {}
+
+# Permisos mínimos: el job solo necesita leer el repositorio para clonarlo. No escribe nada.
+permissions:
+  contents: read
+
+# No solaparse consigo mismo (p. ej. una ejecución manual sobre la programada).
+concurrency:
+  group: verificar-contratos
+  cancel-in-progress: false
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Preparar Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+
+      - name: Instalar el paquete
+        run: python -m pip install -e .
+
+      - name: Verificar contratos contra las fuentes vivas
+        # La clave se inyecta desde GitHub Secrets como variable de entorno; el script la lee
+        # de ahí y nunca la imprime. GitHub además enmascara los secretos en los logs.
+        env:
+          ABUSECH_AUTH_KEY: ${{ secrets.ABUSECH_AUTH_KEY }}
+        run: python scripts/verificar_contratos.py

@@ -1,0 +1,513 @@
+# Tabla curada producto → vector de explotación para la ruta B (§5.2).
+#
+# SIN PATRONES Y SIN CAÍDA POR DEFECTO. La clave es el par canonicalizado
+# (vendorProject, product). Un producto ausente NO infiere nada: rellenar con "lo más
+# probable" es lo que prohíbe §5.4. Lo inclasificable se declara aquí con
+# `inespecifico: true`, no se detecta buscando "multiple" en el nombre — eso reintroduciría
+# el patrón sobre nombres que esta sección rechaza.
+#
+# CRITERIO DE CURACIÓN: UNIVOCIDAD DEL VECTOR (§5.2). Un par se cura si, y solo si,
+# determina por sí mismo la clase de vector. No es "componente frente a sistema entero":
+# `Linux / Kernel` se cura porque "núcleo" implica escalada local sin ambigüedad;
+# `Microsoft / Windows` no, porque abarca desde el navegador hasta el arranque. El criterio
+# se ha aplicado a la tabla ENTERA, no caso a caso: cada entrada lleva justificación escrita
+# precisamente para poder auditarla contra él.
+#
+# Solo se admiten las cuatro técnicas de vector de §5.2: T1190, T1203, T1068, T1210.
+#
+# COBERTURA MEDIDA (2026-08-02, catalogVersion 2026.07.29, 1656 entradas) — la real, no
+# la deseada:
+#   - con vector inferido ......... 510 entradas (30.8%)
+#   - inclasificables por el par .. 129 entradas (7.8%) → producto_inespecifico
+#   - resto ....................... → producto_sin_clasificar (crece por la cola de trabajo)
+# No hay techo teórico: hay un suelo inalcanzable —los pares inespecíficos— y el resto
+# depende de cuánto se cure. Cada informe publica la cifra del día, no una proyección.
+
+entradas:
+  - vendor: "Google"
+    product: "Chromium V8"
+    tecnica: "T1203"
+    justificacion: >-
+      Motor de JavaScript de un navegador: se explota al procesar contenido web que el usuario visita.
+  - vendor: "Microsoft"
+    product: "Internet Explorer"
+    tecnica: "T1203"
+    justificacion: >-
+      Navegador: la vulnerabilidad se alcanza al renderizar contenido remoto en el cliente.
+  - vendor: "Adobe"
+    product: "Flash Player"
+    tecnica: "T1203"
+    justificacion: >-
+      Reproductor de contenido en el cliente; se alcanza al abrir un fichero o una página preparada.
+  - vendor: "Microsoft"
+    product: "Office"
+    tecnica: "T1203"
+    justificacion: >-
+      Suite ofimática: la explotación requiere que el usuario abra un documento preparado.
+  - vendor: "Linux"
+    product: "Kernel"
+    tecnica: "T1068"
+    justificacion: >-
+      Núcleo del sistema: todas sus entradas parten de acceso local ya obtenido y elevan privilegios.
+  - vendor: "Microsoft"
+    product: "Win32k"
+    tecnica: "T1068"
+    justificacion: >-
+      Controlador en modo núcleo; sus entradas son elevaciones locales sin excepción.
+  - vendor: "Microsoft"
+    product: "Exchange Server"
+    tecnica: "T1190"
+    justificacion: >-
+      Servidor de correo publicado en el perímetro; alcanzable desde internet sin acceso previo.
+  - vendor: "Adobe"
+    product: "ColdFusion"
+    tecnica: "T1190"
+    justificacion: >-
+      Servidor de aplicaciones web expuesto; la explotación llega por la superficie HTTP.
+  - vendor: "Synacor"
+    product: "Zimbra Collaboration Suite (ZCS)"
+    tecnica: "T1190"
+    justificacion: >-
+      Suite de correo y colaboración publicada en el perímetro.
+  - vendor: "Cisco"
+    product: "IOS and IOS XE Software"
+    tecnica: "T1190"
+    justificacion: >-
+      Sistema de equipamiento de red: sus servicios y administración quedan accesibles desde el borde.
+  - vendor: "Adobe"
+    product: "Acrobat and Reader"
+    tecnica: "T1203"
+    justificacion: >-
+      Lector de documentos en el cliente; se alcanza al abrir un PDF preparado.
+  - vendor: "Oracle"
+    product: "WebLogic Server"
+    tecnica: "T1190"
+    justificacion: >-
+      Servidor de aplicaciones Java expuesto por HTTP/T3; explotación remota sin autenticación.
+  - vendor: "Palo Alto Networks"
+    product: "PAN-OS"
+    tecnica: "T1190"
+    justificacion: >-
+      Sistema de cortafuegos y VPN en el perímetro: es la superficie expuesta por definición.
+  - vendor: "SAP"
+    product: "NetWeaver"
+    tecnica: "T1190"
+    justificacion: >-
+      Plataforma de aplicaciones con interfaz HTTP expuesta; sus entradas se alcanzan por ella.
+  - vendor: "Fortinet"
+    product: "FortiOS"
+    tecnica: "T1190"
+    justificacion: >-
+      Sistema de appliance de borde (cortafuegos y VPN), expuesto a internet.
+  - vendor: "VMware"
+    product: "vCenter Server"
+    tecnica: "T1210"
+    justificacion: >-
+      Gestión de virtualización: servicio remoto interno, no publicado en internet.
+  - vendor: "Microsoft"
+    product: "SharePoint"
+    tecnica: "T1190"
+    justificacion: >-
+      Portal web de colaboración servido por HTTP.
+  - vendor: "Adobe"
+    product: "Reader and Acrobat"
+    tecnica: "T1203"
+    justificacion: >-
+      Mismo producto que 'Acrobat and Reader' con otro orden de nombre en el catálogo.
+  - vendor: "Ivanti"
+    product: "Endpoint Manager Mobile (EPMM)"
+    tecnica: "T1190"
+    justificacion: >-
+      Plataforma publicada para que los dispositivos se registren desde internet.
+  - vendor: "Roundcube"
+    product: "Webmail"
+    tecnica: "T1190"
+    justificacion: >-
+      Cliente de correo web servido desde un servidor publicado.
+  - vendor: "Juniper"
+    product: "Junos OS"
+    tecnica: "T1190"
+    justificacion: >-
+      Sistema de equipamiento de red con servicios alcanzables desde el borde.
+  - vendor: "Oracle"
+    product: "Java SE"
+    tecnica: "T1203"
+    justificacion: >-
+      Entorno de ejecución en el cliente; sus entradas se alcanzan al procesar contenido no confiable.
+  - vendor: "Ivanti"
+    product: "Pulse Connect Secure"
+    tecnica: "T1190"
+    justificacion: >-
+      Concentrador VPN en el perímetro.
+  - vendor: "Android"
+    product: "Framework"
+    tecnica: "T1068"
+    justificacion: >-
+      Componente del sistema en el dispositivo; sus entradas son elevaciones locales.
+  - vendor: "Google"
+    product: "Chromium"
+    tecnica: "T1203"
+    justificacion: >-
+      Navegador: explotación al renderizar contenido web.
+  - vendor: "Cisco"
+    product: "Adaptive Security Appliance (ASA) and Firepower Threat Defense (FTD)"
+    tecnica: "T1190"
+    justificacion: >-
+      Cortafuegos y VPN en el perímetro.
+  - vendor: "Arm"
+    product: "Mali Graphics Processing Unit (GPU)"
+    tecnica: "T1068"
+    justificacion: >-
+      Controlador de GPU en modo núcleo: elevación de privilegios local.
+  - vendor: "Cisco"
+    product: "IOS XR"
+    tecnica: "T1190"
+    justificacion: >-
+      Sistema de equipamiento de red de operador, alcanzable por sus servicios.
+  - vendor: "Mozilla"
+    product: "Firefox and Thunderbird"
+    tecnica: "T1203"
+    justificacion: >-
+      Navegador y cliente de correo: contenido remoto procesado en el cliente.
+  - vendor: "Cisco"
+    product: "IOS software"
+    tecnica: "T1190"
+    justificacion: >-
+      Sistema de equipamiento de red, alcanzable por sus servicios.
+  - vendor: "Langflow"
+    product: "Langflow"
+    tecnica: "T1190"
+    justificacion: >-
+      Aplicación web servida por HTTP; explotación por su superficie expuesta.
+  - vendor: "Microsoft"
+    product: "SharePoint Server"
+    tecnica: "T1190"
+    justificacion: >-
+      Portal web de colaboración publicado; misma clase que 'SharePoint'.
+  - vendor: "SolarWinds"
+    product: "Web Help Desk"
+    tecnica: "T1190"
+    justificacion: >-
+      Aplicación web de soporte, habitualmente publicada.
+  - vendor: "Apache"
+    product: "Tomcat"
+    tecnica: "T1190"
+    justificacion: >-
+      Contenedor de servlets que sirve aplicaciones web por HTTP.
+  - vendor: "Mozilla"
+    product: "Firefox"
+    tecnica: "T1203"
+    justificacion: >-
+      Navegador: explotación al renderizar contenido web.
+  - vendor: "Apache"
+    product: "Struts"
+    tecnica: "T1190"
+    justificacion: >-
+      Marco de aplicaciones web: la explotación llega por peticiones HTTP.
+  - vendor: "Cisco"
+    product: "Small Business RV160, RV260, RV340, and RV345 Series Routers"
+    tecnica: "T1190"
+    justificacion: >-
+      Enumera series concretas de routers de borde con administración web alcanzable.
+  - vendor: "Fortinet"
+    product: "FortiOS and FortiProxy"
+    tecnica: "T1190"
+    justificacion: >-
+      Appliance de borde; curada por la regla de relevancia (ransomware conocido).
+  - vendor: "Veeam"
+    product: "Backup & Replication"
+    tecnica: "T1210"
+    justificacion: >-
+      Servidor de copias en red interna; regla de relevancia (ransomware).
+  - vendor: "QNAP"
+    product: "Photo Station"
+    tecnica: "T1190"
+    justificacion: >-
+      Aplicación web de un NAS, habitualmente publicada; regla de relevancia.
+  - vendor: "QNAP"
+    product: "Network Attached Storage (NAS)"
+    tecnica: "T1190"
+    justificacion: >-
+      Almacenamiento en red con interfaz publicada; regla de relevancia.
+  - vendor: "Accellion"
+    product: "FTA"
+    tecnica: "T1190"
+    justificacion: >-
+      Appliance de transferencia de ficheros publicada; regla de relevancia.
+  - vendor: "SimpleHelp "
+    product: "SimpleHelp"
+    tecnica: "T1190"
+    justificacion: >-
+      Servidor de soporte remoto publicado; regla de relevancia.
+  - vendor: "JetBrains"
+    product: "TeamCity"
+    tecnica: "T1190"
+    justificacion: >-
+      Servidor de integración continua con interfaz web; regla de relevancia.
+  - vendor: "SmarterTools"
+    product: "SmarterMail"
+    tecnica: "T1190"
+    justificacion: >-
+      Servidor de correo publicado; regla de relevancia.
+  - vendor: "Oracle"
+    product: "E-Business Suite"
+    tecnica: "T1190"
+    justificacion: >-
+      Suite empresarial con interfaz HTTP expuesta; regla de relevancia.
+  - vendor: "VMware"
+    product: "ESXi"
+    tecnica: "T1210"
+    justificacion: >-
+      Hipervisor gestionado en red interna; regla de relevancia.
+  - vendor: "Qlik"
+    product: "Sense"
+    tecnica: "T1190"
+    justificacion: >-
+      Plataforma de analítica con interfaz web; regla de relevancia.
+  - vendor: "Atlassian"
+    product: "Confluence Data Center and Server"
+    tecnica: "T1190"
+    justificacion: >-
+      Wiki corporativa servida por HTTP; regla de relevancia.
+  - vendor: "Veritas"
+    product: "Backup Exec Agent"
+    tecnica: "T1210"
+    justificacion: >-
+      Agente de copias en red interna; regla de relevancia.
+  - vendor: "Mitel"
+    product: "MiVoice Connect"
+    tecnica: "T1190"
+    justificacion: >-
+      Plataforma de comunicaciones con servicios expuestos; regla de relevancia.
+  - vendor: "Kaseya"
+    product: "Virtual System/Server Administrator (VSA)"
+    tecnica: "T1190"
+    justificacion: >-
+      Plataforma de administración remota publicada; regla de relevancia.
+  - vendor: "SonicWall"
+    product: "SonicWall Email Security"
+    tecnica: "T1190"
+    justificacion: >-
+      Appliance de seguridad de correo en el perímetro; regla de relevancia.
+  - vendor: "ConnectWise"
+    product: "ScreenConnect"
+    tecnica: "T1190"
+    justificacion: >-
+      Servidor de acceso remoto publicado; regla de relevancia.
+  - vendor: "Fortra"
+    product: "GoAnywhere MFT"
+    tecnica: "T1190"
+    justificacion: >-
+      Transferencia gestionada de ficheros, publicada; regla de relevancia.
+  - vendor: "Ivanti"
+    product: "Connect Secure, Policy Secure, and ZTA Gateways"
+    tecnica: "T1190"
+    justificacion: >-
+      Pasarelas de acceso remoto en el perímetro; regla de relevancia.
+  - vendor: "SonicWall"
+    product: "SonicOS"
+    tecnica: "T1190"
+    justificacion: >-
+      Sistema de appliance de borde; regla de relevancia.
+  - vendor: "Mitel"
+    product: "MiCollab"
+    tecnica: "T1190"
+    justificacion: >-
+      Plataforma de colaboración con servicios expuestos; regla de relevancia.
+  - vendor: "CyberPersons"
+    product: "CyberPanel"
+    tecnica: "T1190"
+    justificacion: >-
+      Panel de control web publicado; regla de relevancia.
+  - vendor: "Ivanti"
+    product: "Connect Secure and Policy Secure"
+    tecnica: "T1190"
+    justificacion: >-
+      Pasarelas de acceso remoto en el perímetro; regla de relevancia.
+
+  # --- Inclasificables por la vía del par (§5.3: producto_inespecifico) ---
+  # Los 33 pares que la medición del 2026-08-02 identificó, no una muestra: declarar
+  # solo unos pocos dejaría el resto atrapado en la cola de trabajo para siempre, y una
+  # cola con elementos que jamás se cierran deja de leerse como tarea pendiente.
+  - vendor: "Apple"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Qualcomm"
+    product: "Multiple Chipsets"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Fortinet"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Zyxel"
+    product: "Multiple Firewalls"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "GIGABYTE"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "D-Link"
+    product: "Multiple Routers"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "VMware"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Cleo"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "D-Link"
+    product: "Multiple NAS Devices"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "DrayTek"
+    product: "Multiple Vigor Routers"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "GeoVision"
+    product: "Multiple Devices"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "NETGEAR"
+    product: "Multiple Devices"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "TP-Link"
+    product: "Multiple Routers"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Zyxel"
+    product: "Multiple Network-Attached Storage (NAS) Devices"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Cisco"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Crestron"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "D-Link and TRENDnet"
+    product: "Multiple Devices"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Hikvision"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Ivanti"
+    product: "MobileIron Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "MediaTek"
+    product: "Multiple Chipsets"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Mozilla"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "NETGEAR"
+    product: "Multiple Routers"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Oracle"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Reolink"
+    product: "Multiple IP Cameras"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Rockwell"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Ruckus Wireless"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "SAP"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Sitecore"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "SugarCRM"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "TP-Link"
+    product: "Multiple Archer Devices"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "WSO2"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Zyxel"
+    product: "Multiple Products"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+  - vendor: "Samsung"
+    product: "Mobile Devices"
+    inespecifico: true
+    justificacion: >-
+      El par no designa un producto cuya exposición pueda determinarse.
+
+# NO CURADOS: fallan el criterio de univocidad del vector (§5.2). Quedan como
+# `producto_sin_clasificar` —trabajo pendiente que un humano puede afinar—, no como
+# inespecíficos: el par SÍ designa un producto; lo que no determina es la clase de vector.
+#
+#   Sistemas operativos completos, que abarcan varias clases de vector:
+#     - Microsoft / Windows (172 entradas, el par más frecuente del catálogo): va de la
+#       elevación local en el núcleo al servicio de red alcanzable en remoto.
+#     - Apple / iOS, iPadOS, and macOS (11); Apple / iOS (8); Apple / iOS and iPadOS (5);
+#       Apple / macOS (5).
+#     - Microsoft / Defender (5): mezcla elevación local y ejecución al analizar contenido.
+#
+#   Nombres de familia o suite, que agrupan productos heterogéneos:
+#     - Zoho / ManageEngine (6): cubre decenas de productos con exposiciones distintas.
+#     - Oracle / Fusion Middleware (6): plataforma que agrupa componentes heterogéneos.
+#   Ambos estaban curados como T1190 en la versión anterior de esta tabla y se RETIRAN al
+#   aplicar el criterio: un criterio aplicado de forma desigual es peor que no tenerlo.

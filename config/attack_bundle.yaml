@@ -1,0 +1,95 @@
+# Catálogo MITRE ATT&CK — fijado por hash y línea base medida (§5.1, §5.5).
+#
+# El pin es el SHA de commit, no una etiqueta: una etiqueta es mutable, y "misma versión"
+# no garantiza "mismos bytes". Solo un humano sube este pin (§5.5); el "refresco semanal"
+# de §3.3 significa COMPROBAR si hay versión nueva, no adoptarla. Cuando el pin cambia, el
+# informe lo declara como evento (§8.2).
+
+bundle:
+  repositorio: "mitre-attack/attack-stix-data"
+  ruta: "enterprise-attack/enterprise-attack.json"
+  commit_sha: "a6c366439edee3a87b79cf90dc0b93f5d7975956"
+  digest_sha256: "bdf1ce86a4e604214c5076d37ae4dcb322678afc528df8492e6fdc1b554f5da3"
+  version_attack: "19.1"          # colección "Enterprise ATT&CK"
+  fecha_commit: "2026-06-25"      # "docs: update doc links for mitre-attack org migration"
+  tamano_mb_observado: 50.8       # motiva la caché obligatoria de §5.5
+
+  # Trazabilidad de la aprobación. Un pin sin ella es indistinguible de uno copiado de
+  # cualquier sitio: estos valores solo valen si consta quién decidió adoptarlos.
+  aprobacion:
+    aprobado_por: "mantenedor del proyecto (vigiabref)"
+    fecha_aprobacion: "2026-08-02"
+    procedencia: >-
+      Resueltos contra la fuente viva: API de GitHub para el SHA del último commit de la
+      rama por defecto (master), y descarga del fichero EN ESE COMMIT para el digest y la
+      versión. No proceden de documentación ni de una copia local.
+    ejecucion_que_los_produjo: "actions/runs/30732436925"
+    nota_digest: >-
+      El digest se toma del fichero en el commit fijado, no en la rama. Un digest de rama
+      caduca en cuanto MITRE hace push y el pin dejaría de ser reproducible, que es
+      exactamente lo que un pin existe para evitar.
+
+# Línea base de las propiedades del catálogo, medida el 2026-08-02 sobre el bundle
+# Enterprise vivo. Se declara para que un SALTO FUTURO SEA DETECTABLE: si una versión
+# multiplicara los canons ambiguos, la metodología se abstendría sobre una parte creciente
+# del panorama y el único aviso sería la comparación contra estos números (§5.1, §11.3).
+#
+# Los recuentos de objetos son además una SEGUNDA BARRERA independiente del digest: si el
+# bundle descargado no los reproduce, algo cambió entre la medición y la ejecución. El
+# digest ya lo detectaría, pero es una comprobación distinta y barata, y dos barreras
+# independientes fallan juntas con mucha menos probabilidad que una sola.
+linea_base:
+  fecha_medicion: "2026-08-02"
+  objetos_totales: 25843
+  objetos_software: 824
+  objetos_revocados_o_deprecados: 3
+  objetos_software_vivos: 821
+  vivos_con_x_mitre_aliases: 808
+  canons_distintos: 1096
+  canons_ambiguos: 2              # 0,18% — dnsmessenger, spicyomelette
+  canons_ambiguos_sin_excluir: 4  # excluir revocados reduce la ambigüedad a la mitad
+  relaciones_uses_software_tecnica: 11211
+  tecnicas_por_software_media: 13.7
+  software_vivo_sin_tecnicas: 0
+  # Identidad de los objetos Software retirados, medida sobre el bundle fijado (no un recuento).
+  # La comprueba la tercera verificación de forma de §11.3: que estos tres SIGUEN presentes y
+  # SIGUEN marcados. Nunca que sean los únicos retirados — exigir igualdad del conjunto
+  # convertiría en rojo cada deprecación futura de MITRE, que es evolución normal del catálogo
+  # y no una rotura de contrato.
+  # Los dos marcadores están representados a propósito: si una remedición dejara alguno sin
+  # cubrir, su desaparición volvería invisible.
+  objetos_retirados:
+    - id: "malware--310f437b-29e7-4844-848c-7220868d074a"   # Darkmoon
+      marcador: "revoked"
+    - id: "malware--911fe4c3-444d-4e92-83b8-cc761ac5fd3b"   # Ngrok
+      marcador: "revoked"
+    - id: "malware--93ae2edf-a598-4d2d-acd7-bcae0c021923"   # TRITON
+      marcador: "x_mitre_deprecated"
+
+# --------------------------------------------------------------------------------------
+# PROCEDIMIENTO DE ACTUALIZACIÓN DEL PIN
+# --------------------------------------------------------------------------------------
+# Sin este apartado el pin se congela para siempre: nadie sabría cómo descongelarlo, y la
+# fijación —que existe para dar control— se convertiría en parálisis.
+#
+# 1. CUÁNDO SE REVISA. Semanalmente, en el workflow de verificación de contratos (§11.3),
+#    que comprueba si la rama por defecto de `mitre-attack/attack-stix-data` apunta a un
+#    commit distinto del fijado. La revisión es automática; la ADOPCIÓN no lo es.
+#
+# 2. QUIÉN APRUEBA. Un humano, siempre (§5.5). Un agente puede resolver los tres valores
+#    contra la fuente viva y proponerlos; no puede fijarlos por su cuenta. Al adoptarlos se
+#    actualiza el bloque `aprobacion` con quién y cuándo, no solo los valores.
+#
+# 3. QUÉ SE REVISA ANTES DE ADOPTAR. Un cambio de versión de ATT&CK PUEDE ALTERAR MAPEOS
+#    EXISTENTES: una familia puede ganar o perder técnicas, cambiar de alias o pasar a
+#    revocada sin que la amenaza haya cambiado en absoluto. Por eso, al subir el pin:
+#      - se vuelve a medir la línea base y se actualiza este fichero;
+#      - se compara el número de canons ambiguos con el anterior (un salto significa que la
+#        metodología empezará a abstenerse sobre más familias, en silencio);
+#      - el informe de la primera ejecución con el pin nuevo DECLARA el cambio de versión
+#        como evento (§8.2), para que un mapeo que aparece o desaparece sea atribuible al
+#        catálogo y no se lea como un cambio en la amenaza.
+#
+# 4. QUÉ NO SE HACE NUNCA. Adoptar automáticamente el último commit; fijar por etiqueta en
+#    lugar de por SHA; actualizar los valores sin actualizar la línea base; ni subir el pin
+#    sin dejar constancia de la aprobación.

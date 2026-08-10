@@ -1,0 +1,282 @@
+# Captura manual de fixtures de las fuentes (§14.5). Solo ejecución manual: no está
+# programado y no se dispara en push ni en pull_request. Consulta las fuentes, reduce las
+# respuestas a una selección representativa y sube una rama con ellas.
+#
+# La clave ABUSECH_AUTH_KEY solo se usa como cabecera de la petición a ThreatFox; nunca se
+# imprime ni se escribe en ficheros. Las acciones de terceros se fijan por hash de commit,
+# con la etiqueta de versión como comentario, igual que en el CI.
+name: Capturar fixtures
+
+on:
+  workflow_dispatch:
+
+# Sin permisos por defecto; el trabajo eleva solo los que necesita.
+permissions: {}
+
+jobs:
+  capturar:
+    name: Capturar y proponer fixtures
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # crear la rama y hacer commit de las fixtures
+      pull-requests: write # intentar abrir el pull request (si el repo lo permite)
+    env:
+      URL_CISA_KEV: "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
+      URL_THREATFOX: "https://threatfox-api.abuse.ch/api/v1/"
+      # Ventana amplia para que la muestra contenga varios tipos de IOC (dominio, hash, url, ip:port).
+      DIAS_THREATFOX: "7"
+      # Retención: número de ramas fixtures/captura-* que se conservan; el resto se elimina.
+      RETENER_RAMAS: "3"
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Configurar Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+
+      - name: Descargar el feed de CISA KEV
+        run: |
+          set -euo pipefail
+          curl -sS -f --max-time 60 -o "$RUNNER_TEMP/cisa_kev_raw.json" "$URL_CISA_KEV"
+          echo "CISA KEV descargado ($(wc -c < "$RUNNER_TEMP/cisa_kev_raw.json") bytes)"
+
+      - name: Consultar ThreatFox y verificar el estado de aplicación
+        env:
+          ABUSECH_AUTH_KEY: ${{ secrets.ABUSECH_AUTH_KEY }}
+        run: |
+          set -euo pipefail
+          # Enmascara la clave en el log por si acaso (GitHub ya la enmascara por ser secreto).
+          echo "::add-mask::$ABUSECH_AUTH_KEY"
+          if [ -z "$ABUSECH_AUTH_KEY" ]; then
+            echo "::error::El secreto ABUSECH_AUTH_KEY no está definido en el repositorio."
+            exit 1
+          fi
+          # La clave viaja solo en la cabecera; no se usa -v/--trace para no volcarla al log.
+          codigo=$(curl -sS --max-time 60 -o "$RUNNER_TEMP/threatfox_raw.json" -w "%{http_code}" \
+            -X POST \
+            -H "Auth-Key: $ABUSECH_AUTH_KEY" \
+            -H "Content-Type: application/json" \
+            --data "{\"query\": \"get_iocs\", \"days\": ${DIAS_THREATFOX}}" \
+            "$URL_THREATFOX")
+          echo "ThreatFox respondió HTTP $codigo"
+          if [ "$codigo" != "200" ]; then
+            echo "::error::ThreatFox devolvió HTTP $codigo; no se capturan fixtures."
+            exit 1
+          fi
+          # Verificación del estado de aplicación (§14.2): un HTTP 200 puede envolver un
+          # error de autenticación o de límite de tasa en query_status. Se muestra el
+          # estado devuelto, nunca la clave.
+          python - "$RUNNER_TEMP/threatfox_raw.json" <<'PY'
+          import json
+          import sys
+
+          try:
+              datos = json.load(open(sys.argv[1], encoding="utf-8"))
+          except (OSError, json.JSONDecodeError) as exc:
+              print(f"::error::Respuesta de ThreatFox no interpretable como JSON: {exc}")
+              sys.exit(1)
+
+          estado = datos.get("query_status")
+          if estado != "ok":
+              print(
+                  f"::error::ThreatFox devolvió query_status={estado!r} "
+                  "(posible error de autenticación o límite de tasa). No se capturan fixtures."
+              )
+              sys.exit(1)
+          print(f"ThreatFox query_status=ok; {len(datos.get('data', []))} registros recibidos")
+          PY
+
+      - name: Reducir respuestas y construir las fixtures
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import datetime
+          import json
+          import os
+
+          temp = os.environ["RUNNER_TEMP"]
+          destino = "tests/fixtures"
+          os.makedirs(destino, exist_ok=True)
+
+          # --- CISA KEV: pocas vulnerabilidades representativas -------------------------
+          kev = json.load(open(f"{temp}/cisa_kev_raw.json", encoding="utf-8"))
+          vulnerabilidades = kev.get("vulnerabilities", [])[:3]
+          kev_reducido = {
+              "title": kev.get("title"),
+              "catalogVersion": kev.get("catalogVersion"),
+              "dateReleased": kev.get("dateReleased"),
+              "count": len(vulnerabilidades),
+              "vulnerabilities": vulnerabilidades,
+          }
+          with open(f"{destino}/cisa_kev.json", "w", encoding="utf-8") as fichero:
+              json.dump(kev_reducido, fichero, ensure_ascii=False, indent=2)
+
+          # --- ThreatFox: un registro por tipo de IOC, para cubrir varios tipos ---------
+          # Se elimina 'reporter' para no versionar datos personales (§14.5).
+          campos_personales = {"reporter"}
+          tf = json.load(open(f"{temp}/threatfox_raw.json", encoding="utf-8"))
+          datos_tf = tf.get("data", [])
+
+          def primero_por_tipo(tipo):
+              for registro in datos_tf:
+                  if registro.get("ioc_type") == tipo:
+                      return registro
+              return None
+
+          tipos_deseados = ["domain", "url", "sha256_hash", "sha1_hash", "md5_hash", "ip:port"]
+          seleccion = []
+          tipos_obtenidos = []
+          for tipo in tipos_deseados:
+              registro = primero_por_tipo(tipo)
+              if registro is not None:
+                  seleccion.append({k: v for k, v in registro.items() if k not in campos_personales})
+                  tipos_obtenidos.append(tipo)
+
+          faltan = [t for t in tipos_deseados if t not in tipos_obtenidos]
+          if faltan:
+              print(f"::warning::No se encontraron IOCs de estos tipos en la ventana: {faltan}")
+          print(f"Tipos de IOC obtenidos: {tipos_obtenidos}")
+
+          # Registros sintéticos para ejercitar §14.4: uno inválido (confidence_level fuera
+          # de rango → degrada a parcial) y uno de tipo no soportado por el esquema (se
+          # cuenta aparte, sin degradar el estado).
+          # Incluyen first_seen y malware para no arrastrar la cobertura de esos campos
+          # esperados por debajo del umbral (§14.4) con la muestra reducida.
+          registro_invalido = {
+              "id": "0i",
+              "ioc": "invalido.example.com",
+              "ioc_type": "domain",
+              "threat_type": "payload",
+              "malware": "win.sintetico",
+              "malware_printable": "Registro inválido (confidence fuera de rango) para §14.4",
+              "confidence_level": 150,
+              "first_seen": "2026-08-01 00:00:00 UTC",
+          }
+          registro_no_soportado = {
+              "id": "0t",
+              "ioc": "1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90a",
+              "ioc_type": "sha3_384_hash",
+              "threat_type": "payload",
+              "malware": "win.sintetico",
+              "malware_printable": "Registro de tipo no soportado por el esquema para §14.4",
+              "confidence_level": 60,
+              "first_seen": "2026-08-01 00:00:00 UTC",
+          }
+          sinteticos = [registro_invalido, registro_no_soportado]
+          with open(f"{destino}/threatfox.json", "w", encoding="utf-8") as fichero:
+              json.dump({"query_status": "ok", "data": [*seleccion, *sinteticos]}, fichero, ensure_ascii=False, indent=2)
+
+          # --- README de las fixtures: origen exacto de cada registro -------------------
+          fecha = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d")
+          dias = os.environ["DIAS_THREATFOX"]
+          lineas = [
+              "# Fixtures de fuentes",
+              "",
+              "Respuestas reales de cada fuente, capturadas por el workflow `capturar-fixtures`",
+              "y reducidas a una selección representativa para los tests sin acceso a red (§14.5).",
+              "Se regeneran ejecutando ese workflow; no se editan a mano.",
+              "",
+              f"- Fecha de captura: {fecha} (UTC)",
+              "- No contienen claves de API, cabeceras de autenticación ni datos personales.",
+              "",
+              "## CISA KEV",
+              "",
+              f"- Origen: `GET {os.environ['URL_CISA_KEV']}`",
+              f"- Selección: las {len(vulnerabilidades)} primeras entradas del catálogo "
+              f"(catalogVersion `{kev.get('catalogVersion')}`).",
+              "- Registros:",
+          ]
+          for vulnerabilidad in vulnerabilidades:
+              lineas.append(
+                  f"  - `{vulnerabilidad.get('cveID')}` — {vulnerabilidad.get('vendorProject')} "
+                  f"{vulnerabilidad.get('product')}"
+              )
+          lineas += [
+              "",
+              "## ThreatFox",
+              "",
+              f"- Origen: `POST {os.environ['URL_THREATFOX']}` con "
+              f'`{{"query": "get_iocs", "days": {dias}}}` y cabecera `Auth-Key`.',
+              "- Selección: un registro por cada `ioc_type` disponible, para cubrir varios tipos.",
+              "- Registros:",
+          ]
+          for registro in seleccion:
+              lineas.append(
+                  f"  - `id={registro.get('id')}` `ioc_type={registro.get('ioc_type')}` "
+                  f"— {registro.get('malware_printable')}"
+              )
+          lineas += [
+              "  - `id=0i` `ioc_type=domain` — registro sintético inválido (`confidence_level` "
+              "fuera de rango), añadido a mano para ejercitar §14.4 (no procede de la API).",
+              "  - `id=0t` `ioc_type=sha3_384_hash` — registro sintético de tipo no soportado por "
+              "el esquema, añadido a mano para ejercitar §14.4 (no procede de la API).",
+              "",
+          ]
+          with open(f"{destino}/README.md", "w", encoding="utf-8") as fichero:
+              fichero.write("\n".join(lineas))
+
+          print("Fixtures escritas en tests/fixtures/")
+          PY
+
+      - name: Comprobar que la clave no aparece en las fixtures
+        env:
+          ABUSECH_AUTH_KEY: ${{ secrets.ABUSECH_AUTH_KEY }}
+        run: |
+          set -euo pipefail
+          echo "::add-mask::$ABUSECH_AUTH_KEY"
+          if grep -rIlF -- "$ABUSECH_AUTH_KEY" tests/fixtures/; then
+            echo "::error::Se detectó la clave en tests/fixtures/; se aborta."
+            exit 1
+          fi
+          echo "Comprobación superada: la clave no aparece en las fixtures."
+
+      - name: Subir la rama e intentar abrir el pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          fecha="$(date -u +%Y%m%d-%H%M%S)"
+          rama="fixtures/captura-${fecha}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$rama"
+          # Solo se añaden las fixtures: nunca respuestas crudas ni estado runtime.
+          git add tests/fixtures/cisa_kev.json tests/fixtures/threatfox.json tests/fixtures/README.md
+          if git diff --cached --quiet; then
+            echo "No hay cambios en las fixtures; no se sube ninguna rama."
+            exit 0
+          fi
+          git commit -m "Actualiza fixtures capturadas de CISA KEV y ThreatFox"
+          git push -u origin "$rama"
+          echo "Rama de fixtures subida: $rama"
+          echo "RAMA_FIXTURES=$rama" >> "$GITHUB_ENV"
+          # Intento de PR. Si el repo no permite que Actions abra PRs, no se falla el
+          # workflow: la rama ya está subida y se informa su nombre para abrir el PR a mano.
+          cuerpo="Fixtures recapturadas por el workflow capturar-fixtures (§14.5). Revisar y ajustar los tests si cambian los recuentos. Sin claves de API ni datos personales."
+          if gh pr create --base "${{ github.ref_name }}" --head "$rama" \
+              --title "Actualiza fixtures capturadas de CISA KEV y ThreatFox" \
+              --body "$cuerpo" 2> "$RUNNER_TEMP/pr_err.txt"; then
+            echo "Pull request abierto."
+          else
+            echo "::warning::No se pudo abrir el PR automáticamente (¿permiso de Actions deshabilitado?). La rama '$rama' está subida; abre el PR a mano."
+            echo "Compara y abre el PR en: ${{ github.server_url }}/${{ github.repository }}/compare/${{ github.ref_name }}...$rama?expand=1"
+            cat "$RUNNER_TEMP/pr_err.txt" || true
+          fi
+
+      - name: Retener solo las ramas de captura recientes
+        run: |
+          set -euo pipefail
+          # Política de retención (§ tooling): se conservan solo las RETENER_RAMAS ramas
+          # fixtures/captura-* más recientes (el nombre lleva marca temporal, así que un
+          # orden lexicográfico descendente basta). El resto se elimina para que no se
+          # acumulen. La rama recién creada es la más nueva, por lo que nunca se borra.
+          retener="${RETENER_RAMAS:-3}"
+          mapfile -t ramas < <(git ls-remote --heads origin 'fixtures/captura-*' | sed 's#.*refs/heads/##' | sort -r)
+          echo "Ramas de captura en el remoto: ${#ramas[@]}; se conservan las ${retener} más recientes."
+          for vieja in "${ramas[@]:retener}"; do
+            echo "Retención: eliminando rama antigua $vieja"
+            git push origin --delete "$vieja" || echo "::warning::No se pudo eliminar la rama $vieja"
+          done

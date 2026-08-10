@@ -1,0 +1,231 @@
+# Workflow diario de producción (§11.2). Ejecuta el ciclo completo, publica el informe de §8
+# y hace commit de `reports/` y del estado mínimo versionado de §9.
+#
+# **No fuerza el modo del informe**: lo determina el pipeline a partir del estado, conforme a
+# §6.2. La regeneración de la línea base a demanda (§6.6) se solicita por la entrada explícita
+# de abajo, nunca por omisión ni por efecto colateral de otro parámetro: es la única vía por la
+# que un humano puede sustituir un diferencial por un censo, y tiene que quedar registrada en
+# la invocación. La regeneración **periódica** no pasa por aquí — la evalúa el pipeline contra
+# `linea_base_vigente` (§6.6)—, de modo que no hay un segundo lugar donde se decida el modo ni
+# un cron cuya no ejecución la aplace en silencio.
+name: Informe diario (producción)
+
+on:
+  schedule:
+    # 06:00 UTC (§11.2). GitHub Actions no arranca a la hora exacta y la cola habitual va de
+    # minutos a decenas de minutos: el intervalo real entre dos ejecuciones es 24 h ± ruido, y
+    # por eso el umbral de advertencia de §6.5 está en 36 h y no en 24.
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+    inputs:
+      regenerar_linea_base:
+        description: >-
+          Sustituye el diferencial por un censo de línea base. Desactivado por defecto: es la
+          única vía por la que un humano puede pedirlo, y queda registrada en la invocación.
+        type: boolean
+        default: false
+
+# Sin permisos por defecto; el único trabajo eleva solo lo que necesita (§11.3).
+permissions: {}
+
+# Dos ejecuciones simultáneas competirían por el mismo commit de `reports/` y `data/state/`, y
+# la perdedora reescribiría el estado de la ganadora. No se cancela la que ya corre: abandonarla
+# a medias dejaría el estado escrito y el informe sin publicar, que es la peor de las dos mitades.
+concurrency:
+  group: informe-diario
+  cancel-in-progress: false
+
+jobs:
+  informe:
+    name: Ejecutar el pipeline y publicar el informe
+    runs-on: ubuntu-latest
+    permissions:
+      # Lo mínimo para lo que este workflow hace: leer el repositorio y commitear el producto.
+      contents: write
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Configurar Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+
+      - name: Leer el pin del catálogo ATT&CK
+        id: pin
+        run: |
+          set -euo pipefail
+          # La clave de caché es el **hash fijado** del bundle (§5.5), no la fecha ni la versión:
+          # así subir el pin invalida la entrada sin borrar nada, y dos pines conviven sin
+          # pisarse. Se lee del propio fichero de configuración para que no haya dos sitios
+          # donde vivir la misma magnitud.
+          #
+          # Con `grep`, no con PyYAML: este paso corre **antes** de instalar el paquete, y
+          # PyYAML es dependencia del paquete y no del intérprete que trae `setup-python`. La
+          # primera versión usaba `python -c "import yaml"` aquí y habría muerto todos los días
+          # antes de recolectar nada, atribuyendo el rojo a un «fallo total de recolección» que
+          # nunca ocurrió.
+          sha=$(grep -E '^[[:space:]]+commit_sha:' config/attack_bundle.yaml | head -1 | tr -d '" ' | cut -d: -f2)
+          if ! printf '%s' "$sha" | grep -qE '^[0-9a-f]{40}$'; then
+            echo "::error::el pin del bundle no es un SHA de 40 dígitos: '$sha'"
+            exit 1
+          fi
+          echo "commit_sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "Pin del bundle: $sha"
+
+      - name: Restaurar la caché del bundle ATT&CK
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          # Debe coincidir con el directorio que construye `enrich/catalogo.py`
+          # (`<dir_cache>/attack`). Si divergen, la caché no acierta nunca y se descargan
+          # 50,8 MB diarios **sin que nada falle**, que es la peor forma de romperse.
+          path: data/cache/attack
+          # Indexada por el hash fijado (§5.5). Sin esta caché, un runner efímero descargaría
+          # los 50,8 MB del bundle **todos los días** —~18,5 GB al año de infraestructura
+          # ajena—, que es lo que §14.7 llama consumo injustificado.
+          #
+          # Sin `restore-keys`: una clave laxa serviría el bundle de **otro** pin, y el informe
+          # declararía un digest que no corresponde a lo que mapeó.
+          key: attack-bundle-${{ steps.pin.outputs.commit_sha }}
+
+      - name: Instalar el paquete
+        run: python -m pip install -e "."
+
+      - name: Ejecutar el ciclo completo y publicar el informe
+        id: pipeline
+        env:
+          # Nunca en el workflow: solo por GitHub Secrets (§12). El enmascarado evita que un
+          # eco accidental la imprima en el log público.
+          ABUSECH_AUTH_KEY: ${{ secrets.ABUSECH_AUTH_KEY }}
+          LOG_LEVEL: INFO
+        run: |
+          set -uo pipefail
+          echo "::add-mask::$ABUSECH_AUTH_KEY"
+          if [ "${{ inputs.regenerar_linea_base }}" = "true" ]; then
+            echo "::notice::Regeneración de la línea base solicitada explícitamente (§6.6)"
+            set +e
+            python -m threatintel run --regenerar-linea-base
+            codigo=$?
+          else
+            set +e
+            python -m threatintel run
+            codigo=$?
+          fi
+          set -e
+          echo "codigo=$codigo" >> "$GITHUB_OUTPUT"
+          echo "Código de salida del pipeline: $codigo"
+
+      - name: Commitear el informe y el estado versionado
+        id: commit
+        # `always()`: el commit ocurre **también cuando el pipeline falla**. Un fallo total
+        # publica igualmente su informe (§14.3) —el registro de que el sistema intentó
+        # recolectar y no pudo tiene valor de auditoría— y escribe el resultado de recolección,
+        # que es lo que deja rastro del día en que la fuente no llegó. Lo que ese caso no toca
+        # es el estado de indicadores, y de eso se encarga el pipeline, no este paso.
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Rutas explícitas, nunca `git add -A`: `data/cache/` está en .gitignore por volumen
+          # (§9), y un `add` indiscriminado es justo el accidente que ese ignore evita que
+          # importe. Lo que se versiona es el producto y el estado mínimo.
+          #
+          # **Una ruta por invocación, y solo si existe.** `git add a b c` con una ruta ausente
+          # aborta el índice **entero** y no indexa nada; con el `|| true` de la primera
+          # versión, eso se convertía en «Sin cambios que commitear» en verde. Y el caso en que
+          # una ruta falta es precisamente el fallo total: `cli.py` no escribe
+          # `indicadores.json.gz` para no corromper el diferencial (§14.3), de modo que el
+          # informe del fallo —el que el `always()` existe para publicar— no se commiteaba nunca.
+          for ruta in reports \
+                      data/state/indicadores.json.gz \
+                      data/state/recoleccion.json \
+                      data/state/validadores_http.json; do
+            if [ -e "$ruta" ]; then
+              git add -- "$ruta"
+            else
+              echo "Sin $ruta en esta ejecución; no se indexa."
+            fi
+          done
+
+          if git diff --cached --quiet; then
+            echo "Sin cambios que commitear."
+            echo "publicado=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "publicado=true" >> "$GITHUB_OUTPUT"
+
+          fecha=$(date -u +%Y-%m-%d)
+          git commit -q -m "Informe diario ${fecha}
+
+          Publicado por el workflow diario de producción. Incluye el informe de §8 y el estado
+          mínimo versionado del que parte el diferencial de la ejecución siguiente (§9)."
+
+          # Reintento con rebase: entre la ejecución y el push puede haberse fusionado algo.
+          for intento in 1 2 3; do
+            # Nunca `--force`: el rebase de abajo es la forma correcta de resolver la carrera,
+            # y forzar aquí borraría el commit que ganó.
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              echo "Publicado en ${GITHUB_REF_NAME}."
+              exit 0
+            fi
+            echo "Push rechazado (intento ${intento}); se reintenta tras rebase."
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            sleep $((intento * 3))
+          done
+          echo "::error::no se pudo publicar el commit tras tres intentos"
+          exit 1
+
+      - name: Reconstruir el sitio del portafolio
+        # El sitio de `vigiabref.com` deriva sus cifras del informe, de modo que hasta que no se
+        # reconstruye sigue publicando las de la ejecución anterior. Se dispara **solo si esta
+        # ejecución commiteó algo**: sin la guarda, un día sin cambios reconstruiría un sitio
+        # idéntico. Es coherencia con §14.7 aplicada a lo propio — no se gasta una ejecución
+        # ajena para no cambiar nada.
+        #
+        # **Lo que la guarda NO hace, y conviene decirlo:** no excluye el fallo total. El paso de
+        # commit corre con `always()` y un fallo total **sí** publica su informe (§14.3), de modo
+        # que `publicado` vale `true` y el sitio se reconstruye. Es el comportamiento correcto:
+        # el sitio debe mostrar el día que el pipeline no pudo mirar, con sus cifras en guion y
+        # su motivo, en lugar de conservar las de ayer como si nada hubiera pasado. Se escribe
+        # porque una versión anterior de este comentario afirmaba lo contrario.
+        if: steps.commit.outputs.publicado == 'true'
+        continue-on-error: true
+        env:
+          # PAT con permiso de escritura de contenido sobre `vigiabref/portafolio`. `GITHUB_TOKEN`
+          # no sirve: está acotado a este repositorio.
+          TOKEN_SITIO: ${{ secrets.TOKEN_DISPARO_PORTAFOLIO }}
+        run: |
+          set -uo pipefail
+          if [ -z "${TOKEN_SITIO:-}" ]; then
+            echo "::warning::sin TOKEN_DISPARO_PORTAFOLIO: el sitio no se reconstruye y seguira publicando las cifras de la ejecucion anterior"
+            exit 0
+          fi
+          codigo=$(curl -sS -o /dev/null -w "%{http_code}" -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $TOKEN_SITIO" \
+            https://api.github.com/repos/vigiabref/portafolio/dispatches \
+            -d '{"event_type":"informe-publicado"}')
+          if [ "$codigo" = "204" ]; then
+            echo "Reconstruccion del sitio solicitada."
+          else
+            # No se enrojece el workflow por esto: el informe ya esta publicado, que es el
+            # producto. Un sitio desactualizado es visible; un informe sin publicar, no.
+            echo "::warning::el disparo del sitio devolvio HTTP $codigo; el informe si se publico"
+          fi
+
+      - name: Declarar el resultado del pipeline
+        # **El fallo total deja el workflow en rojo** (§11.2, §14.3): si el pipeline falla, el
+        # workflow falla de forma visible y no se enmascara el error. Va al final para que el
+        # informe del fallo se haya publicado antes: un hueco silencioso en la serie de informes
+        # es indistinguible de un sistema abandonado.
+        if: always()
+        run: |
+          set -euo pipefail
+          codigo="${{ steps.pipeline.outputs.codigo }}"
+          if [ "${codigo:-1}" != "0" ]; then
+            echo "::error::el pipeline terminó con código ${codigo:-desconocido}: fallo total de recolección (§14.3)"
+            exit 1
+          fi
+          echo "Pipeline correcto."

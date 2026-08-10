@@ -1,0 +1,29 @@
+# Ajustes generales del pipeline (§6, §7, §8 de CLAUDE.md).
+# El nivel de log puede sobreescribirse con la variable de entorno LOG_LEVEL.
+
+nivel_log: "INFO"
+
+# Rutas de persistencia en ficheros (§2: sin base de datos).
+dir_estado: "data/state"      # estado para el diferencial entre ejecuciones (§6), versionado
+dir_informes: "reports"       # informes generados (§8), versionado
+
+# Umbrales de la escala de confianza (§7). Se usarán al puntuar y filtrar indicadores.
+umbrales_confianza:
+  alta: 85          # fuente autoritativa con validación
+  media: 60         # fuente comunitaria con confianza declarada
+  baja: 30          # corroboración única o sin confianza declarada
+  minimo_informe: 30  # por debajo de este valor no se eleva al informe
+
+# Parámetros del diferencial (§6). Ninguno de los tres es una cifra medida: son valores
+# iniciales elegidos con criterio declarado, que se revisan con lo que registren los primeros
+# informes. El techo de validez de los caídos NO está aquí a propósito: se toma de la
+# `ventana_consultada` que declara la propia recolección (§6.4), y escribirlo también aquí
+# crearía dos fuentes de verdad para una misma magnitud.
+umbral_advertencia_horas: 36    # intervalo real por encima del cual se destaca la advertencia (§6.5)
+retencion_caidos_dias: 30       # cuánto recuerda el estado una caída, para distinguir reaparecido de nuevo (§6.1)
+cadencia_regeneracion_dias: 30  # cada cuánto se rehace el censo de línea base (§6.6); no acoplada a la anterior
+
+# Parámetros del informe (§8.3). Tampoco es una cifra medida: es un tamaño que cabe en una
+# lectura, y se revisa cuando haya informes que digan cuánto de la cola se atiende.
+tamano_cola_linea_base: 20      # entradas de la cola de trabajo que publica el modo línea base
+ventana_dias_vencimiento: 7     # entradas KEV con dueDate en los próximos N días (§6.1, paso 4)
