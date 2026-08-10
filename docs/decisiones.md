@@ -1653,7 +1653,8 @@ anotaba —el PR #9, solo documentación, produjo dos relevantes que obligaron a
 - Queda **una sola pregunta viva**: si el cero de bloqueantes de las dos últimas pasadas acotadas
   es convergencia bajo R4 o casualidad. Con seis puntos no se distingue.
 - Un umbral en **número total** —50, 60— mezclaría los dos regímenes, cuyo coste por bloqueante
-  difiere **6,8 veces**, y volvería a medir lo ya medido. La serie acotada es la única que
+  difiere **4,0 veces** —25,1 frente a 6,2 minutos por bloqueante, medido hoy sobre las 32
+  filas que declaran duración—, y volvería a medir lo ya medido. La serie acotada es la única que
   describe cómo se revisa hoy.
 
 **Y qué pasa si al llegar a las diez la pregunta sigue sin respuesta: se retira igualmente.** Es

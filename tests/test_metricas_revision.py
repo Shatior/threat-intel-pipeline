@@ -21,6 +21,12 @@ REGISTRO = Path(__file__).resolve().parents[1] / "docs" / "metricas-revision.md"
 PROTOCOLO = REGISTRO.parent / "protocolo-revision.md"
 FILA = re.compile(r"^\| \d{4}-\d{2}-\d{2} \|")
 
+#: Valor de la columna `Régimen` que cuenta para el umbral de la regla de retirada.
+REGIMEN_ACOTADO = "acotado"
+
+#: Último día con pasadas de los dos regímenes. Desde el siguiente, todas son acotadas.
+ULTIMO_DIA_DE_REGIMEN_MIXTO = "2026-08-02"
+
 
 def _texto() -> str:
     """Devuelve el registro, o salta si ya no existe.
@@ -94,10 +100,22 @@ def test_el_umbral_del_registro_coincide_con_el_del_protocolo():
     )
 
 
-def _filas_acotadas(texto: str) -> list[str]:
-    """Filas de pasadas del régimen acotado (R1-R6), que son las que cuenta el umbral."""
+def _celdas(linea: str) -> list[str]:
+    return [c.strip() for c in linea.strip().strip("|").split("|")]
 
-    return [ln for ln in texto.splitlines() if FILA.match(ln) and "presupuesto acotado" in ln]
+
+def _filas_acotadas(texto: str) -> list[str]:
+    """Filas del régimen acotado (R1-R6), que son las que cuenta el umbral.
+
+    **Se leen de la columna `Régimen`, no de la prosa de la duración.** La primera versión las
+    contaba buscando la subcadena «presupuesto acotado» en la fila entera, y la revisión lo
+    tumbó con tres mutaciones que sobrevivían: una fila acotada nueva redactada de otro modo
+    —`R1-R6: …`, `presup. acotado`— no se contaba, y el marcador escrito en cualquier otra
+    columna sí. Un recuento que depende de cómo alguien redacte una celda libre es un disparo
+    que enmudece por deriva de redacción, sin que nada falle.
+    """
+
+    return [ln for ln in texto.splitlines() if FILA.match(ln) and _celdas(ln)[5] == REGIMEN_ACOTADO]
 
 
 def test_el_recuento_de_filas_acotadas_coincide_con_la_tabla():
@@ -120,9 +138,34 @@ def test_el_recuento_de_filas_acotadas_coincide_con_la_tabla():
         "el disparo de la regla de retirada se evaluaría sobre una cifra falsa"
     )
     assert reales, (
-        "ninguna fila lleva el marcador «presupuesto acotado»: el umbral no puede alcanzarse y "
-        "la regla de retirada dejó de tener disparo"
+        f"ninguna fila declara `{REGIMEN_ACOTADO}` en la columna Régimen: el umbral no puede "
+        "alcanzarse y la regla de retirada dejó de tener disparo"
     )
+
+
+def test_toda_pasada_posterior_al_regimen_acotado_se_declara_acotada():
+    """El invariante que NO depende de la cabecera, y por eso es el que protege de verdad.
+
+    El cruce cabecera/tabla compara dos cifras que escribe la misma mano en el mismo commit:
+    detecta el despiste de no actualizar una, y **no** detecta que una fila nueva se declare
+    `amplio` y la cabecera se ajuste en consecuencia. Es coherencia interna, que es justo lo
+    que este proyecto no acepta como verificación.
+
+    Este ancla el recuento a un hecho externo al fichero: **el régimen acotado rige desde que
+    se adoptaron R1-R6**, de modo que toda pasada posterior a esa fecha es acotada por
+    definición del protocolo. Una fila nueva marcada `amplio` ya no es una opción de
+    redacción: es un contrato roto.
+    """
+
+    for linea in (ln for ln in _texto().splitlines() if FILA.match(ln)):
+        celdas = _celdas(linea)
+        if celdas[0] > ULTIMO_DIA_DE_REGIMEN_MIXTO:
+            assert celdas[5] == REGIMEN_ACOTADO, (
+                f"la fila del {celdas[0]} declara régimen {celdas[5]!r}: desde "
+                f"{ULTIMO_DIA_DE_REGIMEN_MIXTO} toda pasada se revisa con R1-R6, de modo que "
+                "una fila posterior no acotada deja el disparo de la regla de retirada corto "
+                f"sin que nada falle. Fila: {linea}"
+            )
 
 
 def test_al_alcanzar_el_umbral_la_regla_de_retirada_se_dispara():
@@ -133,7 +176,7 @@ def test_al_alcanzar_el_umbral_la_regla_de_retirada_se_dispara():
     mirase, que es exactamente la definición de alarma que no suena.
 
     **Cuenta solo las filas del régimen acotado** (entrada 33): un umbral sobre el total
-    mezclaría dos regímenes cuyo coste por bloqueante difiere 6,8 veces, y volvería a medir lo
+    mezclaría dos regímenes cuyo coste por bloqueante difiere 4,0 veces, y volvería a medir lo
     ya medido.
 
     Cuando falle, la respuesta correcta **no** es subir el umbral: es evaluar la regla. Y esta
@@ -162,7 +205,7 @@ def test_las_columnas_de_severidad_estan_donde_la_cabecera_dice():
     lineas = _texto().splitlines()
     cabecera = next(ln for ln in lineas if ln.startswith("| Fecha |"))
     columnas = [c.strip() for c in cabecera.strip("|").split("|")]
-    assert columnas[6:9] == ["Bloq.", "Relev.", "Menores"], (
+    assert columnas[7:10] == ["Bloq.", "Relev.", "Menores"], (
         f"las columnas de severidad cambiaron de orden o de nombre: {columnas}"
     )
 
@@ -172,7 +215,7 @@ def test_toda_fila_declara_sus_tres_severidades():
 
     for linea in (ln for ln in _texto().splitlines() if FILA.match(ln)):
         celdas = [c.strip() for c in linea.strip("|").split("|")]
-        assert len(celdas) == 10, f"fila con {len(celdas)} columnas, se esperaban 10: {linea}"
-        bloqueantes, relevantes, menores = celdas[6], celdas[7], celdas[8]
+        assert len(celdas) == 11, f"fila con {len(celdas)} columnas, se esperaban 11: {linea}"
+        bloqueantes, relevantes, menores = celdas[7], celdas[8], celdas[9]
         for valor in (bloqueantes, relevantes, menores):
             assert valor.isdigit() or valor == "n/d", f"severidad ilegible {valor!r} en: {linea}"
