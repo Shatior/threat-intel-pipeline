@@ -17,8 +17,8 @@ de fila **no** es una opción, porque un hueco mudo es indistinguible de «no hu
 
 ## Registro
 
-**Filas: 38** (5 con `†`). Una lleva `‡`. La regla de retirada se evalúa al cerrar la fase 4 **o al llegar a 40 filas**, lo
-que ocurra primero (`docs/protocolo-revision.md`). El recuento se actualiza al añadir una fila:
+**Filas: 38** (5 con `†`). Una lleva `‡`. **Del régimen acotado: 6.** La regla de retirada se evalúa al llegar a **10 filas
+del régimen acotado**, o al cerrar una fase, lo que ocurra primero (`docs/protocolo-revision.md`). El recuento se actualiza al añadir una fila:
 es el insumo del segundo disparo, y un disparo cuyo insumo hay que contar a mano cada vez es un
 disparo que se olvida.
 

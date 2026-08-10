@@ -94,6 +94,37 @@ def test_el_umbral_del_registro_coincide_con_el_del_protocolo():
     )
 
 
+def _filas_acotadas(texto: str) -> list[str]:
+    """Filas de pasadas del régimen acotado (R1-R6), que son las que cuenta el umbral."""
+
+    return [ln for ln in texto.splitlines() if FILA.match(ln) and "presupuesto acotado" in ln]
+
+
+def test_el_recuento_de_filas_acotadas_coincide_con_la_tabla():
+    """El insumo del disparo se declara en la cabecera y tiene que ser cierto.
+
+    Desde la entrada 33 el umbral cuenta **solo el régimen acotado**, de modo que el marcador
+    que distingue esas filas —«presupuesto acotado» en la columna de duración— pasó a ser el
+    insumo de una alarma. Si alguien reescribe esa columna con otra fórmula, el recuento cae a
+    cero y el disparo no suena nunca: sería la categoría 4, una alarma que no puede sonar.
+    Cruzar la cifra declarada contra la tabla lo convierte en un fallo visible.
+    """
+
+    texto = _texto()
+    declarado = re.search(r"Del régimen acotado: (\d+)", texto)
+    assert declarado, "la cabecera del registro ya no declara cuántas filas son del régimen acotado"
+
+    reales = _filas_acotadas(texto)
+    assert int(declarado.group(1)) == len(reales), (
+        f"la cabecera declara {declarado.group(1)} filas acotadas y la tabla tiene {len(reales)}: "
+        "el disparo de la regla de retirada se evaluaría sobre una cifra falsa"
+    )
+    assert reales, (
+        "ninguna fila lleva el marcador «presupuesto acotado»: el umbral no puede alcanzarse y "
+        "la regla de retirada dejó de tener disparo"
+    )
+
+
 def test_al_alcanzar_el_umbral_la_regla_de_retirada_se_dispara():
     """El umbral DISPARA algo: si no, es una nota, no una alarma.
 
@@ -101,18 +132,22 @@ def test_al_alcanzar_el_umbral_la_regla_de_retirada_se_dispara():
     de retirada debe evaluarse. Es deliberado: sin él, el umbral dependía de que alguien
     mirase, que es exactamente la definición de alarma que no suena.
 
-    Cuando falle, la respuesta correcta **no** es subir el umbral: es evaluar la regla —¿ha
-    servido el registro para tomar alguna decisión?— y, según el desenlace, retirarlo o
-    declarar la decisión que lo justifica y fijar el siguiente umbral con esa evidencia.
+    **Cuenta solo las filas del régimen acotado** (entrada 33): un umbral sobre el total
+    mezclaría dos regímenes cuyo coste por bloqueante difiere 6,8 veces, y volvería a medir lo
+    ya medido.
+
+    Cuando falle, la respuesta correcta **no** es subir el umbral: es evaluar la regla. Y esta
+    vez el desenlace por defecto está escrito — si la última pregunta viva sigue sin respuesta,
+    el registro se retira igualmente.
     """
 
     texto = _texto()
     umbral = _umbral_declarado(texto)
-    filas = len([linea for linea in texto.splitlines() if FILA.match(linea)])
+    filas = len(_filas_acotadas(texto))
     assert filas < umbral, (
-        f"el registro tiene {filas} filas y el umbral es {umbral}: toca evaluar la regla de "
-        "retirada (docs/protocolo-revision.md). Subir el umbral sin evaluarla es desactivar la "
-        "alarma en vez de atenderla."
+        f"el registro tiene {filas} filas del régimen acotado y el umbral es {umbral}: toca "
+        "evaluar la regla de retirada (docs/protocolo-revision.md). Subir el umbral sin "
+        "evaluarla es desactivar la alarma en vez de atenderla."
     )
 
 

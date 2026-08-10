@@ -1604,3 +1604,74 @@ recrearlos en la cuenta nueva. Sin el primero, ThreatFox falla y el informe decl
 sin el segundo, el paso del sitio avisa y no enrojece el workflow. Ninguno de los dos rompe el
 pipeline: el diseño de degradación de la entrada 7 cubre exactamente este caso, y por eso la
 migración puede darse por buena antes de que existan.
+
+---
+
+## 33. Segunda aplicación de la regla de retirada: el registro se conserva, con umbral de régimen y con final escrito
+
+*Fecha: 2026-08-10.*
+
+**Contexto.** La regla de retirada del registro de métricas se evalúa «al cerrar la fase 4 o al
+alcanzar 40 filas, lo que ocurra primero». **La fase 4 cerró el 2026-08-03 y la regla no se
+evaluó.** El vencimiento pasó inadvertido una semana, y lo que lo hizo invisible fue que ese
+mismo día la entrada 31 agregó el registro y respondió tres de sus cuatro preguntas: se hizo con
+esmero el trabajo que el registro pedía, y no el que la regla pedía. Son cosas distintas —una
+dice qué hemos aprendido, la otra decide si el instrumento sigue pagándose y hasta cuándo—. El
+defecto del mecanismo queda anotado como **P-23** de `docs/proceso-pendiente.md`.
+
+**Decisión: se conserva.** La evidencia es del tipo que la regla exige —decisiones tomadas con
+él, no una impresión general— y son cuatro entradas de este registro:
+
+| Entrada | Qué decidió | Dato del registro que lo sostuvo |
+|---|---|---|
+| **28** | Acotar el encargo del revisor (R1–R6) | **25,1 → 3,7 min por bloqueante**; mediana 35 → 7 min |
+| **31** | R4, una sola pasada por bloque | #16: **15 de 16 pasadas** con bloqueante. No hubo convergencia, hubo agotamiento |
+| **24** | Conservar a las 20 filas, umbral a 40 | Serie de correcciones con defecto propio: 3/4, 6/11, 2/10, 4/12 |
+| **31** | Validación del orden de prioridad de R6 | Las cinco categorías de cabeza son las de prioridad 1 y 2 |
+
+Las tres primeras **cambiaron el protocolo**. La cuarta confirmó una decisión previa, que es más
+débil y no es nada: sin el registro, R6 seguiría siendo solo un argumento.
+
+**Se responde de paso la tercera pregunta, que llevaba abierta desde el PR #9.** «¿Los diffs de
+documentación justifican el recorrido completo?» Calculada sobre las 38 filas:
+
+| Tipo de diff | n | Bloqueantes por pasada | Mediana |
+|---|---|---|---|
+| **Documentación** | 13 | **1,77** | 16 min |
+| Comportamiento | 15 | 1,13 | 13 min |
+| Mixto | 10 | 1,10 | 45 min |
+
+**Los diffs de documentación producen más bloqueantes que los de comportamiento, a coste casi
+igual.** Contradice la intuición de que la prosa se revisa más rápido, y **desaconseja recortar
+ahí**, que es justo donde el ahorro parecería más fácil. Era la sospecha que la propia pregunta
+anotaba —el PR #9, solo documentación, produjo dos relevantes que obligaron a reconciliar
+`CLAUDE.md`—, y ahora hay trece filas en vez de una.
+
+**Umbral siguiente: 10 filas del régimen acotado.** Hoy son 6. El cambio no es de número sino de
+**magnitud contada**, y esa es la parte que importa:
+
+- Queda **una sola pregunta viva**: si el cero de bloqueantes de las dos últimas pasadas acotadas
+  es convergencia bajo R4 o casualidad. Con seis puntos no se distingue.
+- Un umbral en **número total** —50, 60— mezclaría los dos regímenes, cuyo coste por bloqueante
+  difiere **6,8 veces**, y volvería a medir lo ya medido. La serie acotada es la única que
+  describe cómo se revisa hoy.
+
+**Y qué pasa si al llegar a las diez la pregunta sigue sin respuesta: se retira igualmente.** Es
+la cláusula que las dos evaluaciones anteriores no tenían, y sin ella la siguiente podría
+aplazarse por la razón por la que se aplaza siempre —que con un poco más de serie quizá se vea—.
+Un instrumento que no puede responder su última pregunta no gana nada esperando más datos. De las
+cuatro preguntas originales, tres están respondidas y la segunda **no es respondible sin cambiar
+el instrumento**, cosa que la entrada 31 desaconseja por escrito: cambiarlo para que responda
+mejor a una pregunta es la vía más corta para que deje de medir lo que medía.
+
+**Lo que esta entrada deja registrado.** La evaluación anterior demostró que el mecanismo
+funcionaba entero —sonó, nadie lo silenció, decidió quien debía—. Esta demuestra el reverso: **de
+los dos disparos que la regla declara, solo uno es una alarma.** El de filas es un test que
+falla; el de cierre de fase depende de que alguien se acuerde, y no se acordó nadie. El umbral
+nuevo hereda el mecanismo bueno —`tests/test_metricas_revision.py` cuenta ahora las filas
+acotadas y cruza el recuento declarado contra la tabla, de modo que el marcador no pueda
+desaparecer en silencio y dejar el disparo mudo—.
+
+**Referencias.** `docs/protocolo-revision.md`, «Regla de retirada»; `docs/metricas-revision.md`;
+`tests/test_metricas_revision.py`; entradas 24, 28 y 31 de este registro; P-23 de
+`docs/proceso-pendiente.md`.
