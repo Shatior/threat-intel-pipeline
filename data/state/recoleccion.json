@@ -2,32 +2,32 @@
   {
     "fuente": "cisa-kev",
     "estado": "correcta",
-    "registros_obtenidos": 1665,
+    "registros_obtenidos": 0,
     "descartados_invalidos": 0,
     "no_soportados": 0,
     "no_soportados_excesivo": false,
     "ventana_consultada": null,
-    "momento_intento": "2026-08-15T06:35:03.916222+00:00",
+    "momento_intento": "2026-08-16T06:36:54.743748+00:00",
     "motivo_fallo": null,
-    "codigo_http": 200,
+    "codigo_http": 304,
     "reintentos_realizados": 0,
     "campos_insuficientes": {},
-    "cobertura_no_evaluada": false
+    "cobertura_no_evaluada": true
   },
   {
     "fuente": "threatfox",
     "estado": "parcial",
-    "registros_obtenidos": 4735,
+    "registros_obtenidos": 4937,
     "descartados_invalidos": 0,
     "no_soportados": 0,
     "no_soportados_excesivo": false,
-    "ventana_consultada": "P5D/2026-08-15T06:35:03.916522+00:00",
-    "momento_intento": "2026-08-15T06:35:03.916522+00:00",
+    "ventana_consultada": "P5D/2026-08-16T06:36:54.743985+00:00",
+    "momento_intento": "2026-08-16T06:36:54.743985+00:00",
     "motivo_fallo": null,
     "codigo_http": 200,
     "reintentos_realizados": 0,
     "campos_insuficientes": {
-      "reference": 0.094
+      "reference": 0.077
     },
     "cobertura_no_evaluada": false
   }
