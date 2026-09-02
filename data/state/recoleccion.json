@@ -7,7 +7,7 @@
     "no_soportados": 0,
     "no_soportados_excesivo": false,
     "ventana_consultada": null,
-    "momento_intento": "2026-09-01T11:07:39.803886+00:00",
+    "momento_intento": "2026-09-02T10:40:02.537980+00:00",
     "motivo_fallo": null,
     "codigo_http": 200,
     "reintentos_realizados": 0,
@@ -17,17 +17,17 @@
   {
     "fuente": "threatfox",
     "estado": "parcial",
-    "registros_obtenidos": 3236,
+    "registros_obtenidos": 3281,
     "descartados_invalidos": 0,
     "no_soportados": 0,
     "no_soportados_excesivo": false,
-    "ventana_consultada": "P5D/2026-09-01T11:07:39.804307+00:00",
-    "momento_intento": "2026-09-01T11:07:39.804307+00:00",
+    "ventana_consultada": "P5D/2026-09-02T10:40:02.538371+00:00",
+    "momento_intento": "2026-09-02T10:40:02.538371+00:00",
     "motivo_fallo": null,
     "codigo_http": 200,
     "reintentos_realizados": 0,
     "campos_insuficientes": {
-      "reference": 0.0525
+      "reference": 0.0713
     },
     "cobertura_no_evaluada": false
   }
