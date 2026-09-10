@@ -2,12 +2,12 @@
   {
     "fuente": "cisa-kev",
     "estado": "correcta",
-    "registros_obtenidos": 1699,
+    "registros_obtenidos": 1703,
     "descartados_invalidos": 0,
     "no_soportados": 0,
     "no_soportados_excesivo": false,
     "ventana_consultada": null,
-    "momento_intento": "2026-09-09T10:46:45.010019+00:00",
+    "momento_intento": "2026-09-10T10:38:58.853362+00:00",
     "motivo_fallo": null,
     "codigo_http": 200,
     "reintentos_realizados": 0,
@@ -17,17 +17,17 @@
   {
     "fuente": "threatfox",
     "estado": "parcial",
-    "registros_obtenidos": 5162,
+    "registros_obtenidos": 5813,
     "descartados_invalidos": 0,
     "no_soportados": 0,
     "no_soportados_excesivo": false,
-    "ventana_consultada": "P5D/2026-09-09T10:46:45.010461+00:00",
-    "momento_intento": "2026-09-09T10:46:45.010461+00:00",
+    "ventana_consultada": "P5D/2026-09-10T10:38:58.853763+00:00",
+    "momento_intento": "2026-09-10T10:38:58.853763+00:00",
     "motivo_fallo": null,
     "codigo_http": 200,
     "reintentos_realizados": 0,
     "campos_insuficientes": {
-      "reference": 0.0866
+      "reference": 0.0814
     },
     "cobertura_no_evaluada": false
   }
