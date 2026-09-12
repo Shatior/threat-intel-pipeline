@@ -2,12 +2,12 @@
   {
     "fuente": "cisa-kev",
     "estado": "correcta",
-    "registros_obtenidos": 1705,
+    "registros_obtenidos": 1709,
     "descartados_invalidos": 0,
     "no_soportados": 0,
     "no_soportados_excesivo": false,
     "ventana_consultada": null,
-    "momento_intento": "2026-09-11T10:38:11.133668+00:00",
+    "momento_intento": "2026-09-12T10:07:37.582205+00:00",
     "motivo_fallo": null,
     "codigo_http": 200,
     "reintentos_realizados": 0,
@@ -17,17 +17,17 @@
   {
     "fuente": "threatfox",
     "estado": "parcial",
-    "registros_obtenidos": 10058,
+    "registros_obtenidos": 12032,
     "descartados_invalidos": 0,
     "no_soportados": 0,
     "no_soportados_excesivo": false,
-    "ventana_consultada": "P5D/2026-09-11T10:38:11.134213+00:00",
-    "momento_intento": "2026-09-11T10:38:11.134213+00:00",
+    "ventana_consultada": "P5D/2026-09-12T10:07:37.582661+00:00",
+    "momento_intento": "2026-09-12T10:07:37.582661+00:00",
     "motivo_fallo": null,
     "codigo_http": 200,
     "reintentos_realizados": 0,
     "campos_insuficientes": {
-      "malware_alias": 0.0515
+      "malware_alias": 0.0462
     },
     "cobertura_no_evaluada": false
   }
