@@ -2,33 +2,31 @@
   {
     "fuente": "cisa-kev",
     "estado": "correcta",
-    "registros_obtenidos": 1710,
+    "registros_obtenidos": 0,
     "descartados_invalidos": 0,
     "no_soportados": 0,
     "no_soportados_excesivo": false,
     "ventana_consultada": null,
-    "momento_intento": "2026-09-15T11:06:41.654996+00:00",
+    "momento_intento": "2026-09-16T10:52:16.374737+00:00",
+    "motivo_fallo": null,
+    "codigo_http": 304,
+    "reintentos_realizados": 0,
+    "campos_insuficientes": {},
+    "cobertura_no_evaluada": true
+  },
+  {
+    "fuente": "threatfox",
+    "estado": "correcta",
+    "registros_obtenidos": 8871,
+    "descartados_invalidos": 0,
+    "no_soportados": 0,
+    "no_soportados_excesivo": false,
+    "ventana_consultada": "P5D/2026-09-16T10:52:16.374972+00:00",
+    "momento_intento": "2026-09-16T10:52:16.374972+00:00",
     "motivo_fallo": null,
     "codigo_http": 200,
     "reintentos_realizados": 0,
     "campos_insuficientes": {},
-    "cobertura_no_evaluada": false
-  },
-  {
-    "fuente": "threatfox",
-    "estado": "parcial",
-    "registros_obtenidos": 13211,
-    "descartados_invalidos": 0,
-    "no_soportados": 0,
-    "no_soportados_excesivo": false,
-    "ventana_consultada": "P5D/2026-09-15T11:06:41.655474+00:00",
-    "momento_intento": "2026-09-15T11:06:41.655474+00:00",
-    "motivo_fallo": null,
-    "codigo_http": 200,
-    "reintentos_realizados": 0,
-    "campos_insuficientes": {
-      "malware_alias": 0.0831
-    },
     "cobertura_no_evaluada": false
   }
 ]
