@@ -415,6 +415,36 @@ Dos de los hallazgos de la pasada 4 nacen de contrastar lo que el commit escribi
 desde el otro lado: el implementador no distingue corregir de rediseñar, y el revisor no puede
 declarar que revisó más de lo que el diff contiene.
 
+### P-24 · El disparo por cierre de fase no es generalizable, y al generalizarlo perdió su garantía
+**Se queda en el fichero, y se anota sin perseguir.** Es un defecto del protocolo de este
+repositorio; y no manda hacer ni publicar nada falso, de modo que por la regla 7 se documenta.
+
+*Procedencia: hallazgo relevante R-2 de la pasada 1 del PR #9, 2026-08-10.*
+
+La regla de retirada se dispara «al alcanzar 10 filas del régimen acotado **o al cerrar una
+fase**». La segunda mitad **era comprobable y dejó de serlo** al generalizarse, y conviene
+escribir por qué en vez de dejar la frase con aspecto de criterio:
+
+- Cuando la referencia era el cierre de la **fase 4**, el instante estaba definido: §13 lo fija
+  con seis puntos y declara que el cierre de la fase 4 y la versión 1 son el mismo hito. Era
+  **comprobable contra el repositorio**, que es lo que la regla 6 exige de cualquier criterio de
+  disparo.
+- Generalizado a «una fase», esa garantía no existe: **ninguna sección define operativamente el
+  cierre de una fase 5**, ni existe una fase 5. El criterio pasó a nombrar un instante que nadie
+  puede fechar.
+
+Es la categoría 9 en su forma habitual —al cerrar una puerta se abre otra—: se generalizó para
+que el disparo no quedara atado a una fase ya vencida, y el precio fue que dejó de poder
+comprobarse. Se suma a **P-23**, que recoge el otro defecto del mismo disparo: que **no tiene
+mecanismo** y venció una semana sin que nadie lo atendiera. Entre los dos, la segunda mitad de la
+regla no dice cuándo suena ni tiene con qué sonar.
+
+**Por qué se anota y no se persigue.** El disparo que sí funciona —el de filas, con su test— está
+a tres filas de sonar, de modo que la regla no depende hoy de esta mitad. Arreglarla exige una de
+dos cosas que no toca decidir ahora: definir operativamente el cierre de las fases siguientes, o
+retirar la mitad de cierre de fase y quedarse con el contador. Las dos son decisiones del
+mantenedor y ninguna corre prisa.
+
 ### P-23 · El primer disparo de la regla de retirada venció y nadie lo atendió durante una semana
 **Se queda en el fichero:** es un defecto del protocolo de revisión de este repositorio, y su
 corrección se decide con el corpus delante.
