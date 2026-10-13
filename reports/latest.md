@@ -1,28 +1,28 @@
-# Informe de Ciberinteligencia — 2026-10-12 (UTC)
+# Informe de Ciberinteligencia — 2026-10-13 (UTC)
 
 **TLP:CLEAR**
 
 ## 1. Cabecera
 
-- **Fecha (UTC):** 2026-10-12 14:27:59
+- **Fecha (UTC):** 2026-10-13 13:35:59
 - **Modo del informe:** diferencial
 - **Línea base vigente:** 2026-10-02 11:54:42 UTC
 - **Intervalo real** (difiere entre fuentes):
-  - `cisa-kev`: 26.3 h
-  - `threatfox`: 26.3 h
+  - `cisa-kev`: 23.1 h
+  - `threatfox`: 23.1 h
 - **Fuentes consultadas:** `cisa-kev` (correcta), `threatfox` (correcta)
 
 ## 2. BLUF
 
 **1 vulnerabilidad explotada activamente vence su plazo de corrección en los próximos 7 días.** Es lo accionable de este informe; el detalle está en la sección 4.
 
-**Cambio del periodo:** 1024 indicadores nuevos y 15 reaparecidos, y 1618 caídos.
+**Cambio del periodo:** 1350 indicadores nuevos y 10 reaparecidos, y 919 caídos.
 
-Intervalo real cubierto: difiere entre fuentes — 26.3 h en `cisa-kev`, 26.3 h en `threatfox`.
+Intervalo real cubierto: difiere entre fuentes — 23.1 h en `cisa-kev`, 23.1 h en `threatfox`.
 
 ## 3. Juicios clave
 
-- **99 de las 134 familias observadas** no tienen entrada en ATT&CK. Es **posible** que esa parte del panorama activo corresponda a crimeware commodity, que el catálogo describe peor que el instrumental dirigido. *(confianza: media — medición propia sobre un catálogo con sesgo de cobertura conocido)*
+- **96 de las 131 familias observadas** no tienen entrada en ATT&CK. Es **posible** que esa parte del panorama activo corresponda a crimeware commodity, que el catálogo describe peor que el instrumental dirigido. *(confianza: media — medición propia sobre un catálogo con sesgo de cobertura conocido)*
 
 ## 4. Vulnerabilidades explotadas activamente incorporadas en este periodo o con plazo próximo
 
@@ -38,39 +38,39 @@ El uso conocido en campañas de ransomware lo declara CISA. Las de plazo dentro 
 
 ### Familias con mayor variación
 
-*Las familias se observan en la ventana de 5 días que termina en 2026-10-12 14:27 UTC. La variación compara ese agregado con el de la ejecución anterior.*
+*Las familias se observan en la ventana de 5 días que termina en 2026-10-13 13:35 UTC. La variación compara ese agregado con el de la ejecución anterior.*
 
 | Familia | Variación de indicadores |
 |---|---|
-| `unknown_loader` | -931 |
-| `win.vidar` | +247 |
-| `elf.mirai` | +146 |
-| `win.danabot` | +96 |
-| `js.contagious_drop` | -65 |
-| `js.clearfake` | -61 |
-| `Unknown malware` | +56 |
-| `win.netwire` | -33 |
-| `win.vshell` | +24 |
-| `win.formbook` | -23 |
+| `win.vidar` | +709 |
+| `unknown_stealer` | -153 |
+| `unknown_loader` | -138 |
+| `js.clearfake` | -97 |
+| `elf.mirai` | +89 |
+| `win.regphantom` | -57 |
+| `js.iclickfix` | -46 |
+| `php.shin_webshell` | +36 |
+| `win.phorpiex` | +33 |
+| `py.stealler` | -18 |
 
 ### Técnicas ATT&CK derivadas (unidad: **familia**; denominador: familias observadas)
 
-De las **134 familias observadas**, **32** tienen entrada en ATT&CK. El porcentaje de cada técnica es la proporción de familias observadas cuyo mapeo la incluye, sobre el total de **134 familias observadas**.
+De las **131 familias observadas**, **32** tienen entrada en ATT&CK. El porcentaje de cada técnica es la proporción de familias observadas cuyo mapeo la incluye, sobre el total de **131 familias observadas**.
 
 **Los porcentajes no suman 100:** una familia emplea varias técnicas.
 
 | Técnica | Familias | Proporción |
 |---|---|---|
-| `T1105` Ingress Tool Transfer | 25 de las 134 familias observadas | 18% |
-| `T1082` System Information Discovery | 20 de las 134 familias observadas | 14% |
-| `T1057` Process Discovery | 19 de las 134 familias observadas | 14% |
-| `T1016` System Network Configuration Discovery | 17 de las 134 familias observadas | 12% |
-| `T1083` File and Directory Discovery | 16 de las 134 familias observadas | 11% |
-| `T1113` Screen Capture | 16 de las 134 familias observadas | 11% |
-| `T1027` Obfuscated Files or Information | 15 de las 134 familias observadas | 11% |
-| `T1106` Native API | 13 de las 134 familias observadas | 9% |
-| `T1112` Modify Registry | 13 de las 134 familias observadas | 9% |
-| `T1033` System Owner/User Discovery | 13 de las 134 familias observadas | 9% |
+| `T1105` Ingress Tool Transfer | 24 de las 131 familias observadas | 18% |
+| `T1082` System Information Discovery | 19 de las 131 familias observadas | 14% |
+| `T1057` Process Discovery | 17 de las 131 familias observadas | 12% |
+| `T1016` System Network Configuration Discovery | 16 de las 131 familias observadas | 12% |
+| `T1083` File and Directory Discovery | 16 de las 131 familias observadas | 12% |
+| `T1113` Screen Capture | 14 de las 131 familias observadas | 10% |
+| `T1140` Deobfuscate/Decode Files or Information | 13 de las 131 familias observadas | 9% |
+| `T1055` Process Injection | 13 de las 131 familias observadas | 9% |
+| `T1027` Obfuscated Files or Information | 13 de las 131 familias observadas | 9% |
+| `T1112` Modify Registry | 13 de las 131 familias observadas | 9% |
 
 ### Técnicas ATT&CK inferidas
 
@@ -82,12 +82,12 @@ El catálogo KEV no incorporó entradas en este periodo, de modo que no hay deno
 
 | Tipo | Indicadores |
 |---|---|
-| `domain-name` | 2080 |
-| `file-md5` | 248 |
-| `file-sha1` | 247 |
-| `file-sha256` | 1089 |
-| `ipv4-addr` | 900 |
-| `url` | 856 |
+| `domain-name` | 1731 |
+| `file-md5` | 255 |
+| `file-sha1` | 254 |
+| `file-sha256` | 1195 |
+| `ipv4-addr` | 914 |
+| `url` | 1504 |
 
 ## 6. Indicadores destacados
 
@@ -97,19 +97,19 @@ Infraestructura observada de mayor confianza, con los valores **defanged** para 
 |---|---|---|---|---|---|
 | `889993536[.]xyz` | `domain-name` | `threatfox` | 100 | IClickFix | — |
 | `hxxps://stellaspicy[.]org/2026scrill/ping[.]php` | `url` | `threatfox` | 100 | Unknown malware | — |
-| `hxxps://chrisniagara[.]cc/` | `url` | `threatfox` | 100 | Unknown Loader | — |
 | `fif[.]6666k[.]org` | `domain-name` | `threatfox` | 100 | Vidar | — |
+| `hxxps://noa[.]666iapk[.]net/pf/` | `url` | `threatfox` | 100 | Vidar | — |
 | `64[.]190[.]113[.]163` | `ipv4-addr` | `threatfox` | 100 | VShell | — |
-| `64[.]190[.]113[.]163` | `ipv4-addr` | `threatfox` | 100 | VShell | — |
+| `hxxps://v75[.]666iapk[.]net/sj/` | `url` | `threatfox` | 100 | Vidar | — |
 | `blueideas[.]au` | `domain-name` | `threatfox` | 100 | IClickFix | — |
 | `76dlzuzd[.]pinke[.]store` | `domain-name` | `threatfox` | 100 | ClearFake | — |
-| `62[.]212[.]79[.]67` | `ipv4-addr` | `threatfox` | 100 | Remcos | `T1082`, `T1115`, `T1055`, `T1090`, `T1112`, `T1027`, `T1113`, `T1070`, `T1105`, `T1568`, `T1125`, `T1012`, `T1564`, `T1083`, `T1123`, `T1057`, `T1614`, `T1010`, `T1529`, `T1033` |
 | `abinteriors[.]in` | `domain-name` | `threatfox` | 100 | IClickFix | — |
+| `hxxps://x5u[.]6r6r6[.]org/sm` | `url` | `threatfox` | 100 | Vidar | — |
+| `hxxps://lk[.]6r6r6[.]org/co/` | `url` | `threatfox` | 100 | Vidar | — |
+| `hxxps://v75[.]666iapk[.]net/s` | `url` | `threatfox` | 100 | Vidar | — |
 | `86[.]163[.]111[.]183` | `ipv4-addr` | `threatfox` | 100 | Quasar RAT | `T1082`, `T1105`, `T1614`, `T1112`, `T1033`, `T1005`, `T1095`, `T1016`, `T1555`, `T1090`, `T1571`, `T1010`, `T1125` |
 | `bluepage[.]au` | `domain-name` | `threatfox` | 100 | IClickFix | — |
 | `67sixcebeh[.]surf` | `domain-name` | `threatfox` | 100 | IClickFix | — |
-| `1e29472ea92b8218232d63d0c72859e94e531d9b6d804555c97b26b076af4d23` | `file-sha256` | `threatfox` | 100 | Unknown malware | — |
-| `agenqez[.]quest` | `domain-name` | `threatfox` | 100 | IClickFix | — |
 
 ## 7. Recomendaciones y ventanas de decisión
 
@@ -124,7 +124,7 @@ La metodología de mapeo a ATT&CK, con sus dos rutas y sus reglas de abstención
 | Fuente | Estado | Registros | Inválidos | No soportados | Cobertura evaluada |
 |---|---|---|---|---|---|
 | `cisa-kev` | correcta | 0 | 0 | 0 | no |
-| `threatfox` | correcta | 5420 | 0 | 0 | sí |
+| `threatfox` | correcta | 5853 | 0 | 0 | sí |
 
 ### Catálogo ATT&CK
 
@@ -138,15 +138,15 @@ La metodología de mapeo a ATT&CK, con sus dos rutas y sus reglas de abstención
 
 ### Motivos de mapeo ausente, cada uno a su nivel
 
-**Nivel familia** — denominador: **134 familias observadas**.
+**Nivel familia** — denominador: **131 familias observadas**.
 
-- `ambiguedad_candidatos`: 1 de 134 familias
-- `ambiguedad_origen`: 2 de 134 familias
-- `familia_sin_entrada`: 99 de 134 familias
+- `ambiguedad_candidatos`: 1 de 131 familias
+- `ambiguedad_origen`: 2 de 131 familias
+- `familia_sin_entrada`: 96 de 131 familias
 
-**Nivel indicador** — denominador: **5420 indicadores de ThreatFox**.
+**Nivel indicador** — denominador: **5853 indicadores de ThreatFox**.
 
-- `sin_atribucion`: 332 de 5420
+- `sin_atribucion`: 338 de 5853
 
 
 ### Cobertura de la tabla de vectores de explotación
