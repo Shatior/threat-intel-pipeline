@@ -1,32 +1,32 @@
-# Informe de Ciberinteligencia — 2026-10-27 (UTC)
+# Informe de Ciberinteligencia — 2026-10-28 (UTC)
 
 **TLP:CLEAR**
 
 ## 1. Cabecera
 
-- **Fecha (UTC):** 2026-10-27 11:37:39
+- **Fecha (UTC):** 2026-10-28 12:08:49
 - **Modo del informe:** diferencial
 - **Línea base vigente:** 2026-10-02 11:54:42 UTC
 - **Intervalo real** (difiere entre fuentes):
-  - `cisa-kev`: 23.3 h
-  - `threatfox`: 23.3 h
+  - `cisa-kev`: 24.5 h
+  - `threatfox`: 24.5 h
 - **Fuentes consultadas:** `cisa-kev` (correcta), `threatfox` (correcta)
 
 ## 2. BLUF
 
 **5 vulnerabilidades explotadas activamente vencen su plazo de corrección en los próximos 7 días.** Es lo accionable de este informe; el detalle está en la sección 4.
 
-**Cambio del periodo:** 1810 indicadores nuevos y 9 reaparecidos, y 1672 caídos.
+**Cambio del periodo:** 1679 indicadores nuevos y 8 reaparecidos, y 2166 caídos.
 
-Intervalo real cubierto: difiere entre fuentes — 23.3 h en `cisa-kev`, 23.3 h en `threatfox`.
+Intervalo real cubierto: difiere entre fuentes — 24.5 h en `cisa-kev`, 24.5 h en `threatfox`.
 
 ## 3. Juicios clave
 
-- **88 de las 115 familias observadas** no tienen entrada en ATT&CK. Es **posible** que esa parte del panorama activo corresponda a crimeware commodity, que el catálogo describe peor que el instrumental dirigido. *(confianza: media — medición propia sobre un catálogo con sesgo de cobertura conocido)*
+- **97 de las 127 familias observadas** no tienen entrada en ATT&CK. Es **posible** que esa parte del panorama activo corresponda a crimeware commodity, que el catálogo describe peor que el instrumental dirigido. *(confianza: media — medición propia sobre un catálogo con sesgo de cobertura conocido)*
 
 ## 4. Vulnerabilidades explotadas activamente incorporadas en este periodo o con plazo próximo
 
-**5 entradas**, ordenadas por fecha límite: primero lo que aún no ha vencido, de lo que vence antes a lo que vence después; después lo vencido, de lo más reciente a lo más antiguo. A igualdad de plazo, primero las de uso conocido en campañas de ransomware.
+**7 entradas**, ordenadas por fecha límite: primero lo que aún no ha vencido, de lo que vence antes a lo que vence después; después lo vencido, de lo más reciente a lo más antiguo. A igualdad de plazo, primero las de uso conocido en campañas de ransomware.
 
 El uso conocido en campañas de ransomware lo declara CISA. Las de plazo dentro de los próximos 7 días van marcadas con ⏰.
 
@@ -37,44 +37,46 @@ El uso conocido en campañas de ransomware lo declara CISA. Las de plazo dentro 
 | `CVE-2026-110936` ⏰ | Siemens | Software Center | Unknown | 2026-11-03 |
 | `CVE-2026-96652` ⏰ | Plex | Media Server | Unknown | 2026-11-03 |
 | `CVE-2026-96655` ⏰ | Plex | Media Server | Unknown | 2026-11-03 |
+| `CVE-2026-111497` | Google | Brotli | Unknown | 2026-11-10 |
+| `CVE-2026-48356` | Adobe | Commerce and Magento | Unknown | 2026-11-10 |
 
 ## 5. Panorama de amenazas
 
 ### Familias con mayor variación
 
-*Las familias se observan en la ventana de 5 días que termina en 2026-10-27 11:37 UTC. La variación compara ese agregado con el de la ejecución anterior.*
+*Las familias se observan en la ventana de 5 días que termina en 2026-10-28 12:08 UTC. La variación compara ese agregado con el de la ejecución anterior.*
 
 | Familia | Variación de indicadores |
 |---|---|
-| `win.asyncrat` | +362 |
-| `win.salatstealer` | +176 |
-| `win.strelastealer` | -143 |
-| `unknown_loader` | -123 |
-| `Unknown malware` | +91 |
-| `win.coinminer` | -88 |
-| `win.vshell` | -85 |
-| `js.iclickfix` | -47 |
-| `unknown_stealer` | -23 |
-| `win.warden_stealer` | -23 |
+| `win.asyncrat` | -358 |
+| `js.iclickfix` | -253 |
+| `Unknown malware` | +172 |
+| `win.salatstealer` | +143 |
+| `js.clearfake` | -112 |
+| `win.coinminer` | -94 |
+| `elf.mirai` | +87 |
+| `win.vshell` | -64 |
+| `unknown_loader` | -63 |
+| `win.strelastealer` | -56 |
 
 ### Técnicas ATT&CK derivadas (unidad: **familia**; denominador: familias observadas)
 
-De las **115 familias observadas**, **27** tienen entrada en ATT&CK. El porcentaje de cada técnica es la proporción de familias observadas cuyo mapeo la incluye, sobre el total de **115 familias observadas**.
+De las **127 familias observadas**, **29** tienen entrada en ATT&CK. El porcentaje de cada técnica es la proporción de familias observadas cuyo mapeo la incluye, sobre el total de **127 familias observadas**.
 
 **Los porcentajes no suman 100:** una familia emplea varias técnicas.
 
 | Técnica | Familias | Proporción |
 |---|---|---|
-| `T1105` Ingress Tool Transfer | 21 de las 115 familias observadas | 18% |
-| `T1082` System Information Discovery | 16 de las 115 familias observadas | 13% |
-| `T1016` System Network Configuration Discovery | 14 de las 115 familias observadas | 12% |
-| `T1113` Screen Capture | 14 de las 115 familias observadas | 12% |
-| `T1106` Native API | 13 de las 115 familias observadas | 11% |
-| `T1057` Process Discovery | 13 de las 115 familias observadas | 11% |
-| `T1140` Deobfuscate/Decode Files or Information | 13 de las 115 familias observadas | 11% |
-| `T1027` Obfuscated Files or Information | 12 de las 115 familias observadas | 10% |
-| `T1112` Modify Registry | 12 de las 115 familias observadas | 10% |
-| `T1033` System Owner/User Discovery | 12 de las 115 familias observadas | 10% |
+| `T1105` Ingress Tool Transfer | 23 de las 127 familias observadas | 18% |
+| `T1082` System Information Discovery | 18 de las 127 familias observadas | 14% |
+| `T1113` Screen Capture | 15 de las 127 familias observadas | 11% |
+| `T1106` Native API | 14 de las 127 familias observadas | 11% |
+| `T1057` Process Discovery | 14 de las 127 familias observadas | 11% |
+| `T1016` System Network Configuration Discovery | 14 de las 127 familias observadas | 11% |
+| `T1140` Deobfuscate/Decode Files or Information | 14 de las 127 familias observadas | 11% |
+| `T1033` System Owner/User Discovery | 13 de las 127 familias observadas | 10% |
+| `T1112` Modify Registry | 12 de las 127 familias observadas | 9% |
+| `T1027` Obfuscated Files or Information | 12 de las 127 familias observadas | 9% |
 
 ### Técnicas ATT&CK inferidas (unidad: **entrada KEV**; denominador: entradas KEV **nuevas** del periodo)
 
@@ -88,13 +90,13 @@ Ninguna entrada KEV del periodo tiene vector de explotación inferido.
 
 | Tipo | Indicadores |
 |---|---|
-| `domain-name` | 3291 |
-| `file-md5` | 320 |
-| `file-sha1` | 316 |
-| `file-sha256` | 4276 |
-| `ipv4-addr` | 2883 |
-| `url` | 1424 |
-| `vulnerability` | 1758 |
+| `domain-name` | 2441 |
+| `file-md5` | 366 |
+| `file-sha1` | 364 |
+| `file-sha256` | 4564 |
+| `ipv4-addr` | 2825 |
+| `url` | 1423 |
+| `vulnerability` | 1760 |
 
 ## 6. Indicadores destacados
 
@@ -110,13 +112,13 @@ Infraestructura observada de mayor confianza, con los valores **defanged** para 
 | `hxxps://g[.]agenplay89[.]org/ic/` | `url` | `threatfox` | 100 | Vidar | — |
 | `e7fcec7b1cb60a3d85812912cfa8f6d8af914bf99258a12eea70638588481ee7` | `file-sha256` | `threatfox` | 100 | VShell | — |
 | `f89f28cf0f882619a45a53ffd35ebdb2dda219efa44b8332a0b4b55604e95bd3` | `file-sha256` | `threatfox` | 100 | VShell | — |
-| `ataturk[.]sbs` | `domain-name` | `threatfox` | 100 | Unknown RAT | — |
 | `648be0b1935a86f80d5437d6147e96e1e7fe113db3c6682a53c5b5cc0eff3882` | `file-sha256` | `threatfox` | 100 | VShell | — |
-| `investstockharbour[.]com` | `domain-name` | `threatfox` | 100 | AsyncRAT | `T1622`, `T1106`, `T1124`, `T1680`, `T1033`, `T1568`, `T1125`, `T1105`, `T1057`, `T1016`, `T1113` |
 | `hxxps://wx[.]agenpr[.]org/f/` | `url` | `threatfox` | 100 | Vidar | — |
 | `4cce755f6e0f4bf39388c676e66d9e3f19dc1164b70482dce616b793dfd536fc` | `file-sha256` | `threatfox` | 100 | AMOS | — |
+| `4e4e39db1e1d949a0fb2547748e5c5965d36876c42f571bddd7cf55644d7724a` | `file-sha256` | `threatfox` | 100 | AMOS | — |
 | `mtclodz[.]pl` | `domain-name` | `threatfox` | 100 | StrelaStealer | `T1001`, `T1041`, `T1622`, `T1027`, `T1480`, `T1518`, `T1497`, `T1036`, `T1140`, `T1105`, `T1082`, `T1119`, `T1020` |
 | `85f3e285bb40c97534c2e52d90202a04120ff7cb5bfe967f55bc058329490a2a` | `file-sha256` | `threatfox` | 100 | VShell | — |
+| `hxxps://garden-82[.]com/curl/c7d2xn1k0/fmv7bafu0t42u1byn1[.]dat` | `url` | `threatfox` | 100 | AMOS | — |
 
 ## 7. Recomendaciones y ventanas de decisión
 
@@ -130,8 +132,8 @@ La metodología de mapeo a ATT&CK, con sus dos rutas y sus reglas de abstención
 
 | Fuente | Estado | Registros | Inválidos | No soportados | Cobertura evaluada |
 |---|---|---|---|---|---|
-| `cisa-kev` | correcta | 1758 | 0 | 0 | sí |
-| `threatfox` | correcta | 12510 | 0 | 0 | sí |
+| `cisa-kev` | correcta | 1760 | 0 | 0 | sí |
+| `threatfox` | correcta | 11983 | 0 | 0 | sí |
 
 ### Catálogo ATT&CK
 
@@ -145,26 +147,27 @@ La metodología de mapeo a ATT&CK, con sus dos rutas y sus reglas de abstención
 
 ### Motivos de mapeo ausente, cada uno a su nivel
 
-**Nivel familia** — denominador: **115 familias observadas**.
+**Nivel familia** — denominador: **127 familias observadas**.
 
-- `familia_sin_entrada`: 88 de 115 familias
+- `ambiguedad_candidatos`: 1 de 127 familias
+- `familia_sin_entrada`: 97 de 127 familias
 
-**Nivel indicador** — denominador: **12510 indicadores de ThreatFox**.
+**Nivel indicador** — denominador: **11983 indicadores de ThreatFox**.
 
-- `sin_atribucion`: 1767 de 12510
+- `sin_atribucion`: 1906 de 11983
 
-**Nivel entrada KEV** — denominador: **1758 entradas KEV procesadas**.
+**Nivel entrada KEV** — denominador: **1760 entradas KEV procesadas**.
 
-- `producto_inespecifico`: 133 de 1758
-- `producto_sin_clasificar`: 1091 de 1758
+- `producto_inespecifico`: 133 de 1760
+- `producto_sin_clasificar`: 1093 de 1760
 
 
 ### Cobertura de la tabla de vectores de explotación
 
-Medida sobre las **1758 entradas KEV procesadas** en esta ejecución (2026-10-27), no proyectada:
+Medida sobre las **1760 entradas KEV procesadas** en esta ejecución (2026-10-28), no proyectada:
 
 - **Con vector inferido:** 534 (30%)
-- **Sin clasificar** (trabajo pendiente, alimenta la cola de abajo): 1091 (62%)
+- **Sin clasificar** (trabajo pendiente, alimenta la cola de abajo): 1093 (62%)
 - **Producto inespecífico** (no es trabajo pendiente: no puede clasificarse por la vía del par fabricante-producto): 133 (7%)
 
 Las dos últimas no se suman: una mide lo que falta por curar y la otra lo que no puede curarse así. Confundirlas dejaría la cobertura con un suelo que nunca se alcanza.
@@ -177,7 +180,7 @@ Ordenada por valor de decisión, no alfabéticamente ni por frecuencia: ordenada
 
 | CVE | Fabricante | Producto | Ransomware | Fecha límite |
 |---|---|---|---|---|
-| `CVE-2026-109618` | PHP Group | PHP | Unknown | 2026-10-29 |
-| `CVE-2026-109619` | PHP Group | PHP | Unknown | 2026-10-29 |
+| `CVE-2026-111497` | Google | Brotli | Unknown | 2026-11-10 |
+| `CVE-2026-48356` | Adobe | Commerce and Magento | Unknown | 2026-11-10 |
 
 **Parte de esta cola no es atendible por esta vía**, y se declara: las entradas cuyo par (fabricante, producto) no determina por sí solo la clase de vector —un sistema operativo completo, el nombre de una suite— no pueden curarse con la tabla de pares, y nadie las curará así. No se cuantifica: medirlo exigiría una clasificación que hoy no existe.
