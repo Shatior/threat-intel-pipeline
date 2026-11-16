@@ -1,28 +1,28 @@
-# Informe de Ciberinteligencia — 2026-11-15 (UTC)
+# Informe de Ciberinteligencia — 2026-11-16 (UTC)
 
 **TLP:CLEAR**
 
 ## 1. Cabecera
 
-- **Fecha (UTC):** 2026-11-15 13:27:26
+- **Fecha (UTC):** 2026-11-16 14:50:01
 - **Modo del informe:** diferencial
 - **Línea base vigente:** 2026-11-01 12:42:09 UTC
 - **Intervalo real** (difiere entre fuentes):
-  - `cisa-kev`: 24.5 h
-  - `threatfox`: 24.5 h
+  - `cisa-kev`: 25.4 h
+  - `threatfox`: 25.4 h
 - **Fuentes consultadas:** `cisa-kev` (correcta), `threatfox` (correcta)
 
 ## 2. BLUF
 
 **4 vulnerabilidades explotadas activamente vencen su plazo de corrección en los próximos 7 días.** Es lo accionable de este informe; el detalle está en la sección 4.
 
-**Cambio del periodo:** 1213 indicadores nuevos y 8 reaparecidos, y 710 caídos.
+**Cambio del periodo:** 1654 indicadores nuevos y 9 reaparecidos, y 1590 caídos.
 
-Intervalo real cubierto: difiere entre fuentes — 24.5 h en `cisa-kev`, 24.5 h en `threatfox`.
+Intervalo real cubierto: difiere entre fuentes — 25.4 h en `cisa-kev`, 25.4 h en `threatfox`.
 
 ## 3. Juicios clave
 
-- **116 de las 145 familias observadas** no tienen entrada en ATT&CK. Es **posible** que esa parte del panorama activo corresponda a crimeware commodity, que el catálogo describe peor que el instrumental dirigido. *(confianza: media — medición propia sobre un catálogo con sesgo de cobertura conocido)*
+- **95 de las 120 familias observadas** no tienen entrada en ATT&CK. Es **posible** que esa parte del panorama activo corresponda a crimeware commodity, que el catálogo describe peor que el instrumental dirigido. *(confianza: media — medición propia sobre un catálogo con sesgo de cobertura conocido)*
 
 ## 4. Vulnerabilidades explotadas activamente incorporadas en este periodo o con plazo próximo
 
@@ -41,39 +41,39 @@ El uso conocido en campañas de ransomware lo declara CISA. Las de plazo dentro 
 
 ### Familias con mayor variación
 
-*Las familias se observan en la ventana de 5 días que termina en 2026-11-15 13:27 UTC. La variación compara ese agregado con el de la ejecución anterior.*
+*Las familias se observan en la ventana de 5 días que termina en 2026-11-16 14:50 UTC. La variación compara ese agregado con el de la ejecución anterior.*
 
 | Familia | Variación de indicadores |
 |---|---|
-| `unknown_loader` | +298 |
-| `js.iclickfix` | +113 |
-| `win.ravenstealer` | +66 |
-| `elf.snowlight` | -51 |
-| `win.njrat` | +40 |
-| `js.clearfake` | +36 |
-| `win.xworm` | -28 |
-| `elf.mirai` | -26 |
-| `win.zstealer` | +21 |
-| `py.rn_stealer` | +16 |
+| `Unknown malware` | +161 |
+| `win.salatstealer` | -154 |
+| `js.iclickfix` | +90 |
+| `elf.mirai` | +78 |
+| `win.strelastealer` | -77 |
+| `win.stealc` | +55 |
+| `win.ravenstealer` | +52 |
+| `unknown_stealer` | +26 |
+| `unknown_loader` | +24 |
+| `win.pure_rat` | -21 |
 
 ### Técnicas ATT&CK derivadas (unidad: **familia**; denominador: familias observadas)
 
-De las **145 familias observadas**, **29** tienen entrada en ATT&CK. El porcentaje de cada técnica es la proporción de familias observadas cuyo mapeo la incluye, sobre el total de **145 familias observadas**.
+De las **120 familias observadas**, **25** tienen entrada en ATT&CK. El porcentaje de cada técnica es la proporción de familias observadas cuyo mapeo la incluye, sobre el total de **120 familias observadas**.
 
 **Los porcentajes no suman 100:** una familia emplea varias técnicas.
 
 | Técnica | Familias | Proporción |
 |---|---|---|
-| `T1105` Ingress Tool Transfer | 20 de las 145 familias observadas | 13% |
-| `T1082` System Information Discovery | 17 de las 145 familias observadas | 11% |
-| `T1016` System Network Configuration Discovery | 15 de las 145 familias observadas | 10% |
-| `T1057` Process Discovery | 14 de las 145 familias observadas | 9% |
-| `T1113` Screen Capture | 14 de las 145 familias observadas | 9% |
-| `T1033` System Owner/User Discovery | 13 de las 145 familias observadas | 8% |
-| `T1112` Modify Registry | 12 de las 145 familias observadas | 8% |
-| `T1140` Deobfuscate/Decode Files or Information | 12 de las 145 familias observadas | 8% |
-| `T1083` File and Directory Discovery | 12 de las 145 familias observadas | 8% |
-| `T1106` Native API | 12 de las 145 familias observadas | 8% |
+| `T1105` Ingress Tool Transfer | 18 de las 120 familias observadas | 15% |
+| `T1082` System Information Discovery | 16 de las 120 familias observadas | 13% |
+| `T1016` System Network Configuration Discovery | 14 de las 120 familias observadas | 11% |
+| `T1057` Process Discovery | 12 de las 120 familias observadas | 10% |
+| `T1112` Modify Registry | 12 de las 120 familias observadas | 10% |
+| `T1106` Native API | 12 de las 120 familias observadas | 10% |
+| `T1083` File and Directory Discovery | 12 de las 120 familias observadas | 10% |
+| `T1033` System Owner/User Discovery | 12 de las 120 familias observadas | 10% |
+| `T1113` Screen Capture | 12 de las 120 familias observadas | 10% |
+| `T1027` Obfuscated Files or Information | 9 de las 120 familias observadas | 7% |
 
 ### Técnicas ATT&CK inferidas
 
@@ -85,12 +85,12 @@ El catálogo KEV no incorporó entradas en este periodo, de modo que no hay deno
 
 | Tipo | Indicadores |
 |---|---|
-| `domain-name` | 3035 |
-| `file-md5` | 363 |
-| `file-sha1` | 356 |
-| `file-sha256` | 1862 |
-| `ipv4-addr` | 782 |
-| `url` | 360 |
+| `domain-name` | 3191 |
+| `file-md5` | 292 |
+| `file-sha1` | 285 |
+| `file-sha256` | 1564 |
+| `ipv4-addr` | 1004 |
+| `url` | 506 |
 
 ## 6. Indicadores destacados
 
@@ -127,7 +127,7 @@ La metodología de mapeo a ATT&CK, con sus dos rutas y sus reglas de abstención
 | Fuente | Estado | Registros | Inválidos | No soportados | Cobertura evaluada |
 |---|---|---|---|---|---|
 | `cisa-kev` | correcta | 0 | 0 | 0 | no |
-| `threatfox` | correcta | 6758 | 0 | 0 | sí |
+| `threatfox` | correcta | 6842 | 0 | 0 | sí |
 
 ### Catálogo ATT&CK
 
@@ -141,13 +141,13 @@ La metodología de mapeo a ATT&CK, con sus dos rutas y sus reglas de abstención
 
 ### Motivos de mapeo ausente, cada uno a su nivel
 
-**Nivel familia** — denominador: **145 familias observadas**.
+**Nivel familia** — denominador: **120 familias observadas**.
 
-- `familia_sin_entrada`: 116 de 145 familias
+- `familia_sin_entrada`: 95 de 120 familias
 
-**Nivel indicador** — denominador: **6758 indicadores de ThreatFox**.
+**Nivel indicador** — denominador: **6842 indicadores de ThreatFox**.
 
-- `sin_atribucion`: 841 de 6758
+- `sin_atribucion`: 1034 de 6842
 
 
 ### Cobertura de la tabla de vectores de explotación
