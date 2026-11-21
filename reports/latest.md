@@ -1,41 +1,44 @@
-# Informe de Ciberinteligencia — 2026-11-20 (UTC)
+# Informe de Ciberinteligencia — 2026-11-21 (UTC)
 
 **TLP:CLEAR**
 
 ## 1. Cabecera
 
-- **Fecha (UTC):** 2026-11-20 14:54:30
+- **Fecha (UTC):** 2026-11-21 14:15:02
 - **Modo del informe:** diferencial
 - **Línea base vigente:** 2026-11-01 12:42:09 UTC
 - **Intervalo real** (difiere entre fuentes):
-  - `cisa-kev`: 23.6 h
-  - `threatfox`: 23.6 h
+  - `cisa-kev`: 23.3 h
+  - `threatfox`: 23.3 h
 - **Fuentes consultadas:** `cisa-kev` (correcta), `threatfox` (correcta)
 
 ## 2. BLUF
 
-**8 vulnerabilidades explotadas activamente vencen su plazo de corrección en los próximos 7 días.** Es lo accionable de este informe; el detalle está en la sección 4.
+**11 vulnerabilidades explotadas activamente vencen su plazo de corrección en los próximos 7 días.** Es lo accionable de este informe; el detalle está en la sección 4.
 
-**Cambio del periodo:** 793 indicadores nuevos y 18 reaparecidos, y 1451 caídos.
+**Cambio del periodo:** 1634 indicadores nuevos y 11 reaparecidos, y 1090 caídos.
 
-Intervalo real cubierto: difiere entre fuentes — 23.6 h en `cisa-kev`, 23.6 h en `threatfox`.
+Intervalo real cubierto: difiere entre fuentes — 23.3 h en `cisa-kev`, 23.3 h en `threatfox`.
 
 ## 3. Juicios clave
 
-- **104 de las 136 familias observadas** no tienen entrada en ATT&CK. Es **posible** que esa parte del panorama activo corresponda a crimeware commodity, que el catálogo describe peor que el instrumental dirigido. *(confianza: media — medición propia sobre un catálogo con sesgo de cobertura conocido)*
+- **102 de las 133 familias observadas** no tienen entrada en ATT&CK. Es **posible** que esa parte del panorama activo corresponda a crimeware commodity, que el catálogo describe peor que el instrumental dirigido. *(confianza: media — medición propia sobre un catálogo con sesgo de cobertura conocido)*
 
 ## 4. Vulnerabilidades explotadas activamente incorporadas en este periodo o con plazo próximo
 
-**8 entradas**, ordenadas por fecha límite: primero lo que aún no ha vencido, de lo que vence antes a lo que vence después; después lo vencido, de lo más reciente a lo más antiguo. A igualdad de plazo, primero las de uso conocido en campañas de ransomware.
+**11 entradas**, ordenadas por fecha límite: primero lo que aún no ha vencido, de lo que vence antes a lo que vence después; después lo vencido, de lo más reciente a lo más antiguo. A igualdad de plazo, primero las de uso conocido en campañas de ransomware.
 
 El uso conocido en campañas de ransomware lo declara CISA. Las de plazo dentro de los próximos 7 días van marcadas con ⏰.
 
 | CVE | Fabricante | Producto | Uso en ransomware | Fecha límite |
 |---|---|---|---|---|
-| `CVE-2026-19868` ⏰ | SonicWall | SonicOS SSLVPN | Unknown | 2026-11-20 |
 | `CVE-2024-10441` ⏰ | Synology | DiskStation Manager (DSM) | Unknown | 2026-11-21 |
 | `CVE-2026-90436` ⏰ | Apache | Axis | Unknown | 2026-11-21 |
 | `CVE-2026-90817` ⏰ | Vanderbilt University | Research Electronic Data Capture (REDCap) | Unknown | 2026-11-21 |
+| `CVE-2025-42884` ⏰ | SAP | NetWeaver | Unknown | 2026-11-23 |
+| `CVE-2026-123890` ⏰ | Broadcom | VMware vCenter | Unknown | 2026-11-23 |
+| `CVE-2026-129448` ⏰ | Apache | Roller | Unknown | 2026-11-23 |
+| `CVE-2026-76466` ⏰ | Cisco | Expressway Series | Unknown | 2026-11-23 |
 | `CVE-2026-111793` ⏰ | Openwave Messaging Limited | Webtop Media Transcoder | Unknown | 2026-11-24 |
 | `CVE-2026-124194` ⏰ | Microsoft | Office | Unknown | 2026-11-24 |
 | `CVE-2026-125350` ⏰ | Google | Chromium | Unknown | 2026-11-24 |
@@ -45,43 +48,47 @@ El uso conocido en campañas de ransomware lo declara CISA. Las de plazo dentro 
 
 ### Familias con mayor variación
 
-*Las familias se observan en la ventana de 5 días que termina en 2026-11-20 14:54 UTC. La variación compara ese agregado con el de la ejecución anterior.*
+*Las familias se observan en la ventana de 5 días que termina en 2026-11-21 14:15 UTC. La variación compara ese agregado con el de la ejecución anterior.*
 
 | Familia | Variación de indicadores |
 |---|---|
-| `unknown_loader` | -527 |
-| `js.iclickfix` | -216 |
-| `Unknown malware` | +175 |
-| `win.ravenstealer` | -66 |
-| `js.clearfake` | -45 |
-| `win.njrat` | -30 |
-| `win.vshell` | +27 |
-| `elf.mirai` | +26 |
-| `win.agent_tesla` | +23 |
-| `win.sliver` | +23 |
+| `win.skimer` | +335 |
+| `Unknown malware` | +290 |
+| `unknown_loader` | -184 |
+| `win.zstealer` | +156 |
+| `win.merdoor` | +120 |
+| `js.clearfake` | -71 |
+| `win.vidar` | -46 |
+| `unknown_stealer` | +39 |
+| `elf.mirai` | -38 |
+| `win.salatstealer` | -16 |
 
 ### Técnicas ATT&CK derivadas (unidad: **familia**; denominador: familias observadas)
 
-De las **136 familias observadas**, **31** tienen entrada en ATT&CK. El porcentaje de cada técnica es la proporción de familias observadas cuyo mapeo la incluye, sobre el total de **136 familias observadas**.
+De las **133 familias observadas**, **30** tienen entrada en ATT&CK. El porcentaje de cada técnica es la proporción de familias observadas cuyo mapeo la incluye, sobre el total de **133 familias observadas**.
 
 **Los porcentajes no suman 100:** una familia emplea varias técnicas.
 
 | Técnica | Familias | Proporción |
 |---|---|---|
-| `T1105` Ingress Tool Transfer | 23 de las 136 familias observadas | 16% |
-| `T1082` System Information Discovery | 20 de las 136 familias observadas | 14% |
-| `T1057` Process Discovery | 17 de las 136 familias observadas | 12% |
-| `T1106` Native API | 17 de las 136 familias observadas | 12% |
-| `T1113` Screen Capture | 15 de las 136 familias observadas | 11% |
-| `T1140` Deobfuscate/Decode Files or Information | 14 de las 136 familias observadas | 10% |
-| `T1016` System Network Configuration Discovery | 14 de las 136 familias observadas | 10% |
-| `T1112` Modify Registry | 13 de las 136 familias observadas | 9% |
-| `T1083` File and Directory Discovery | 13 de las 136 familias observadas | 9% |
-| `T1033` System Owner/User Discovery | 12 de las 136 familias observadas | 8% |
+| `T1105` Ingress Tool Transfer | 23 de las 133 familias observadas | 17% |
+| `T1082` System Information Discovery | 21 de las 133 familias observadas | 15% |
+| `T1057` Process Discovery | 17 de las 133 familias observadas | 12% |
+| `T1106` Native API | 17 de las 133 familias observadas | 12% |
+| `T1140` Deobfuscate/Decode Files or Information | 15 de las 133 familias observadas | 11% |
+| `T1113` Screen Capture | 15 de las 133 familias observadas | 11% |
+| `T1016` System Network Configuration Discovery | 13 de las 133 familias observadas | 9% |
+| `T1083` File and Directory Discovery | 13 de las 133 familias observadas | 9% |
+| `T1033` System Owner/User Discovery | 12 de las 133 familias observadas | 9% |
+| `T1112` Modify Registry | 12 de las 133 familias observadas | 9% |
 
-### Técnicas ATT&CK inferidas
+### Técnicas ATT&CK inferidas (unidad: **entrada KEV**; denominador: entradas KEV **nuevas** del periodo)
 
-El catálogo KEV no incorporó entradas en este periodo, de modo que no hay denominador sobre el que calcular la tabla. No es que ninguna entrada tenga vector inferido: es que no hay entradas del periodo que contar.
+Sobre **4 entradas KEV nuevas del periodo**. La confianza de toda esta ruta es `low` sin excepciones: la etiqueta califica el método —inferencia desde categoría de producto—, no el caso concreto. **Nunca se mezclan con las derivadas**: son dos rutas con denominadores distintos.
+
+| Técnica | Entradas KEV | Proporción |
+|---|---|---|
+| `T1190` Exploit Public-Facing Application | 1 de las 4 entradas KEV nuevas del periodo | 25% |
 
 ### Infraestructura observada (unidad: **indicador**)
 
@@ -89,12 +96,13 @@ El catálogo KEV no incorporó entradas en este periodo, de modo que no hay deno
 
 | Tipo | Indicadores |
 |---|---|
-| `domain-name` | 1945 |
-| `file-md5` | 331 |
-| `file-sha1` | 331 |
-| `file-sha256` | 1372 |
-| `ipv4-addr` | 1750 |
-| `url` | 541 |
+| `domain-name` | 2055 |
+| `file-md5` | 396 |
+| `file-sha1` | 396 |
+| `file-sha256` | 1530 |
+| `ipv4-addr` | 2020 |
+| `url` | 439 |
+| `vulnerability` | 1790 |
 
 ## 6. Indicadores destacados
 
@@ -116,11 +124,11 @@ Infraestructura observada de mayor confianza, con los valores **defanged** para 
 | `106[.]54[.]203[.]98` | `ipv4-addr` | `threatfox` | 100 | Unknown malware | — |
 | `134[.]122[.]153[.]218` | `ipv4-addr` | `threatfox` | 100 | Unknown malware | — |
 | `al07[.]store` | `domain-name` | `threatfox` | 100 | ClearFake | — |
-| `185[.]227[.]153[.]148` | `ipv4-addr` | `threatfox` | 100 | VShell | — |
+| `americaspadel[.]com` | `domain-name` | `threatfox` | 100 | ClearFake | — |
 
 ## 7. Recomendaciones y ventanas de decisión
 
-1. **Priorizar el parcheo** de las 8 entradas KEV con plazo en los próximos 7 días: `CVE-2026-19868` (2026-11-20), `CVE-2024-10441` (2026-11-21), `CVE-2026-90436` (2026-11-21).
+1. **Priorizar el parcheo** de las 11 entradas KEV con plazo en los próximos 7 días: `CVE-2024-10441` (2026-11-21), `CVE-2026-90436` (2026-11-21), `CVE-2026-90817` (2026-11-21).
 
 ## 8. Nota metodológica
 
@@ -130,8 +138,8 @@ La metodología de mapeo a ATT&CK, con sus dos rutas y sus reglas de abstención
 
 | Fuente | Estado | Registros | Inválidos | No soportados | Cobertura evaluada |
 |---|---|---|---|---|---|
-| `cisa-kev` | correcta | 0 | 0 | 0 | no |
-| `threatfox` | correcta | 6270 | 0 | 0 | sí |
+| `cisa-kev` | correcta | 1790 | 0 | 0 | sí |
+| `threatfox` | correcta | 6836 | 0 | 0 | sí |
 
 ### Catálogo ATT&CK
 
@@ -145,22 +153,41 @@ La metodología de mapeo a ATT&CK, con sus dos rutas y sus reglas de abstención
 
 ### Motivos de mapeo ausente, cada uno a su nivel
 
-**Nivel familia** — denominador: **136 familias observadas**.
+**Nivel familia** — denominador: **133 familias observadas**.
 
-- `ambiguedad_candidatos`: 1 de 136 familias
-- `familia_sin_entrada`: 104 de 136 familias
+- `ambiguedad_candidatos`: 1 de 133 familias
+- `familia_sin_entrada`: 102 de 133 familias
 
-**Nivel indicador** — denominador: **6270 indicadores de ThreatFox**.
+**Nivel indicador** — denominador: **6836 indicadores de ThreatFox**.
 
-- `sin_atribucion`: 1398 de 6270
+- `sin_atribucion`: 1691 de 6836
+
+**Nivel entrada KEV** — denominador: **1790 entradas KEV procesadas**.
+
+- `producto_inespecifico`: 134 de 1790
+- `producto_sin_clasificar`: 1118 de 1790
 
 
 ### Cobertura de la tabla de vectores de explotación
 
-El catálogo KEV no aportó entradas en esta ejecución, de modo que la cobertura no se ha medido hoy. **No es 0%**: es que no hubo denominador sobre el que medirla.
+Medida sobre las **1790 entradas KEV procesadas** en esta ejecución (2026-11-21), no proyectada:
+
+- **Con vector inferido:** 538 (30%)
+- **Sin clasificar** (trabajo pendiente, alimenta la cola de abajo): 1118 (62%)
+- **Producto inespecífico** (no es trabajo pendiente: no puede clasificarse por la vía del par fabricante-producto): 134 (7%)
+
+Las dos últimas no se suman: una mide lo que falta por curar y la otra lo que no puede curarse así. Confundirlas dejaría la cobertura con un suelo que nunca se alcanza.
 
 ### Cola de trabajo: entradas KEV **nuevas del periodo** sin clasificar
 
-**0** entradas nuevas del periodo sin clasificar.
+**3** entradas nuevas del periodo sin clasificar.
 
-La cola está vacía en esta ejecución. Si el catálogo respondió que no hay novedades, eso no significa que la tabla esté al día: significa que no hubo entradas nuevas.
+Ordenada por valor de decisión, no alfabéticamente ni por frecuencia: ordenada por fecha límite: primero lo que aún no ha vencido, de lo que vence antes a lo que vence después; después lo vencido, de lo más reciente a lo más antiguo. A igualdad de plazo, primero las de uso conocido en campañas de ransomware.
+
+| CVE | Fabricante | Producto | Ransomware | Fecha límite |
+|---|---|---|---|---|
+| `CVE-2026-123890` | Broadcom | VMware vCenter | Unknown | 2026-11-23 |
+| `CVE-2026-129448` | Apache | Roller | Unknown | 2026-11-23 |
+| `CVE-2026-76466` | Cisco | Expressway Series | Unknown | 2026-11-23 |
+
+**Parte de esta cola no es atendible por esta vía**, y se declara: las entradas cuyo par (fabricante, producto) no determina por sí solo la clase de vector —un sistema operativo completo, el nombre de una suite— no pueden curarse con la tabla de pares, y nadie las curará así. No se cuantifica: medirlo exigiría una clasificación que hoy no existe.
