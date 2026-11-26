@@ -5,6 +5,34 @@ verdad del proyecto: ante cualquier ambigüedad, prevalece lo escrito aquí.
 
 ---
 
+## Alcance de la sesión de trabajo
+
+**Esta instrucción gobierna a cualquier sesión de agente que trabaje en este repositorio, y se
+aplica desde el primer turno.** Va sin numerar y al principio a propósito: numerarla obligaría a
+renumerar quince secciones y a reescribir las decenas de referencias `§N` que se citan entre
+ellas, y va delante porque una regla de alcance que se lee después de actuar no sirve de nada.
+
+- **Esta sesión trabaja únicamente sobre `Shatior/threat-intel-pipeline` y su proyecto de Linear,
+  `threat-intel-pipeline`.**
+- **Cada respuesta declara en qué repositorio está.** No es ceremonia: es lo que permite detectar
+  desde fuera que la sesión se ha ido a otro sitio, sin tener que reconstruirlo de sus acciones.
+- **Si un encargo menciona otro repositorio, otro proyecto de Linear o incidencias que no
+  pertenecen a este, la sesión se detiene y avisa en lugar de interpretarlo.** Detenerse es la
+  respuesta correcta, no una falta de iniciativa: adivinar a qué se refería un encargo ambiguo es
+  cómo se acaba escribiendo en un proyecto ajeno con toda la buena fe.
+- **No consulta ni modifica nada de otros proyectos del *workspace*, aunque las herramientas lo
+  permitan.** Que una herramienta alcance algo no es autorización para tocarlo.
+- **Única excepción, y está acotada:** el pipeline y el portafolio comparten el contrato del
+  `repository_dispatch` (§11.2, §11.3), de modo que la sesión **puede leer del portafolio lo
+  necesario para verificarlo**. **Escribir en él, no.** La excepción existe porque el contrato es
+  de los dos y verificarlo desde un solo lado es imposible; se detiene donde deja de ser
+  verificación y pasaría a ser intervención.
+
+Es la misma disciplina que el producto aplica a sus fuentes: se declara desde dónde se observa, y
+lo que no se puede sostener no se hace.
+
+---
+
 ## 1. Propósito
 
 Pipeline automatizado de Ciberinteligencia (CTI) que ejecuta el ciclo de inteligencia
